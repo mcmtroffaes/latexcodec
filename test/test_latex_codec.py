@@ -12,7 +12,7 @@ else:
     from cStringIO import StringIO as BytesIO
 from unittest import TestCase
 
-import sphinxcontrib.bibtex.latex_codec  # registers automatically
+import latexcodec.codec # registers automatically
 
 
 def test_getregentry():
