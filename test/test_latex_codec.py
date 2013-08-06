@@ -12,15 +12,15 @@ else:
     from cStringIO import StringIO as BytesIO
 from unittest import TestCase
 
-import latexcodec.codec # registers automatically
+import latexcodec.codec  # registers automatically
 
 
 def test_getregentry():
-    assert sphinxcontrib.bibtex.latex_codec.getregentry() is not None
+    assert latexcodec.codec.getregentry() is not None
 
 
 def test_find_latex():
-    assert sphinxcontrib.bibtex.latex_codec.find_latex('hello') is None
+    assert latexcodec.codec.find_latex('hello') is None
 
 
 def test_latex_incremental_decoder_getstate():

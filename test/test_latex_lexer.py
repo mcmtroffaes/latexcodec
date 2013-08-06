@@ -6,6 +6,7 @@ from unittest import TestCase
 from latexcodec.lexer import (
     LatexLexer, LatexIncrementalDecoder, LatexIncrementalEncoder, Token)
 
+
 def test_token_create():
     t = Token()
     nose.tools.assert_equal(t.name, 'unknown')
