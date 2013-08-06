@@ -1,7 +1,24 @@
 # -*- coding: utf-8 -*-
 """
-    LaTeX codec implementation
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    LaTeX Codec
+    ~~~~~~~~~~~
+    Classes and methods to implement LaTeX code translation.
+
+    .. autofunction:: register
+
+    .. autofunction:: find_latex
+
+    .. autoclass:: LatexIncrementalEncoder
+        :members:
+
+    .. autoclass:: LatexIncrementalDecoder
+        :members:
+
+    .. autoclass:: LatexCodec
+        :members:
+
+    .. autoclass:: LatexUnicodeTable
+        :members:
 """
 
 # Copyright (c) 2003, 2008 David Eppstein
