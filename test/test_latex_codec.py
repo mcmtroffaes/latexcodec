@@ -12,7 +12,8 @@ else:
     from cStringIO import StringIO as BytesIO
 from unittest import TestCase
 
-import latexcodec.codec  # registers automatically
+import latexcodec.codec
+latexcodec.codec.register()
 
 
 def test_getregentry():

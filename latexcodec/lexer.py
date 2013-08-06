@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    Simple incremental latex lexer
+    Simple incremental LaTeX lexer
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 

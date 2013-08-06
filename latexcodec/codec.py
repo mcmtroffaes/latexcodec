@@ -1,16 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Character translation utilities for LaTeX-formatted text
-========================================================
-
-Usage:
- - unicode(string,'latex')
- - ustring.decode('latex')
-are both available just by letting "import latex" find this file.
- - unicode(string,'latex+latin1')
- - ustring.decode('latex+latin1')
-where latin1 can be replaced by any other known encoding, also
-become available by calling latex.register().
+    LaTeX codec implementation
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 # Copyright (c) 2003, 2008 David Eppstein
@@ -41,7 +32,7 @@ from __future__ import print_function
 
 import codecs
 
-from sphinxcontrib.bibtex import latex_lexer
+from latexcodec import lexer
 
 
 def register():
@@ -541,21 +532,21 @@ class LatexUnicodeTable:
                 and tokens[0].name.startswith('control')
                     and tokens[1].name == 'chars'):
                 alt_tokens = (
-                    tokens[0], latex_lexer.Token('chars', b'{'),
-                    tokens[1], latex_lexer.Token('chars', b'}'),
+                    tokens[0], lexer.Token('chars', b'{'),
+                    tokens[1], lexer.Token('chars', b'}'),
                 )
                 if not alt_tokens in self.unicode_map:
                     self.unicode_map[alt_tokens] = u"{" + unicode_text + u"}"
         if encode and unicode_text not in self.latex_map:
             self.latex_map[unicode_text] = (latex_text, tokens)
 
-_LATEX_UNICODE_TABLE = LatexUnicodeTable(latex_lexer.LatexIncrementalDecoder())
+_LATEX_UNICODE_TABLE = LatexUnicodeTable(lexer.LatexIncrementalDecoder())
 
 # incremental encoder does not need a buffer
 # but decoder does
 
 
-class LatexIncrementalEncoder(latex_lexer.LatexIncrementalEncoder):
+class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
 
     """Translating incremental encoder for latex. Maintains a state to
     determine whether control spaces etc. need to be inserted.
@@ -565,7 +556,7 @@ class LatexIncrementalEncoder(latex_lexer.LatexIncrementalEncoder):
     """Translation table."""
 
     def __init__(self, errors='strict'):
-        latex_lexer.LatexIncrementalEncoder.__init__(self, errors=errors)
+        lexer.LatexIncrementalEncoder.__init__(self, errors=errors)
         self.reset()
 
     def reset(self):
@@ -653,7 +644,7 @@ class LatexIncrementalEncoder(latex_lexer.LatexIncrementalEncoder):
                 yield bytes_
 
 
-class LatexIncrementalDecoder(latex_lexer.LatexIncrementalDecoder):
+class LatexIncrementalDecoder(lexer.LatexIncrementalDecoder):
 
     """Translating incremental decoder for latex."""
 
@@ -661,11 +652,11 @@ class LatexIncrementalDecoder(latex_lexer.LatexIncrementalDecoder):
     """Translation table."""
 
     def __init__(self, errors='strict'):
-        latex_lexer.LatexIncrementalDecoder.__init__(self, errors=errors)
+        lexer.LatexIncrementalDecoder.__init__(self, errors=errors)
         self.max_length = 0
 
     def reset(self):
-        latex_lexer.LatexIncrementalDecoder.reset(self)
+        lexer.LatexIncrementalDecoder.reset(self)
         self.token_buffer = []
 
     # python codecs API does not support multibuffer incremental decoders
