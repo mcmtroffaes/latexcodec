@@ -1,7 +1,31 @@
 # -*- coding: utf-8 -*-
 """
-    Simple incremental LaTeX lexer
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    LaTeX Lexer
+    ~~~~~~~~~~~
+
+    This module contains all classes for lexing LaTeX code, as well as
+    general purpose base classes for incremental LaTeX decoders and
+    encoders, which could be useful in case you are writing your own
+    custom LaTeX codec.
+
+    .. autoclass:: Token
+       :members:
+
+    .. autoclass:: LatexLexer
+       :show-inheritance:
+       :members:
+
+    .. autoclass:: LatexIncrementalLexer
+       :show-inheritance:
+       :members:
+
+    .. autoclass:: LatexIncrementalDecoder
+       :show-inheritance:
+       :members:
+
+    .. autoclass:: LatexIncrementalEncoder
+       :show-inheritance:
+       :members:
 """
 
 # Copyright (c) 2003, 2008 David Eppstein

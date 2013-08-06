@@ -2,19 +2,26 @@
 """
     LaTeX Codec
     ~~~~~~~~~~~
-    Classes and methods to implement LaTeX code translation.
+
+    This module contains all classes and functions for LaTeX code
+    translation. For practical use, you should only ever need to call
+    the :func:`register` function. The other functions and classes
+    are exposed in case someone would want to extend them.
 
     .. autofunction:: register
 
     .. autofunction:: find_latex
 
     .. autoclass:: LatexIncrementalEncoder
+        :show-inheritance:
         :members:
 
     .. autoclass:: LatexIncrementalDecoder
+        :show-inheritance:
         :members:
 
     .. autoclass:: LatexCodec
+        :show-inheritance:
         :members:
 
     .. autoclass:: LatexUnicodeTable
@@ -739,6 +746,10 @@ class LatexCodec(codecs.Codec):
 
 
 def find_latex(encoding):
+    """Return a :class:`codecs.CodecInfo` instance for the requested
+    latex *encoding*, which must be equal to latex, or to latex+x
+    where x describes another encoding.
+    """
     # check if requested codec info is for latex encoding
     if not encoding.startswith('latex'):
         return None

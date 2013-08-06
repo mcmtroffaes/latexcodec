@@ -9,6 +9,6 @@ Minimal Example
    import latexcodec.codec
    latexcodec.codec.register()
    text_latex = br"\'el\`eve"
-   assert text_latex.decode("latex+utf8") == u"élève"
+   assert text_latex.decode("latex") == u"élève"
    text_unicode = u"ångström"
-   assert text_unicode.encode("latex+utf8") == br'\aa ngstr\"om'
+   assert text_unicode.encode("latex") == br'\aa ngstr\"om'
