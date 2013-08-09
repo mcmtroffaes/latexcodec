@@ -1,6 +1,16 @@
-0.1.0 (in development)
+0.3.0 (in development)
 ----------------------
 
 * Copied lexer and codec from sphinxcontrib-bibtex.
 
 * Initial usage and API documentation.
+
+0.2 (28 September 2012)
+-----------------------
+
+* Adding additional codec with brackets around special characters.
+
+0.1 (26 May 2012)
+-----------------
+
+* Initial release.
