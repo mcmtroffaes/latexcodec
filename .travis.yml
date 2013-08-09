@@ -1,0 +1,20 @@
+language: python
+python:
+  - "3.3"
+  - "3.2"
+  - "2.7"
+  - "2.6"
+branches:
+  only:
+    - develop
+install:
+  - "pip install coveralls"
+  - "pip install ."
+before_script:
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.2' ]]; then 2to3 -w -n test; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.3' ]]; then 2to3 -w -n test; fi"
+script:
+  - "cd test"
+  - "coverage run --source=latexcodec `type -p nosetests`"
+after_success:
+  - "coveralls"
