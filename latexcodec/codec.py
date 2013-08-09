@@ -8,6 +8,9 @@
     the :func:`register` function. The other functions and classes
     are exposed in case someone would want to extend them.
 
+    Note that the :func:`register` function is automatically called
+    when you import the :mod:`latexcodec` module.
+
     .. autofunction:: register
 
     .. autofunction:: find_latex

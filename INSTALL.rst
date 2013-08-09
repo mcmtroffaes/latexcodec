@@ -6,8 +6,7 @@ Minimal Example
 
 .. code-block:: python
 
-   import latexcodec.codec
-   latexcodec.codec.register()
+   import latexcodec
    text_latex = br"\'el\`eve"
    assert text_latex.decode("latex") == u"élève"
    text_unicode = u"ångström"
