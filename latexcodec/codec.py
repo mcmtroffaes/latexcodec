@@ -3,13 +3,16 @@
     LaTeX Codec
     ~~~~~~~~~~~
 
-    This module contains all classes and functions for LaTeX code
-    translation. For practical use, you should only ever need to call
-    the :func:`register` function. The other functions and classes
+    The :mod:`latexcodec.codec` module
+    contains all classes and functions for LaTeX code
+    translation. For practical use,
+    you should only ever need to import the :mod:`latexcodec` module,
+    which will automatically register the codec
+    so it can be used by :meth:`str.encode`, :meth:`str.decode`,
+    and any of the functions defined in the :mod:`codecs` module
+    such as :func:`codecs.open` and so on.
+    The other functions and classes
     are exposed in case someone would want to extend them.
-
-    Note that the :func:`register` function is automatically called
-    when you import the :mod:`latexcodec` module.
 
     .. autofunction:: register
 
@@ -32,7 +35,7 @@
 """
 
 # Copyright (c) 2003, 2008 David Eppstein
-# Copyright (c) 2011 Matthias C. M. Troffaes
+# Copyright (c) 2011-2013 Matthias C. M. Troffaes
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
