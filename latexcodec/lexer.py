@@ -55,6 +55,7 @@
 import codecs
 import collections
 import re
+import sys
 
 
 class Token(collections.namedtuple("Token", "name text")):
@@ -63,10 +64,11 @@ class Token(collections.namedtuple("Token", "name text")):
     __slots__ = ()  # efficiency
 
     def __new__(cls, name=None, text=None):
+        # text can be memoryview; convert to bytes so Token remains hashable
         return tuple.__new__(
             cls,
             (name if name is not None else 'unknown',
-             text if text is not None else b''))
+             bytes(text) if text is not None else b''))
 
     def __nonzero__(self):
         return bool(self.text)
@@ -165,10 +167,6 @@ class LatexLexer(codecs.IncrementalDecoder):
         - ``#<n>``: a parameter
         - a series of byte characters
         """
-        if not isinstance(bytes_, bytes):
-            raise TypeError(
-                'expected bytes but got %s'
-                % bytes_.__class__.__name__)
         if self.raw_buffer:
             bytes_ = self.raw_buffer.text + bytes_
         self.raw_buffer = Token()
