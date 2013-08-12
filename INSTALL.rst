@@ -29,5 +29,5 @@ The following code snippet demonstrates this behaviour:
     assert text_latex.decode("latex+latin1") == u"þ"
     assert text_latex.decode("latex+latin2") == u"ţ"
     text_unicode = u"ţ"
-    assert text_unicode.encode("latex+latin1") == b'\\c t' # ţ is not latin1
-    assert text_unicode.encode("latex+latin2") == b'\xfe'  # but it is latin2
+    assert text_unicode.encode("latex+latin1") == b'\\c t'  # ţ is not latin1
+    assert text_unicode.encode("latex+latin2") == b'\xfe'   # but it is latin2
