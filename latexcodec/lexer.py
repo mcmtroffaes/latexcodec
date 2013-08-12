@@ -8,8 +8,8 @@
     encoders, which could be useful in case you are writing your own
     custom LaTeX codec.
 
-    .. autoclass:: Token
-       :members:
+    .. autoclass:: Token(name, text)
+       :members: decode, __len__, __nonzero__
 
     .. autoclass:: LatexLexer
        :show-inheritance:
@@ -60,7 +60,22 @@ import sys
 
 class Token(collections.namedtuple("Token", "name text")):
 
-    """Stores information about a matched token."""
+    """A :func:`collections.namedtuple` storing information about a
+    matched token.
+
+    .. seealso:: :attr:`LatexLexer.tokens`
+
+    .. attribute:: name
+
+       The name of the token as a :class:`str`.
+
+    .. attribute:: text
+
+       The matched token text as :class:`bytes`.
+       The constructor also accepts text as :class:`memoryview`,
+       in which case it is automatically converted to :class:`bytes`.
+       This ensures that the token is hashable.
+    """
     __slots__ = ()  # efficiency
 
     def __new__(cls, name=None, text=None):
@@ -71,12 +86,29 @@ class Token(collections.namedtuple("Token", "name text")):
              bytes(text) if text is not None else b''))
 
     def __nonzero__(self):
+        """Whether the token contains any text."""
         return bool(self.text)
 
     def __len__(self):
+        """Length of the token text."""
         return len(self.text)
 
     def decode(self, encoding):
+        """Returns the decoded token text in the specified *encoding*.
+
+        .. note::
+
+           Control words get an extra space added at the back to make
+           sure separation from the next token, so that decoded token
+           sequences can be :meth:`str.join`\ ed together.
+
+           For example, the tokens ``b'\\hello'`` and ``b'world'``
+           will correctly result in ``u'\\hello world'`` (remember
+           that LaTeX eats space following control words). If no space
+           were added, this would wrongfully result in
+           ``u'\\helloworld'``.
+
+        """
         if self.name == 'control_word':
             return self.text.decode(encoding) + u' '
         else:
@@ -133,6 +165,7 @@ class LatexLexer(codecs.IncrementalDecoder):
         # is never emitted, but used internally by the buffer
         ('unknown', br'.'),
     ]
+    """List of token names, and the regular expressions they match."""
 
     def __init__(self, errors='strict'):
         """Initialize the codec."""
