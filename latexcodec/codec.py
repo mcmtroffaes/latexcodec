@@ -83,7 +83,7 @@ def getregentry():
 
 class LatexUnicodeTable:
 
-    """Tabulates a translation between latex and unicode."""
+    """Tabulates a translation between LaTeX and unicode."""
 
     def __init__(self, lexer):
         self.lexer = lexer
@@ -551,8 +551,8 @@ class LatexUnicodeTable:
         # tokenize, and register unicode translation
         tokens = tuple(self.lexer.get_tokens(latex_text, final=True))
         if decode:
-            self.max_length = max(self.max_length, len(tokens))
             if not tokens in self.unicode_map:
+                self.max_length = max(self.max_length, len(tokens))
                 self.unicode_map[tokens] = unicode_text
             # also register token variant with brackets, if appropriate
             # for instance, "\'{e}" for "\'e", "\c{c}" for "\c c", etc.
@@ -566,6 +566,7 @@ class LatexUnicodeTable:
                     tokens[1], lexer.Token('chars', b'}'),
                 )
                 if not alt_tokens in self.unicode_map:
+                    self.max_length = max(self.max_length, len(alt_tokens))
                     self.unicode_map[alt_tokens] = u"{" + unicode_text + u"}"
         if encode and unicode_text not in self.latex_map:
             self.latex_map[unicode_text] = (latex_text, tokens)
