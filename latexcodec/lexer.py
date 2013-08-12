@@ -64,8 +64,8 @@ class Token(collections.namedtuple("Token", "name text")):
     __slots__ = ()  # efficiency
 
     def __new__(cls, name=None, text=None):
-        if sys.version_info >= (2, 7) and isinstance(text, memoryview):
-            text = bytes(text)
+        # text can be memoryview; convert to bytes so Token remains hashable
+        text = bytes(text)
         return tuple.__new__(
             cls,
             (name if name is not None else 'unknown',
