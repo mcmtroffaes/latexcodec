@@ -683,7 +683,6 @@ class LatexIncrementalDecoder(lexer.LatexIncrementalDecoder):
 
     def __init__(self, errors='strict'):
         lexer.LatexIncrementalDecoder.__init__(self, errors=errors)
-        self.max_length = 0
 
     def reset(self):
         lexer.LatexIncrementalDecoder.reset(self)
