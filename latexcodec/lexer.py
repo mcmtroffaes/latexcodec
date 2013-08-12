@@ -65,11 +65,10 @@ class Token(collections.namedtuple("Token", "name text")):
 
     def __new__(cls, name=None, text=None):
         # text can be memoryview; convert to bytes so Token remains hashable
-        text = bytes(text)
         return tuple.__new__(
             cls,
             (name if name is not None else 'unknown',
-             text if text is not None else b''))
+             bytes(text) if text is not None else b''))
 
     def __nonzero__(self):
         return bool(self.text)
