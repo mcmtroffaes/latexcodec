@@ -76,6 +76,7 @@ class Token(collections.namedtuple("Token", "name text")):
        in which case it is automatically converted to :class:`bytes`.
        This ensures that the token is hashable.
     """
+
     __slots__ = ()  # efficiency
 
     def __new__(cls, name=None, text=None):
@@ -180,16 +181,18 @@ class LatexLexer(codecs.IncrementalDecoder):
         self.reset()
 
     def reset(self):
-        """Reset state (also called by __init__ to initialize the
-        state).
-        """
+        """Reset state."""
         # buffer for storing last (possibly incomplete) token
         self.raw_buffer = Token()
 
     def getstate(self):
+        """Get state."""
         return (self.raw_buffer.text, 0)
 
     def setstate(self, state):
+        """Set state. The *state* must correspond to the return value
+        of a previous :meth:`getstate` call.
+        """
         self.raw_buffer = Token('unknown', state[0])
 
     def get_raw_tokens(self, bytes_, final=False):
@@ -236,9 +239,6 @@ class LatexIncrementalLexer(LatexLexer):
     """
 
     def reset(self):
-        """Reset state (also called by __init__ to initialize the
-        state).
-        """
         LatexLexer.reset(self)
         # three possible states:
         # newline (N), skipping spaces (S), and middle of line (M)
@@ -350,7 +350,7 @@ class LatexIncrementalLexer(LatexLexer):
 
 class LatexIncrementalDecoder(LatexIncrementalLexer):
 
-    """Simple incremental decoder. Transforms lexed latex tokens into
+    """Simple incremental decoder. Transforms lexed LaTeX tokens into
     unicode.
 
     To customize decoding, subclass and override
@@ -361,9 +361,7 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
     """Input encoding. **Must** extend ascii."""
 
     def get_unicode_tokens(self, bytes_, final=False):
-        """:meth:`decode` calls this function to produce the final
-        sequence of unicode strings. This implementation simply
-        decodes every sequence in *inputenc* encoding. Override to
+        """Decode every token in :attr:`inputenc` encoding. Override to
         process the tokens in some other way (for example, for token
         translation).
         """
@@ -371,6 +369,11 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
             yield token.decode(self.inputenc)
 
     def decode(self, bytes_, final=False):
+        """Decode LaTeX *bytes_* into a unicode string.
+
+        This implementation calls :meth:`get_unicode_tokens` and joins
+        the resulting unicode strings together.
+        """
         try:
             return u''.join(self.get_unicode_tokens(bytes_, final=final))
         except UnicodeDecodeError as e:
@@ -381,15 +384,18 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
 
 class LatexIncrementalEncoder(codecs.IncrementalEncoder):
 
-    """Simple incremental encoder for latex."""
+    """Simple incremental encoder for LaTeX. Transforms unicode into
+    :class:`bytes`.
+
+    To customize decoding, subclass and override
+    :meth:`get_latex_bytes`.
+    """
 
     inputenc = "ascii"
     """Input encoding. **Must** extend ascii."""
 
     def get_latex_bytes(self, unicode_, final=False):
-        """:meth:`encode` calls this function to produce the final
-        sequence of latex bytes. This implementation simply
-        encodes every sequence in *inputenc* encoding. Override to
+        """Encode every character in :attr:`inputenc` encoding. Override to
         process the unicode in some other way (for example, for character
         translation).
         """
@@ -401,7 +407,11 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
             yield c.encode(self.inputenc, self.errors)
 
     def encode(self, unicode_, final=False):
-        """Encode unicode string into a latex byte sequence."""
+        """Encode the *unicode_* string into LaTeX :class:`bytes`.
+
+        This implementation calls :meth:`get_latex_bytes` and joins
+        the resulting :class:`bytes` together.
+        """
         try:
             return b''.join(self.get_latex_bytes(unicode_, final=final))
         except UnicodeEncodeError as e:
