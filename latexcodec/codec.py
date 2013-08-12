@@ -66,9 +66,9 @@ from latexcodec import lexer
 
 
 def register():
-    """Enable encodings of the form 'latex+x' where x describes another
-    encoding. Unicode characters are translated to or from x when possible,
-    otherwise expanded to latex.
+    """Register the :func:`find_latex` codec search function.
+
+    .. seealso:: :func:`codecs.register`
     """
     codecs.register(find_latex)
 
@@ -93,6 +93,9 @@ class LatexUnicodeTable:
         self.register_all()
 
     def register_all(self):
+        """Register all symbols and their LaTeX equivalents
+        (called by constructor).
+        """
         # TODO complete this list
         # register special symbols
         self.register(u'\N{EN DASH}', b'--')
@@ -539,6 +542,18 @@ class LatexUnicodeTable:
 
     def register(self, unicode_text, latex_text, mode='text', package=None,
                  decode=True, encode=True):
+        """Register a correspondence between *unicode_text* and *latex_text*.
+
+        :param str unicode_text: A unicode string.
+        :param bytes latex_text: Its corresponding LaTeX translation.
+        :param str mode: LaTeX mode in which the translation applies
+            (``'text'`` or ``'math'``).
+        :param str package: LaTeX package requirements (currently ignored).
+        :param bool decode: Whether this translation applies to decoding
+            (default: ``True``).
+        :param bool encode: Whether this translation applies to encoding
+            (default: ``True``).
+        """
         if package is not None:
             # TODO implement packages
             pass
@@ -608,12 +623,6 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
             return b'', bytes_
 
     def get_latex_bytes(self, unicode_, final=False):
-        """:meth:`encode` calls this function to produce the final
-        sequence of latex bytes. This implementation simply
-        encodes every sequence in *inputenc* encoding. Override to
-        process the bytes in some other way (for example, for token
-        translation).
-        """
         if not isinstance(unicode_, basestring):
             raise TypeError(
                 "expected unicode for encode input, but got {0} instead"
@@ -677,7 +686,7 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
 
 class LatexIncrementalDecoder(lexer.LatexIncrementalDecoder):
 
-    """Translating incremental decoder for latex."""
+    """Translating incremental decoder for LaTeX."""
 
     table = _LATEX_UNICODE_TABLE
     """Translation table."""
@@ -735,7 +744,7 @@ class LatexCodec(codecs.Codec):
     IncrementalDecoder = None
 
     def encode(self, unicode_, errors='strict'):
-        """Convert unicode string to latex bytes."""
+        """Convert unicode string to LaTeX bytes."""
         encoder = self.IncrementalEncoder(errors=errors)
         return (
             encoder.encode(unicode_, final=True),
@@ -743,7 +752,7 @@ class LatexCodec(codecs.Codec):
         )
 
     def decode(self, bytes_, errors='strict'):
-        """Convert latex bytes to unicode string."""
+        """Convert LaTeX bytes to unicode string."""
         decoder = self.IncrementalDecoder(errors=errors)
         return (
             decoder.decode(bytes_, final=True),
@@ -753,8 +762,9 @@ class LatexCodec(codecs.Codec):
 
 def find_latex(encoding):
     """Return a :class:`codecs.CodecInfo` instance for the requested
-    latex *encoding*, which must be equal to latex, or to latex+x
-    where x describes another encoding.
+    LaTeX *encoding*, which must be equal to ``latex``,
+    or to ``latex+<encoding>``
+    where ``<encoding>`` describes another encoding.
     """
     # check if requested codec info is for latex encoding
     if not encoding.startswith('latex'):
