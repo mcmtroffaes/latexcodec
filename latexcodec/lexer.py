@@ -55,7 +55,6 @@
 import codecs
 import collections
 import re
-import sys
 
 
 class Token(collections.namedtuple("Token", "name text")):
