@@ -1,5 +1,4 @@
 | latexcodec is a lexer and codec to work with LaTeX code in Python
-| Copyright (c) 2003, 2008 by David Eppstein
 | Copyright (c) 2011-2013 by Matthias C. M. Troffaes
 
 Permission is hereby granted, free of charge, to any person
