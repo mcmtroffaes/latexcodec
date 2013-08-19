@@ -13,6 +13,7 @@ Contents
    quickstart
    api
    changes
+   authors
    license
 
 Indices and tables
