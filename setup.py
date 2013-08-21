@@ -8,7 +8,7 @@ def readfile(filename):
     with codecs.open(filename, encoding="utf-8") as stream:
         return stream.read().split("\n")
 
-doclines = readfile("README.rst")
+doclines = readfile("README.rst")[3:] # first 3 lines are title
 version = readfile("VERSION")[0].strip()
 
 setup(
