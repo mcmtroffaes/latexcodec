@@ -283,7 +283,7 @@ class LatexIncrementalLexer(LatexLexer):
                     yield Token('space', b' ')
                 else:
                     raise AssertionError(
-                        "unknown tex state '%s'" % self.state)
+                        "unknown tex state {0!r}".format(self.state))
             elif token.name == 'space':
                 if self.state == 'N':
                     # remain in 'N' state, no space token generated
@@ -298,7 +298,7 @@ class LatexIncrementalLexer(LatexLexer):
                     yield token
                 else:
                     raise AssertionError(
-                        "unknown state %s" % repr(self.state))
+                        "unknown state {0!r}".format(self.state))
             elif token.name == 'mathshift':
                 self.inline_math = not self.inline_math
                 yield token
@@ -333,7 +333,7 @@ class LatexIncrementalLexer(LatexLexer):
                         bytes_,  # problematic input
                         pos - len(token),  # start of problematic token
                         pos,  # end of it
-                        "unknown token %s" % repr(token.text))
+                        "unknown token {0!r}".format(token.text))
                 elif self.errors == 'ignore':
                     # do nothing
                     pass
@@ -341,10 +341,10 @@ class LatexIncrementalLexer(LatexLexer):
                     yield Token('chars', b'?' * len(token))
                 else:
                     raise NotImplementedError(
-                        "error mode %s not supported" % repr(self.errors))
+                        "error mode {0!r} not supported".format(self.errors))
             else:
                 raise AssertionError(
-                    "unknown token name %s" % repr(token.name))
+                    "unknown token name {0!r}".format(token.name))
 
 
 class LatexIncrementalDecoder(LatexIncrementalLexer):
