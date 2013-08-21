@@ -1,3 +1,6 @@
+latexcodec
+==========
+
 A lexer and codec to work with LaTeX code in Python.
 
 * Download: http://pypi.python.org/pypi/latexcodec/#downloads
