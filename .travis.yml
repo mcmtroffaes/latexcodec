@@ -4,17 +4,19 @@ python:
   - "3.2"
   - "2.7"
   - "2.6"
+  - "pypy"
 branches:
   only:
     - develop
 install:
-  - "pip install coveralls"
   - "pip install ."
+  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install coveralls; fi"
 before_script:
   - "if [[ $TRAVIS_PYTHON_VERSION == '3.2' ]]; then 2to3 -w -n test; fi"
   - "if [[ $TRAVIS_PYTHON_VERSION == '3.3' ]]; then 2to3 -w -n test; fi"
 script:
   - "cd test"
-  - "coverage run --source=latexcodec `type -p nosetests`"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then coverage run --source=latexcodec `type -p nosetests`; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION != '2.7' ]]; then nosetests; fi"
 after_success:
-  - "coveralls"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then coveralls; fi"
