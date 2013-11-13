@@ -39,5 +39,4 @@ setup(
     ],
     platforms='any',
     packages=find_packages(),
-    use_2to3=True,
 )
