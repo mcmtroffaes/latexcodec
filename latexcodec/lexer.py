@@ -55,6 +55,7 @@
 import codecs
 import collections
 import re
+from six import string_types
 
 
 class Token(collections.namedtuple("Token", "name text")):
@@ -398,7 +399,7 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
         process the unicode in some other way (for example, for character
         translation).
         """
-        if not isinstance(unicode_, basestring):
+        if not isinstance(unicode_, string_types):
             raise TypeError(
                 "expected unicode for encode input, but got {0} instead"
                 .format(unicode_.__class__.__name__))

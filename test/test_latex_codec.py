@@ -5,11 +5,7 @@ from __future__ import print_function
 
 import codecs
 import nose.tools
-import sys
-if sys.version_info >= (3, 0):
-    from io import BytesIO
-else:
-    from cStringIO import StringIO as BytesIO
+from six import text_type, binary_type, BytesIO
 from unittest import TestCase
 
 import latexcodec
@@ -38,10 +34,10 @@ def test_latex_incremental_decoder_setstate():
 
 def split_input(input_):
     """Helper function for testing the incremental encoder and decoder."""
-    if not isinstance(input_, (unicode, bytes)):
+    if not isinstance(input_, (text_type, binary_type)):
         raise TypeError("expected unicode or bytes input")
     if input_:
-        for i in xrange(len(input_)):
+        for i in range(len(input_)):
             if i + 1 < len(input_):
                 yield input_[i:i + 1], False
             else:

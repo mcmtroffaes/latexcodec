@@ -61,6 +61,7 @@
 from __future__ import print_function
 
 import codecs
+from six import string_types
 
 from latexcodec import lexer
 
@@ -623,7 +624,7 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
             return b'', bytes_
 
     def get_latex_bytes(self, unicode_, final=False):
-        if not isinstance(unicode_, basestring):
+        if not isinstance(unicode_, string_types):
             raise TypeError(
                 "expected unicode for encode input, but got {0} instead"
                 .format(unicode_.__class__.__name__))
@@ -714,7 +715,7 @@ class LatexIncrementalDecoder(lexer.LatexIncrementalDecoder):
             # note: match is only possible at the *end* of the buffer
             # because all other positions have already been checked in
             # earlier iterations
-            for i in xrange(1, len(self.token_buffer) + 1):
+            for i in range(1, len(self.token_buffer) + 1):
                 last_tokens = tuple(self.token_buffer[-i:])  # last i tokens
                 try:
                     unicode_text = self.table.unicode_map[last_tokens]
