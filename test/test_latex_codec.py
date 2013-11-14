@@ -5,7 +5,7 @@ from __future__ import print_function
 
 import codecs
 import nose.tools
-from six import text_type, binary_type, BytesIO
+from six import text_type, binary_type, BytesIO, PY2
 from unittest import TestCase
 
 import latexcodec
@@ -147,6 +147,14 @@ class TestStreamDecoder(TestDecoder):
         reader = codecs.getreader(encoding)(stream)
         self.assertEqual(text_utf8, reader.read())
 
+    # in this test, BytesIO(object()) is eventually called
+    # this is valid on Python 2, so we skip this test there
+    def test_invalid_type(self):
+        if PY2:
+            raise nose.plugins.skip.SkipTest
+        else:
+            TestDecoder.test_invalid_type(self)
+
 
 class TestIncrementalDecoder(TestDecoder):
 
@@ -159,7 +167,6 @@ class TestIncrementalDecoder(TestDecoder):
             decoder.decode(text_latex_part, final)
             for text_latex_part, final in split_input(text_latex))
         self.assertEqual(text_utf8, u''.join(decoded_parts))
-
 
 class TestEncoder(TestCase):
 
