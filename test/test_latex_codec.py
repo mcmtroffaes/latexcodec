@@ -168,6 +168,7 @@ class TestIncrementalDecoder(TestDecoder):
             for text_latex_part, final in split_input(text_latex))
         self.assertEqual(text_utf8, u''.join(decoded_parts))
 
+
 class TestEncoder(TestCase):
 
     """Stateless encoder tests."""
