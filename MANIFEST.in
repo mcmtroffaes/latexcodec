@@ -5,8 +5,10 @@ include CHANGELOG.rst
 include LICENSE.rst
 include AUTHORS.rst
 include requirements.txt
+include tox.ini
 recursive-include doc *
 recursive-include test *
 global-exclude *.pyc
 global-exclude .gitignore
 prune doc/_build
+exclude .travis.yml
