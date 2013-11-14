@@ -8,7 +8,7 @@ def readfile(filename):
     with io.open(filename, encoding="utf-8") as stream:
         return stream.read().split("\n")
 
-doclines = readfile("README.rst")[3:]  # first 3 lines are title
+readme = readfile("README.rst")[5:]  # skip title and badges
 requires = readfile("requirements.txt")
 version = readfile("VERSION")[0].strip()
 
@@ -18,10 +18,10 @@ setup(
     url='https://github.com/mcmtroffaes/latexcodec',
     download_url='http://pypi.python.org/pypi/sphinxcontrib-bibtex',
     license='MIT',
-    author="Matthias C. M. Troffaes",
+    author='Matthias C. M. Troffaes',
     author_email='matthias.troffaes@gmail.com',
-    description=doclines[0],
-    long_description="\n".join(doclines[2:]),
+    description=readme[0],
+    long_description="\n".join(readme[2:]),
     zip_safe=True,
     classifiers=[
         'Development Status :: 4 - Beta',
