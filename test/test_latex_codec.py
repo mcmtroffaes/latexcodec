@@ -5,11 +5,7 @@ from __future__ import print_function
 
 import codecs
 import nose.tools
-import sys
-if sys.version_info >= (3, 0):
-    from io import BytesIO
-else:
-    from cStringIO import StringIO as BytesIO
+from six import text_type, binary_type, BytesIO, PY2
 from unittest import TestCase
 
 import latexcodec
@@ -38,10 +34,10 @@ def test_latex_incremental_decoder_setstate():
 
 def split_input(input_):
     """Helper function for testing the incremental encoder and decoder."""
-    if not isinstance(input_, (unicode, bytes)):
+    if not isinstance(input_, (text_type, binary_type)):
         raise TypeError("expected unicode or bytes input")
     if input_:
-        for i in xrange(len(input_)):
+        for i in range(len(input_)):
             if i + 1 < len(input_):
                 yield input_[i:i + 1], False
             else:
@@ -151,6 +147,14 @@ class TestStreamDecoder(TestDecoder):
         reader = codecs.getreader(encoding)(stream)
         self.assertEqual(text_utf8, reader.read())
 
+    # in this test, BytesIO(object()) is eventually called
+    # this is valid on Python 2, so we skip this test there
+    def test_invalid_type(self):
+        if PY2:
+            raise nose.plugins.skip.SkipTest
+        else:
+            TestDecoder.test_invalid_type(self)
+
 
 class TestIncrementalDecoder(TestDecoder):
 
@@ -163,7 +167,6 @@ class TestIncrementalDecoder(TestDecoder):
             decoder.decode(text_latex_part, final)
             for text_latex_part, final in split_input(text_latex))
         self.assertEqual(text_utf8, u''.join(decoded_parts))
-
 
 class TestEncoder(TestCase):
 

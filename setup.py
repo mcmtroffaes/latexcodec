@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
+import io
 from setuptools import setup, find_packages
-import codecs
 
 
 def readfile(filename):
-    with codecs.open(filename, encoding="utf-8") as stream:
+    with io.open(filename, encoding="utf-8") as stream:
         return stream.read().split("\n")
 
-doclines = readfile("README.rst")[3:] # first 3 lines are title
+doclines = readfile("README.rst")[3:]  # first 3 lines are title
+requires = readfile("requirements.txt")
 version = readfile("VERSION")[0].strip()
 
 setup(
@@ -33,12 +34,11 @@ setup(
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Topic :: Text Processing :: Markup :: LaTeX',
         'Topic :: Text Processing :: Filters',
     ],
     platforms='any',
     packages=find_packages(),
-    use_2to3=True,
+    install_requires=requires,
 )
