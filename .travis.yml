@@ -8,9 +8,11 @@ branches:
   only:
     - develop
 install:
+  - "pip install check-manifest"
   - "pip install ."
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install coveralls; fi"
 script:
+  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then check-manifest; fi"
   - "cd test"
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then coverage run --source=latexcodec `type -p nosetests`; fi"
   - "if [[ $TRAVIS_PYTHON_VERSION != '2.7' ]]; then nosetests; fi"
