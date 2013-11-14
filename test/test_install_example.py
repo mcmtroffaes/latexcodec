@@ -2,7 +2,7 @@
 
 
 def test_install_example_1():
-    import latexcodec
+    import latexcodec  # noqa
     text_latex = br"\'el\`eve"
     assert text_latex.decode("latex") == u"élève"
     text_unicode = u"ångström"
@@ -10,7 +10,7 @@ def test_install_example_1():
 
 
 def test_install_example_2():
-    import latexcodec
+    import latexcodec  # noqa
     text_latex = b"\xfe"
     assert text_latex.decode("latex+latin1") == u"þ"
     assert text_latex.decode("latex+latin2") == u"ţ"
