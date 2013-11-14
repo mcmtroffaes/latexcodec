@@ -62,6 +62,7 @@ from __future__ import print_function
 
 import codecs
 from six import string_types
+from six.moves import range
 
 from latexcodec import lexer
 
