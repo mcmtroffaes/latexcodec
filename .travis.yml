@@ -9,12 +9,18 @@ branches:
     - develop
 install:
   - "pip install ."
-  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install coveralls check-manifest flake8; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install coveralls check-manifest flake8 Sphinx; fi"
 script:
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then check-manifest; fi"
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then flake8; fi"
-  - "cd test"
+  - "pushd doc"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then make html; fi"
+  - "popd"
+  - "pushd test"
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then coverage run --source=latexcodec `type -p nosetests`; fi"
   - "if [[ $TRAVIS_PYTHON_VERSION != '2.7' ]]; then nosetests; fi"
+  - "popd"
 after_success:
+  - "pushd test"
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then coveralls; fi"
+  - "popd"
