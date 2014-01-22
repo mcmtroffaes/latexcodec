@@ -112,8 +112,8 @@ class LatexUnicodeTable:
         self.register(u'\N{BULLET}', b'\\bullet', mode='math')
         self.register(u'\N{BULLET}', b'\\textbullet', package='textcomp')
 
-        self.register(u'\N{NUMBER SIGN}', b'\\#')
-        self.register(u'\N{AMPERSAND}', b'\\&')
+        self.register(u'\N{NUMBER SIGN}', b'\\#', decode=False)
+        self.register(u'\N{AMPERSAND}', b'\\&', decode=False)
         self.register(u'\N{NO-BREAK SPACE}', b'~')
         self.register(u'\N{INVERTED EXCLAMATION MARK}', b'!`')
         self.register(u'\N{CENT SIGN}', b'\\not{c}')
