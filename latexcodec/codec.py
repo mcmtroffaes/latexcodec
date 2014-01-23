@@ -100,6 +100,7 @@ class LatexUnicodeTable:
         """
         # TODO complete this list
         # register special symbols
+        self.register(u' ', b'\\ ', encode=False)  # encoding left to lexer
         self.register(u'\N{EN DASH}', b'--')
         self.register(u'\N{EN DASH}', b'\\textendash')
         self.register(u'\N{EM DASH}', b'---')
