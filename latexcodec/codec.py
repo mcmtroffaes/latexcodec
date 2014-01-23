@@ -626,6 +626,7 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
         else:
             return b'', bytes_
 
+    # TODO refactor this function
     def get_latex_bytes(self, unicode_, final=False):
         if not isinstance(unicode_, string_types):
             raise TypeError(
@@ -633,8 +634,27 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
                 .format(unicode_.__class__.__name__))
         # convert character by character
         for pos, c in enumerate(unicode_):
-            # attempt input encoding first
-            # if this succeeds, then we don't need a latex representation
+            # if ascii, try latex equivalents
+            # (this covers \, #, &, and other special LaTeX characters)
+            if ord(c) < 128:
+                try:
+                    bytes_, tokens = self.table.latex_map[c]
+                except KeyError:
+                    pass
+                else:
+                    # translation succeeded
+                    space, bytes_ = self.get_space_bytes(bytes_)
+                    # update state
+                    if tokens[-1].name == 'control_word':
+                        # we're eating spaces
+                        self.state = 'S'
+                    else:
+                        self.state = 'M'
+                    if space:
+                        yield space
+                    yield bytes_
+                    continue
+            # next, try input encoding
             try:
                 bytes_ = c.encode(self.inputenc, 'strict')
             except UnicodeEncodeError:
@@ -646,8 +666,7 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
                     yield space
                 yield bytes_
                 continue
-            # inputenc failed; let's try the latex equivalents
-            # of common unicode characters
+            # next, try latex equivalents of common unicode characters
             try:
                 bytes_, tokens = self.table.latex_map[c]
             except KeyError:
