@@ -77,17 +77,17 @@ class TestDecoder(TestCase):
 
     def test_laren(self):
         self.decode(
-            u"©\\ låren av björn",
+            u"© låren av björn",
             br'\copyright\ l\aa ren av bj\"orn')
 
     def test_laren_brackets(self):
         self.decode(
-            u"©\\ l{å}ren av bj{ö}rn",
+            u"© l{å}ren av bj{ö}rn",
             br'\copyright\ l{\aa}ren av bj{\"o}rn')
 
     def test_laren_latin1(self):
         self.decode(
-            u"©\\ låren av björn",
+            u"© låren av björn",
             b'\\copyright\\ l\xe5ren av bj\xf6rn',
             'latin1')
 
@@ -263,7 +263,7 @@ class TestEncoder(TestCase):
         self.encode(u"ææ", br'\ae \ae')
 
     def test_space_2(self):
-        self.decode(u"æ æ", br'\ae\ \ae')
+        self.encode(u"æ æ", br'\ae\ \ae')
 
 
 class TestStreamEncoder(TestEncoder):
