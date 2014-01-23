@@ -139,6 +139,7 @@ class TestDecoder(TestCase):
     def test_space_2(self):
         self.decode(u"æ æ", br'\ae\ \ae')
 
+
 class TestStreamDecoder(TestDecoder):
 
     """Stream decoder tests."""
