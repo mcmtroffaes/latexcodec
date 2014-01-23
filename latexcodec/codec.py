@@ -547,7 +547,7 @@ class LatexUnicodeTable:
                  decode=True, encode=True):
         """Register a correspondence between *unicode_text* and *latex_text*.
 
-        :param str unicode_text: A unicode string.
+        :param str unicode_text: A unicode character.
         :param bytes latex_text: Its corresponding LaTeX translation.
         :param str mode: LaTeX mode in which the translation applies
             (``'text'`` or ``'math'``).
@@ -557,6 +557,7 @@ class LatexUnicodeTable:
         :param bool encode: Whether this translation applies to encoding
             (default: ``True``).
         """
+        assert len(unicode_text) == 1
         if package is not None:
             # TODO implement packages
             pass
