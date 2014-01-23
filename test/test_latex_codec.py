@@ -143,8 +143,14 @@ class TestDecoder(TestCase):
         self.decode(u"# hello", br'\#\ hello')
 
     def test_number_sign_2(self):
-        # LaTeX does not absorb the space following '\#'
+        # LaTeX does not absorb the space following '\#':
+        # check decoding is correct
         self.decode(u"# hello", br'\# hello')
+
+    def test_number_sign_3(self):
+        # a single '#' is not valid LaTeX:
+        # for the moment we ignore this error and return # unchanged
+        self.decode(u"# hello", br'# hello')
 
 
 class TestStreamDecoder(TestDecoder):
