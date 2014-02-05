@@ -139,6 +139,19 @@ class TestDecoder(TestCase):
     def test_space_2(self):
         self.decode(u"æ æ", br'\ae\ \ae')
 
+    def test_number_sign_1(self):
+        self.decode(u"# hello", br'\#\ hello')
+
+    def test_number_sign_2(self):
+        # LaTeX does not absorb the space following '\#':
+        # check decoding is correct
+        self.decode(u"# hello", br'\# hello')
+
+    def test_number_sign_3(self):
+        # a single '#' is not valid LaTeX:
+        # for the moment we ignore this error and return # unchanged
+        self.decode(u"# hello", br'# hello')
+
 
 class TestStreamDecoder(TestDecoder):
 
@@ -265,6 +278,10 @@ class TestEncoder(TestCase):
 
     def test_space_2(self):
         self.encode(u"æ æ", br'\ae\ \ae')
+
+    def test_number_sign(self):
+        # note: no need for control space after \#
+        self.encode(u"# hello", br'\# hello')
 
 
 class TestStreamEncoder(TestEncoder):

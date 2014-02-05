@@ -8,6 +8,9 @@
 
 * Fix control space "\ " decoding.
 
+* Fix LaTeX encoding of number sign "#" and other special ascii
+  characters (see issues #11 and #13, reported by beltiste).
+
 0.3.0 (19 August 2013)
 ----------------------
 
