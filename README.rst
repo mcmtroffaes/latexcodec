@@ -11,7 +11,7 @@ A lexer and codec to work with LaTeX code in Python.
 
 * Development: http://github.com/mcmtroffaes/latexcodec/
 
-.. |release| image:: https://pypip.in/v/latexcodec/badge.png
+.. |version| image:: https://pypip.in/v/latexcodec/badge.png
     :target: http://pypi.python.org/pypi/latexcodec/
     :alt: latest version
 
