@@ -1,7 +1,7 @@
 latexcodec
 ==========
 
-|pypi| |travis| |coveralls|
+|travis| |coveralls| |downloads| |version| |license|
 
 A lexer and codec to work with LaTeX code in Python.
 
@@ -11,14 +11,22 @@ A lexer and codec to work with LaTeX code in Python.
 
 * Development: http://github.com/mcmtroffaes/latexcodec/
 
-.. |pypi| image:: https://badge.fury.io/py/latexcodec.png
-    :target: http://badge.fury.io/py/latexcodec
-    :alt: pypi
+.. |release| image:: https://pypip.in/v/latexcodec/badge.png
+    :target: http://pypi.python.org/pypi/latexcodec/
+    :alt: latest version
 
 .. |travis| image:: https://travis-ci.org/mcmtroffaes/latexcodec.png?branch=develop
     :target: https://travis-ci.org/mcmtroffaes/latexcodec
     :alt: travis-ci
 
+.. |downloads| image:: https://pypip.in/d/latexcodec/badge.png
+    :target: http://pypi.python.org/pypi/latexcodec/
+    :alt: downloads
+
 .. |coveralls| image:: https://coveralls.io/repos/mcmtroffaes/latexcodec/badge.png?branch=develop
     :target: https://coveralls.io/r/mcmtroffaes/latexcodec?branch=develop
     :alt: coveralls.io
+
+.. |license| image:: https://pypip.in/license/latexcodec/badge.png
+    :target: http://pypi.python.org/pypi/latexcodec/
+    :alt: license
