@@ -626,7 +626,47 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
         else:
             return b'', bytes_
 
-    # TODO refactor this function
+    def _get_latex_bytes_tokens_from_char(self, c):
+        # if ascii, try latex equivalents
+        # (this covers \, #, &, and other special LaTeX characters)
+        if ord(c) < 128:
+            try:
+                return self.table.latex_map[c]
+            except KeyError:
+                pass
+        # next, try input encoding
+        try:
+            bytes_ = c.encode(self.inputenc, 'strict')
+        except UnicodeEncodeError:
+            pass
+        else:
+            return bytes_, (lexer.Token(name='chars', text=bytes_),)
+        # next, try latex equivalents of common unicode characters
+        try:
+            return self.table.latex_map[c]
+        except KeyError:
+            # translation failed
+            if self.errors == 'strict':
+                raise UnicodeEncodeError(
+                    "latex",  # codec
+                    c,  # problematic input
+                    0, 1,  # location of problematic character
+                    "don't know how to translate {0} into latex"
+                    .format(repr(c)))
+            elif self.errors == 'ignore':
+                return b'', (lexer.Token(),)
+            elif self.errors == 'replace':
+                # use the \\char command
+                # this assumes
+                # \usepackage[T1]{fontenc}
+                # \usepackage[utf8]{inputenc}
+                bytes_ = b'{\\char' + str(ord(c)).encode("ascii") + b'}'
+                return bytes_, (lexer.Token(name='chars', text=bytes_),)
+            else:
+                raise ValueError(
+                    "latex codec does not support {0} errors"
+                    .format(self.errors))
+
     def get_latex_bytes(self, unicode_, final=False):
         if not isinstance(unicode_, string_types):
             raise TypeError(
@@ -634,77 +674,17 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
                 .format(unicode_.__class__.__name__))
         # convert character by character
         for pos, c in enumerate(unicode_):
-            # if ascii, try latex equivalents
-            # (this covers \, #, &, and other special LaTeX characters)
-            if ord(c) < 128:
-                try:
-                    bytes_, tokens = self.table.latex_map[c]
-                except KeyError:
-                    pass
-                else:
-                    # translation succeeded
-                    space, bytes_ = self.get_space_bytes(bytes_)
-                    # update state
-                    if tokens[-1].name == 'control_word':
-                        # we're eating spaces
-                        self.state = 'S'
-                    else:
-                        self.state = 'M'
-                    if space:
-                        yield space
-                    yield bytes_
-                    continue
-            # next, try input encoding
-            try:
-                bytes_ = c.encode(self.inputenc, 'strict')
-            except UnicodeEncodeError:
-                pass
+            bytes_, tokens = self._get_latex_bytes_tokens_from_char(c)
+            space, bytes_ = self.get_space_bytes(bytes_)
+            # update state
+            if tokens[-1].name == 'control_word':
+                # we're eating spaces
+                self.state = 'S'
             else:
-                space, bytes_ = self.get_space_bytes(bytes_)
                 self.state = 'M'
-                if space:
-                    yield space
-                yield bytes_
-                continue
-            # next, try latex equivalents of common unicode characters
-            try:
-                bytes_, tokens = self.table.latex_map[c]
-            except KeyError:
-                # translation failed
-                if self.errors == 'strict':
-                    raise UnicodeEncodeError(
-                        "latex",  # codec
-                        unicode_,  # problematic input
-                        pos, pos + 1,  # location of problematic character
-                        "don't know how to translate {0} into latex"
-                        .format(repr(c)))
-                elif self.errors == 'ignore':
-                    pass
-                elif self.errors == 'replace':
-                    # use the \\char command
-                    # this assumes
-                    # \usepackage[T1]{fontenc}
-                    # \usepackage[utf8]{inputenc}
-                    yield b'{\\char'
-                    yield str(ord(c)).encode("ascii")
-                    yield b'}'
-                    self.state = 'M'
-                else:
-                    raise ValueError(
-                        "latex codec does not support {0} errors"
-                        .format(self.errors))
-            else:
-                # translation succeeded
-                space, bytes_ = self.get_space_bytes(bytes_)
-                # update state
-                if tokens[-1].name == 'control_word':
-                    # we're eating spaces
-                    self.state = 'S'
-                else:
-                    self.state = 'M'
-                if space:
-                    yield space
-                yield bytes_
+            if space:
+                yield space
+            yield bytes_
 
 
 class LatexIncrementalDecoder(lexer.LatexIncrementalDecoder):
