@@ -155,6 +155,7 @@ class TestDecoder(TestCase):
     def test_underscore(self):
         self.decode(u"_", br'\_')
 
+
 class TestStreamDecoder(TestDecoder):
 
     """Stream decoder tests."""
@@ -287,6 +288,7 @@ class TestEncoder(TestCase):
 
     def test_underscore(self):
         self.encode(u"_", br'\_')
+
 
 class TestStreamEncoder(TestEncoder):
 
