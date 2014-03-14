@@ -1,6 +1,9 @@
 0.3.2 (in development)
 ----------------------
 
+* Fix underscore "\_" encoding (see issue #16, reported and fixed by
+  Michael Radziej).
+
 0.3.1 (5 February 2014)
 -----------------------
 

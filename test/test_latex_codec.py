@@ -152,6 +152,9 @@ class TestDecoder(TestCase):
         # for the moment we ignore this error and return # unchanged
         self.decode(u"# hello", br'# hello')
 
+    def test_underscore(self):
+        self.decode(u"_", br'\_')
+
 
 class TestStreamDecoder(TestDecoder):
 
@@ -282,6 +285,9 @@ class TestEncoder(TestCase):
     def test_number_sign(self):
         # note: no need for control space after \#
         self.encode(u"# hello", br'\# hello')
+
+    def test_underscore(self):
+        self.encode(u"_", br'\_')
 
 
 class TestStreamEncoder(TestEncoder):

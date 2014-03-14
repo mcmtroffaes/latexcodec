@@ -116,6 +116,7 @@ class LatexUnicodeTable:
         self.register(u'\N{BULLET}', b'\\textbullet', package='textcomp')
 
         self.register(u'\N{NUMBER SIGN}', b'\\#')
+        self.register(u'\N{LOW LINE}', b'\\_')
         self.register(u'\N{AMPERSAND}', b'\\&')
         self.register(u'\N{NO-BREAK SPACE}', b'~')
         self.register(u'\N{INVERTED EXCLAMATION MARK}', b'!`')
