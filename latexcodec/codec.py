@@ -571,7 +571,7 @@ class LatexUnicodeTable:
         # tokenize, and register unicode translation
         tokens = tuple(self.lexer.get_tokens(latex_text, final=True))
         if decode:
-            if not tokens in self.unicode_map:
+            if tokens not in self.unicode_map:
                 self.max_length = max(self.max_length, len(tokens))
                 self.unicode_map[tokens] = unicode_text
             # also register token variant with brackets, if appropriate
@@ -585,7 +585,7 @@ class LatexUnicodeTable:
                     tokens[0], lexer.Token('chars', b'{'),
                     tokens[1], lexer.Token('chars', b'}'),
                 )
-                if not alt_tokens in self.unicode_map:
+                if alt_tokens not in self.unicode_map:
                     self.max_length = max(self.max_length, len(alt_tokens))
                     self.unicode_map[alt_tokens] = u"{" + unicode_text + u"}"
         if encode and unicode_text not in self.latex_map:

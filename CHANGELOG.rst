@@ -1,5 +1,5 @@
-0.3.2 (in development)
-----------------------
+0.3.2 (17 April 2014)
+---------------------
 
 * Fix underscore "\_" encoding (see issue #17, reported and fixed by
   Michael Radziej).
