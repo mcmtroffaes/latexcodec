@@ -16,7 +16,7 @@ setup(
     name='latexcodec',
     version=version,
     url='https://github.com/mcmtroffaes/latexcodec',
-    download_url='http://pypi.python.org/pypi/sphinxcontrib-bibtex',
+    download_url='http://pypi.python.org/pypi/latexcodec',
     license='MIT',
     author='Matthias C. M. Troffaes',
     author_email='matthias.troffaes@gmail.com',
