@@ -3,6 +3,9 @@
 
 * Add Python 3.4 support.
 
+* Fix "DZ" decoding (see issue #21, reported and fixed by Philipp
+  Spitzer).
+
 0.3.2 (17 April 2014)
 ---------------------
 

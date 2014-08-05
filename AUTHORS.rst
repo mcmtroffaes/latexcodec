@@ -18,3 +18,9 @@ Main authors:
     design
 
   - various bugfixes
+
+Contributors:
+
+* Michael Radziej
+
+* Philipp Spitzer

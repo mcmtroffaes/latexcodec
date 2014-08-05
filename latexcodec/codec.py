@@ -388,7 +388,7 @@ class LatexUnicodeTable:
         self.register(u'\N{LATIN CAPITAL LETTER O WITH OGONEK}', b'\\c O')
         self.register(u'\N{LATIN SMALL LETTER O WITH OGONEK}', b'\\c o')
         self.register(u'\N{LATIN SMALL LETTER J WITH CARON}', b'\\v\\j')
-        self.register(u'\N{LATIN CAPITAL LETTER DZ}', b'DZ')
+        self.register(u'\N{LATIN CAPITAL LETTER DZ}', b'DZ', decode=False)
         self.register(
             u'\N{LATIN CAPITAL LETTER D WITH SMALL LETTER Z}',
             b'Dz',
