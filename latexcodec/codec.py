@@ -100,6 +100,8 @@ class LatexUnicodeTable:
         """
         # TODO complete this list
         # register special symbols
+        self.register(u'\n\n', b' \\par', encode=False)  # encoding left to lexer
+        self.register(u'\n\n', b'\\par', encode=False)  # encoding left to lexer
         self.register(u' ', b'\\ ', encode=False)  # encoding left to lexer
         self.register(u'\N{EN DASH}', b'--')
         self.register(u'\N{EN DASH}', b'\\textendash')
@@ -568,6 +570,8 @@ class LatexUnicodeTable:
             # XXX for the time being, we do not perform in-math substitutions
             return
         # tokenize, and register unicode translation
+        self.lexer.reset()
+        self.lexer.state = 'M'
         tokens = tuple(self.lexer.get_tokens(latex_text, final=True))
         if decode:
             if tokens not in self.unicode_map:
@@ -718,7 +722,7 @@ class LatexIncrementalDecoder(lexer.LatexIncrementalDecoder):
             # note: match is only possible at the *end* of the buffer
             # because all other positions have already been checked in
             # earlier iterations
-            for i in range(1, len(self.token_buffer) + 1):
+            for i in range(len(self.token_buffer), 0, -1):
                 last_tokens = tuple(self.token_buffer[-i:])  # last i tokens
                 try:
                     unicode_text = self.table.unicode_map[last_tokens]
