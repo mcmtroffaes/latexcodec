@@ -170,6 +170,10 @@ class TestDecoder(TestCase):
     def test_par3(self):
         self.decode(u"hello\n\nworld", b"hello \\par world")
 
+    def test_ogonek(self):
+        self.decode(u"ĄąĘęĮįǪǫŲų",
+                    br'\k A\k a\k E\k e\k I\k i\k O\k o\k U\k u')
+
 
 class TestStreamDecoder(TestDecoder):
 
@@ -318,6 +322,10 @@ class TestEncoder(TestCase):
 
     def test_par2(self):
         self.encode(u"hello\\par world", b"hello\\par world")
+
+    def test_ogonek(self):
+        self.encode(u"ĄąĘęĮįǪǫŲų",
+                    br'\k A\k a\k E\k e\k I\k i\k O\k o\k U\k u')
 
 
 class TestStreamEncoder(TestEncoder):
