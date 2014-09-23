@@ -558,7 +558,6 @@ class LatexUnicodeTable:
         :param bool encode: Whether this translation applies to encoding
             (default: ``True``).
         """
-        assert len(unicode_text) == 1
         if package is not None:
             # TODO implement packages
             pass
@@ -589,6 +588,7 @@ class LatexUnicodeTable:
                     self.max_length = max(self.max_length, len(alt_tokens))
                     self.unicode_map[alt_tokens] = u"{" + unicode_text + u"}"
         if encode and unicode_text not in self.latex_map:
+            assert len(unicode_text) == 1
             self.latex_map[unicode_text] = (latex_text, tokens)
 
 _LATEX_UNICODE_TABLE = LatexUnicodeTable(lexer.LatexIncrementalDecoder())
