@@ -100,7 +100,9 @@ class LatexUnicodeTable:
         """
         # TODO complete this list
         # register special symbols
-        self.register(u' ', b'\\ ', encode=False)  # encoding left to lexer
+        self.register(u'\n\n', b' \\par', encode=False)
+        self.register(u'\n\n', b'\\par', encode=False)
+        self.register(u' ', b'\\ ', encode=False)
         self.register(u'\N{EN DASH}', b'--')
         self.register(u'\N{EN DASH}', b'\\textendash')
         self.register(u'\N{EM DASH}', b'---')
@@ -558,7 +560,6 @@ class LatexUnicodeTable:
         :param bool encode: Whether this translation applies to encoding
             (default: ``True``).
         """
-        assert len(unicode_text) == 1
         if package is not None:
             # TODO implement packages
             pass
@@ -569,6 +570,8 @@ class LatexUnicodeTable:
             # XXX for the time being, we do not perform in-math substitutions
             return
         # tokenize, and register unicode translation
+        self.lexer.reset()
+        self.lexer.state = 'M'
         tokens = tuple(self.lexer.get_tokens(latex_text, final=True))
         if decode:
             if tokens not in self.unicode_map:
@@ -589,6 +592,7 @@ class LatexUnicodeTable:
                     self.max_length = max(self.max_length, len(alt_tokens))
                     self.unicode_map[alt_tokens] = u"{" + unicode_text + u"}"
         if encode and unicode_text not in self.latex_map:
+            assert len(unicode_text) == 1
             self.latex_map[unicode_text] = (latex_text, tokens)
 
 _LATEX_UNICODE_TABLE = LatexUnicodeTable(lexer.LatexIncrementalDecoder())
@@ -718,7 +722,7 @@ class LatexIncrementalDecoder(lexer.LatexIncrementalDecoder):
             # note: match is only possible at the *end* of the buffer
             # because all other positions have already been checked in
             # earlier iterations
-            for i in range(1, len(self.token_buffer) + 1):
+            for i in range(len(self.token_buffer), 0, -1):
                 last_tokens = tuple(self.token_buffer[-i:])  # last i tokens
                 try:
                     unicode_text = self.table.unicode_map[last_tokens]

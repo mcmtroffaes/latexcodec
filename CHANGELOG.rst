@@ -1,6 +1,9 @@
 1.0.1 (in development)
 ----------------------
 
+* br"\par" is now decoded using two newlines (see issue #26, reported
+  by Jorrit Wronski).
+
 1.0.0 (5 August 2014)
 ---------------------
 
