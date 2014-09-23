@@ -4,7 +4,8 @@ import nose.tools
 from unittest import TestCase
 
 from latexcodec.lexer import (
-    LatexLexer, LatexIncrementalDecoder, LatexIncrementalEncoder, Token)
+    LatexLexer, LatexIncrementalLexer, LatexIncrementalDecoder,
+    LatexIncrementalEncoder, Token)
 
 
 def test_token_create():
@@ -383,6 +384,33 @@ def invalid_state_test_2():
     # piggyback invalid state
     lexer.state = '**invalid**'
     nose.tools.assert_raises(AssertionError, lambda: lexer.decode(b'   '))
+
+
+class LatexIncrementalLexerTest(TestCase):
+
+    errors = 'strict'
+
+    def setUp(self):
+        self.lexer = LatexIncrementalLexer(errors=self.errors)
+
+    def lex_it(self, latex_code, latex_tokens, final=False):
+        tokens = self.lexer.get_tokens(latex_code, final=final)
+        self.assertEqual(
+            list(token.text for token in tokens),
+            latex_tokens)
+
+    def tearDown(self):
+        del self.lexer
+
+    def test_newline(self):
+        self.lex_it(
+            b"hello\nworld", b"h|e|l|l|o| |w|o|r|l|d".split(b'|'),
+            final=True)
+
+    def test_par(self):
+        self.lex_it(
+            b"hello\n\nworld", b"h|e|l|l|o| |\\par|w|o|r|l|d".split(b'|'),
+            final=True)
 
 
 class LatexIncrementalEncoderTest(TestCase):

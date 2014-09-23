@@ -158,6 +158,18 @@ class TestDecoder(TestCase):
     def test_dz(self):
         self.decode(u"DZ", br'DZ')
 
+    def test_newline(self):
+        self.decode(u"hello world", b"hello\nworld")
+
+    def test_par1(self):
+        self.decode(u"hello\n\nworld", b"hello\n\nworld")
+
+    def test_par2(self):
+        self.decode(u"hello\n\nworld", b"hello\\par world")
+
+    def test_par3(self):
+        self.decode(u"hello\n\nworld", b"hello \\par world")
+
 
 class TestStreamDecoder(TestDecoder):
 
@@ -297,6 +309,15 @@ class TestEncoder(TestCase):
 
     def test_dz2(self):
         self.encode(u"Ǳ", br'DZ')
+
+    def test_newline(self):
+        self.encode(u"hello\nworld", b"hello\nworld")
+
+    def test_par1(self):
+        self.encode(u"hello\n\nworld", b"hello\n\nworld")
+
+    def test_par2(self):
+        self.encode(u"hello\\par world", b"hello\\par world")
 
 
 class TestStreamEncoder(TestEncoder):
