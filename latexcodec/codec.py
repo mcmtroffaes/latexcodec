@@ -737,17 +737,17 @@ class LatexIncrementalDecoder(lexer.LatexIncrementalDecoder):
                     # match!! flush buffer, and translate last bit
                     # exclude last i tokens
                     for token in self.token_buffer[:-i]:
-                        yield token.decode(self.inputenc)
+                        yield self.decode_token(token)
                     yield unicode_text
                     self.token_buffer = []
                     break
             # flush tokens that can no longer match
             while len(self.token_buffer) >= self.table.max_length:
-                yield self.token_buffer.pop(0).decode(self.inputenc)
+                yield self.decode_token(self.token_buffer.pop(0))
         # also flush the buffer at the end
         if final:
             for token in self.token_buffer:
-                yield token.decode(self.inputenc)
+                yield self.decode_token(token)
             self.token_buffer = []
 
 

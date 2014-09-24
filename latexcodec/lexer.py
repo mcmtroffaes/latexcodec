@@ -85,26 +85,6 @@ class Token(collections.namedtuple("Token", "name text")):
         assert text is not None
         return tuple.__new__(cls, (name, bytes(text)))
 
-    def decode(self, encoding):
-        """Returns the decoded token text in the specified *encoding*.
-
-        .. note::
-
-           Control words get an extra space added at the back to make
-           sure separation from the next token, so that decoded token
-           sequences can be :meth:`str.join`\ ed together.
-
-           For example, the tokens ``b'\\hello'`` and ``b'world'``
-           will correctly result in ``u'\\hello world'`` (remember
-           that LaTeX eats space following control words). If no space
-           were added, this would wrongfully result in
-           ``u'\\helloworld'``.
-
-        """
-        if self.name == 'control_word':
-            return self.text.decode(encoding) + u' '
-        else:
-            return self.text.decode(encoding)
 
 # implementation note: we derive from IncrementalDecoder because this
 # class serves excellently as a base class for incremental decoders,
@@ -371,13 +351,34 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
     inputenc = "ascii"
     """Input encoding. **Must** extend ascii."""
 
+    def decode_token(self, token):
+        """Returns the decoded token text in :attr:`inputenc` encoding.
+
+        .. note::
+
+           Control words get an extra space added at the back to make
+           sure separation from the next token, so that decoded token
+           sequences can be :meth:`str.join`\ ed together.
+
+           For example, the tokens ``b'\\hello'`` and ``b'world'``
+           will correctly result in ``u'\\hello world'`` (remember
+           that LaTeX eats space following control words). If no space
+           were added, this would wrongfully result in
+           ``u'\\helloworld'``.
+
+        """
+        if token.name == 'control_word':
+            return token.text.decode(self.inputenc) + u' '
+        else:
+            return token.text.decode(self.inputenc)
+
     def get_unicode_tokens(self, bytes_, final=False):
         """Decode every token in :attr:`inputenc` encoding. Override to
         process the tokens in some other way (for example, for token
         translation).
         """
         for token in self.get_tokens(bytes_, final=final):
-            yield token.decode(self.inputenc)
+            yield self.decode_token(token)
 
     def decode(self, bytes_, final=False):
         """Decode LaTeX *bytes_* into a unicode string.
