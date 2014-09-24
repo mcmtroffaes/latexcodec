@@ -85,14 +85,6 @@ class Token(collections.namedtuple("Token", "name text")):
         assert text is not None
         return tuple.__new__(cls, (name, bytes(text)))
 
-    def __nonzero__(self):
-        """Whether the token contains any text."""
-        raise NotImplementedError
-
-    def __len__(self):
-        """Length of the token text."""
-        raise NotImplementedError
-
     def decode(self, encoding):
         """Returns the decoded token text in the specified *encoding*.
 
