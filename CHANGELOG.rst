@@ -4,6 +4,9 @@
 * br"\par" is now decoded using two newlines (see issue #26, reported
   by Jorrit Wronski).
 
+* Fix encoding and decoding of the ogonek (see issue #24, reported by
+  beltiste).
+
 1.0.0 (5 August 2014)
 ---------------------
 
