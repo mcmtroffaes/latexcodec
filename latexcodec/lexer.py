@@ -63,7 +63,7 @@ class Token(collections.namedtuple("Token", "name text")):
     """A :func:`collections.namedtuple` storing information about a
     matched token.
 
-    .. seealso:: :attr:`LatexLexer.tokens`
+    .. seealso:: :meth:`RegexpLexer.get_raw_tokens`
 
     .. attribute:: name
 
@@ -81,10 +81,9 @@ class Token(collections.namedtuple("Token", "name text")):
 
     def __new__(cls, name=None, text=None):
         # text can be memoryview; convert to bytes so Token remains hashable
-        return tuple.__new__(
-            cls,
-            (name if name is not None else 'unknown',
-             bytes(text) if text is not None else b''))
+        assert name is not None
+        assert text is not None
+        return tuple.__new__(cls, (name, bytes(text)))
 
     def __nonzero__(self):
         """Whether the token contains any text."""
@@ -120,7 +119,71 @@ class Token(collections.namedtuple("Token", "name text")):
 # but of course we don't decode yet until later
 
 
-class LatexLexer(codecs.IncrementalDecoder):
+class RegexpLexer(codecs.IncrementalDecoder):
+
+    """Abstract base class for regexp based lexers."""
+
+    def regexp(self):
+        """Return compiled regular expression for lexing."""
+        raise NotImplementedError
+
+    def emptytoken(self):
+        """Empty token."""
+        raise NotImplementedError
+
+    def __init__(self, errors='strict'):
+        """Initialize the codec."""
+        self.errors = errors
+        self.reset()
+
+    def reset(self):
+        """Reset state."""
+        # buffer for storing last (possibly incomplete) token
+        self.raw_buffer = self.emptytoken()
+
+    def getstate(self):
+        """Get state."""
+        return (self.raw_buffer.text, 0)
+
+    def setstate(self, state):
+        """Set state. The *state* must correspond to the return value
+        of a previous :meth:`getstate` call.
+        """
+        self.raw_buffer = Token('unknown', state[0])
+
+    def get_raw_tokens(self, bytes_, final=False):
+        """Yield tokens without any further processing. Tokens are one of:
+
+        - ``\\<word>``: a control word (i.e. a command)
+        - ``\\<symbol>``: a control symbol (i.e. \\^ etc.)
+        - ``#<n>``: a parameter
+        - a series of byte characters
+        """
+        if self.raw_buffer:
+            bytes_ = self.raw_buffer.text + bytes_
+        self.raw_buffer = self.emptytoken()
+        for match in self.regexp().finditer(bytes_):
+            for name, regexp in self.tokens:
+                text = match.group(name)
+                if text is not None:
+                    # yield the buffer token(s)
+                    for token in self.flush_raw_tokens():
+                        yield token
+                    # fill buffer with next token
+                    self.raw_buffer = Token(name, text)
+                    break
+        if final:
+            for token in self.flush_raw_tokens():
+                yield token
+
+    def flush_raw_tokens(self):
+        """Flush the raw token buffer."""
+        if self.raw_buffer:
+            yield self.raw_buffer
+            self.raw_buffer = self.emptytoken()
+
+
+class LatexLexer(RegexpLexer):
 
     """A very simple lexer for tex/latex code."""
 
@@ -170,62 +233,18 @@ class LatexLexer(codecs.IncrementalDecoder):
 
     def __init__(self, errors='strict'):
         """Initialize the codec."""
-        self.errors = errors
-        # regular expression used for matching
-        self.regexp = re.compile(
+        super(LatexLexer, self).__init__(errors=errors)
+        self._regexp = re.compile(
             b"|".join(
                 b"(?P<" + name.encode() + b">" + regexp + b")"
                 for name, regexp in self.tokens),
             re.DOTALL)
-        # reset state
-        self.reset()
 
-    def reset(self):
-        """Reset state."""
-        # buffer for storing last (possibly incomplete) token
-        self.raw_buffer = Token()
+    def regexp(self):
+        return self._regexp
 
-    def getstate(self):
-        """Get state."""
-        return (self.raw_buffer.text, 0)
-
-    def setstate(self, state):
-        """Set state. The *state* must correspond to the return value
-        of a previous :meth:`getstate` call.
-        """
-        self.raw_buffer = Token('unknown', state[0])
-
-    def get_raw_tokens(self, bytes_, final=False):
-        """Yield tokens without any further processing. Tokens are one of:
-
-        - ``\\<word>``: a control word (i.e. a command)
-        - ``\\<symbol>``: a control symbol (i.e. \\^ etc.)
-        - ``#<n>``: a parameter
-        - a series of byte characters
-        """
-        if self.raw_buffer:
-            bytes_ = self.raw_buffer.text + bytes_
-        self.raw_buffer = Token()
-        for match in self.regexp.finditer(bytes_):
-            for name, regexp in self.tokens:
-                text = match.group(name)
-                if text is not None:
-                    # yield the buffer token(s)
-                    for token in self.flush_raw_tokens():
-                        yield token
-                    # fill buffer with next token
-                    self.raw_buffer = Token(name, text)
-                    break
-        if final:
-            for token in self.flush_raw_tokens():
-                yield token
-
-    def flush_raw_tokens(self):
-        """Flush the raw token buffer."""
-        if self.raw_buffer:
-            yield self.raw_buffer
-            self.raw_buffer = Token()
-
+    def emptytoken(self):
+        return Token("unknown", b"")
 
 class LatexIncrementalLexer(LatexLexer):
 

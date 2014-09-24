@@ -8,12 +8,6 @@ from latexcodec.lexer import (
     LatexIncrementalEncoder, Token)
 
 
-def test_token_create():
-    t = Token()
-    nose.tools.assert_equal(t.name, 'unknown')
-    nose.tools.assert_equal(t.text, b'')
-
-
 def test_token_create_with_args():
     t = Token('hello', b'world')
     nose.tools.assert_equal(t.name, 'hello')
@@ -22,19 +16,19 @@ def test_token_create_with_args():
 
 @nose.tools.raises(AttributeError)
 def test_token_assign_name():
-    t = Token()
+    t = Token('hello', b'world')
     t.name = 'test'
 
 
 @nose.tools.raises(AttributeError)
 def test_token_assign_text():
-    t = Token()
+    t = Token('hello', b'world')
     t.text = 'test'
 
 
 @nose.tools.raises(AttributeError)
 def test_token_assign_other():
-    t = Token()
+    t = Token('hello', b'world')
     t.blabla = 'test'
 
 

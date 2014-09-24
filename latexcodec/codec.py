@@ -663,7 +663,7 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
                     "don't know how to translate {0} into latex"
                     .format(repr(c)))
             elif self.errors == 'ignore':
-                return b'', (lexer.Token(),)
+                return b'', (lexer.Token("unknown", b""),)
             elif self.errors == 'replace':
                 # use the \\char command
                 # this assumes
