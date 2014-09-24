@@ -9,7 +9,6 @@
     custom LaTeX codec.
 
     .. autoclass:: Token(name, text)
-       :members: decode, __len__, __nonzero__
 
     .. autoclass:: LatexLexer
        :show-inheritance:
@@ -58,32 +57,7 @@ import re
 from six import string_types
 
 
-class Token(collections.namedtuple("Token", "name text")):
-
-    """A :func:`collections.namedtuple` storing information about a
-    matched token.
-
-    .. seealso:: :meth:`RegexpLexer.get_raw_tokens`
-
-    .. attribute:: name
-
-       The name of the token as a :class:`str`.
-
-    .. attribute:: text
-
-       The matched token text as :class:`bytes`.
-       The constructor also accepts text as :class:`memoryview`,
-       in which case it is automatically converted to :class:`bytes`.
-       This ensures that the token is hashable.
-    """
-
-    __slots__ = ()  # efficiency
-
-    def __new__(cls, name=None, text=None):
-        # text can be memoryview; convert to bytes so Token remains hashable
-        assert name is not None
-        assert text is not None
-        return tuple.__new__(cls, (name, bytes(text)))
+Token = collections.namedtuple("Token", "name text")
 
 
 # implementation note: we derive from IncrementalDecoder because this
@@ -367,10 +341,12 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
            ``u'\\helloworld'``.
 
         """
+        # in python 3, the token text can be a memoryview
+        # which do not have a decode method; must cast to bytes explicitly
         if token.name == 'control_word':
-            return token.text.decode(self.inputenc) + u' '
+            return bytes(token.text).decode(self.inputenc) + u' '
         else:
-            return token.text.decode(self.inputenc)
+            return bytes(token.text).decode(self.inputenc)
 
     def get_unicode_tokens(self, bytes_, final=False):
         """Decode every token in :attr:`inputenc` encoding. Override to
