@@ -4,7 +4,7 @@
 1.0.1 (24 September 2014)
 -------------------------
 
-* br"\par" is now decoded using two newlines (see issue #26, reported
+* br"\\par" is now decoded using two newlines (see issue #26, reported
   by Jorrit Wronski).
 
 * Fix encoding and decoding of the ogonek (see issue #24, reported by
@@ -21,7 +21,7 @@
 0.3.2 (17 April 2014)
 ---------------------
 
-* Fix underscore "\_" encoding (see issue #17, reported and fixed by
+* Fix underscore "\\_" encoding (see issue #17, reported and fixed by
   Michael Radziej).
 
 0.3.1 (5 February 2014)
@@ -32,7 +32,7 @@
 * Drop 2to3 and instead use six to support both Python 2 and 3 from a
   single code base.
 
-* Fix control space "\ " decoding.
+* Fix control space "\\ " decoding.
 
 * Fix LaTeX encoding of number sign "#" and other special ascii
   characters (see issues #11 and #13, reported by beltiste).
