@@ -545,6 +545,10 @@ class LatexUnicodeTable:
             u'\N{TRADE MARK SIGN}',
             b'\\texttrademark',
             package='textcomp')
+        # \=O and \=o will be translated into Ō and ō before we can
+        # match the full latex string... so decoding disabled for now
+        self.register(u'Ǭ', br'\textogonekcentered{\=O}', decode=False)
+        self.register(u'ǭ', br'\textogonekcentered{\=o}', decode=False)
 
     def register(self, unicode_text, latex_text, mode='text', package=None,
                  decode=True, encode=True):
