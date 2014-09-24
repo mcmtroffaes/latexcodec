@@ -87,11 +87,11 @@ class Token(collections.namedtuple("Token", "name text")):
 
     def __nonzero__(self):
         """Whether the token contains any text."""
-        return bool(self.text)
+        raise NotImplementedError
 
     def __len__(self):
         """Length of the token text."""
-        return len(self.text)
+        raise NotImplementedError
 
     def decode(self, encoding):
         """Returns the decoded token text in the specified *encoding*.
@@ -159,7 +159,7 @@ class RegexpLexer(codecs.IncrementalDecoder):
         - ``#<n>``: a parameter
         - a series of byte characters
         """
-        if self.raw_buffer:
+        if self.raw_buffer.text:
             bytes_ = self.raw_buffer.text + bytes_
         self.raw_buffer = self.emptytoken()
         for match in self.regexp().finditer(bytes_):
@@ -178,7 +178,7 @@ class RegexpLexer(codecs.IncrementalDecoder):
 
     def flush_raw_tokens(self):
         """Flush the raw token buffer."""
-        if self.raw_buffer:
+        if self.raw_buffer.text:
             yield self.raw_buffer
             self.raw_buffer = self.emptytoken()
 
@@ -286,9 +286,9 @@ class LatexIncrementalLexer(LatexLexer):
         """
         # current position relative to the start of bytes_ in the sequence
         # of bytes that have been decoded
-        pos = -len(self.raw_buffer)
+        pos = -len(self.raw_buffer.text)
         for token in self.get_raw_tokens(bytes_, final=final):
-            pos = pos + len(token)
+            pos = pos + len(token.text)
             assert pos >= 0  # first token includes at least self.raw_buffer
             if token.name == 'newline':
                 if self.state == 'N':
@@ -351,14 +351,14 @@ class LatexIncrementalLexer(LatexLexer):
                     raise UnicodeDecodeError(
                         "latex",  # codec
                         bytes_,  # problematic input
-                        pos - len(token),  # start of problematic token
+                        pos - len(token.text),  # start of problematic token
                         pos,  # end of it
                         "unknown token {0!r}".format(token.text))
                 elif self.errors == 'ignore':
                     # do nothing
                     pass
                 elif self.errors == 'replace':
-                    yield Token('chars', b'?' * len(token))
+                    yield Token('chars', b'?' * len(token.text))
                 else:
                     raise NotImplementedError(
                         "error mode {0!r} not supported".format(self.errors))
