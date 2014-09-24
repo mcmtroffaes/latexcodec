@@ -176,7 +176,7 @@ class TestDecoder(TestCase):
 
     def test_ogonek2(self):
         # note: should decode into u"Ǭǭ" but can't support this yet...
-        self.decode(ur"\textogonekcentered {Ō}\textogonekcentered {ō}",
+        self.decode(u"\\textogonekcentered {Ō}\\textogonekcentered {ō}",
                     br'\textogonekcentered{\=O}\textogonekcentered{\=o}')
 
 
