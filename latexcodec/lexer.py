@@ -195,10 +195,6 @@ class LatexLexer(RegexpLexer):
     )
     """List of token names, and the regular expressions they match."""
 
-    def __init__(self, errors='strict', binary_mode=True):
-        """Initialize the codec."""
-        super(LatexLexer, self).__init__(errors=errors)
-
 
 class LatexUnicodeLexer(LatexLexer):
 
