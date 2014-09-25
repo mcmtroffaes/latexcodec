@@ -182,6 +182,9 @@ class BaseLatexIncrementalDecoderTest(TestCase):
         self.lexer = self.IncrementalDecoder(self.errors)
 
     def lex_it(self, latex_code, latex_tokens, final=False):
+        if not self.lexer.binary_mode:
+            latex_code = latex_code.decode("ascii")
+            latex_tokens = [token.decode("ascii") for token in latex_tokens]
         tokens = self.lexer.get_tokens(latex_code, final=final)
         self.assertEqual(
             list(token.text for token in tokens),
