@@ -10,14 +10,28 @@ to be used as an encoding:
 .. code-block:: python
 
     import latexcodec
-    text_latex = br"\'el\`eve"
+    text_latex = b"\\'el\\`eve"
     assert text_latex.decode("latex") == u"élève"
     text_unicode = u"ångström"
-    assert text_unicode.encode("latex") == br'\aa ngstr\"om'
+    assert text_unicode.encode("latex") == b'\\aa ngstr\\"om'
+
+There are also a ``ulatex`` encoding for text transforms.
+The simplest way to use this codec goes through the codecs module
+(as for all text transform codecs on Python):
+
+.. code-block:: python
+
+    import codecs
+    import latexcodec
+    text_latex = u"\\'el\\`eve"
+    assert codecs.decode(text_latex, "ulatex") == u"élève"
+    text_unicode = u"ångström"
+    assert codecs.encode(text_unicode, "ulatex") == u'\\aa ngstr\\"om'
 
 By default, the LaTeX input is assumed to be ascii, as per standard LaTeX.
 However, you can also specify an extra codec
-as ``latex+<encoding>``, where ``<encoding>`` describes another encoding.
+as ``latex+<encoding>`` or ``ulatex+<encoding>``,
+where ``<encoding>`` describes another encoding.
 In this case characters will be
 translated to and from that encoding whenever possible.
 The following code snippet demonstrates this behaviour:

@@ -564,15 +564,17 @@ class LatexUnicodeTable:
         :param bool encode: Whether this translation applies to encoding
             (default: ``True``).
         """
-        if package is not None:
-            # TODO implement packages
-            pass
         if mode == 'math':
             # also register text version
             self.register(unicode_text, b'$' + latex_text + b'$', mode='text',
                           package=package, decode=decode, encode=encode)
             # XXX for the time being, we do not perform in-math substitutions
             return
+        if not self.lexer.binary_mode:
+            latex_text = latex_text.decode("ascii")
+        if package is not None:
+            # TODO implement packages
+            pass
         # tokenize, and register unicode translation
         self.lexer.reset()
         self.lexer.state = 'M'
@@ -588,10 +590,8 @@ class LatexUnicodeTable:
             if (len(tokens) == 2
                 and tokens[0].name.startswith('control')
                     and tokens[1].name == 'chars'):
-                alt_tokens = (
-                    tokens[0], lexer.Token('chars', b'{'),
-                    tokens[1], lexer.Token('chars', b'}'),
-                )
+                alt_tokens = (tokens[0], self.lexer.curlylefttoken, tokens[1],
+                              self.lexer.curlyrighttoken)
                 if alt_tokens not in self.unicode_map:
                     self.max_length = max(self.max_length, len(alt_tokens))
                     self.unicode_map[alt_tokens] = u"{" + unicode_text + u"}"
@@ -599,7 +599,10 @@ class LatexUnicodeTable:
             assert len(unicode_text) == 1
             self.latex_map[unicode_text] = (latex_text, tokens)
 
+
 _LATEX_UNICODE_TABLE = LatexUnicodeTable(lexer.LatexIncrementalDecoder())
+_ULATEX_UNICODE_TABLE = LatexUnicodeTable(
+    lexer.UnicodeLatexIncrementalDecoder())
 
 # incremental encoder does not need a buffer
 # but decoder does
@@ -626,14 +629,14 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
         if self.state == 'S':
             # in space eating mode
             # control space needed?
-            if bytes_.startswith(b' '):
+            if bytes_.startswith(self.spacechar):
                 # replace by control space
-                return b'\\ ', bytes_[1:]
+                return self.controlspacechar, bytes_[1:]
             else:
                 # insert space (it is eaten, but needed for separation)
-                return b' ', bytes_
+                return self.spacechar, bytes_
         else:
-            return b'', bytes_
+            return self.emptychar, bytes_
 
     def _get_latex_bytes_tokens_from_char(self, c):
         # if ascii, try latex equivalents
@@ -649,7 +652,10 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
         except UnicodeEncodeError:
             pass
         else:
-            return bytes_, (lexer.Token(name='chars', text=bytes_),)
+            if self.binary_mode:
+                return bytes_, (lexer.Token(name='chars', text=bytes_),)
+            else:
+                return c, (lexer.Token(name='chars', text=c),)
         # next, try latex equivalents of common unicode characters
         try:
             return self.table.latex_map[c]
@@ -663,13 +669,16 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
                     "don't know how to translate {0} into latex"
                     .format(repr(c)))
             elif self.errors == 'ignore':
-                return b'', (lexer.Token(),)
+                return self.emptychar, (self.emptytoken,)
             elif self.errors == 'replace':
                 # use the \\char command
                 # this assumes
                 # \usepackage[T1]{fontenc}
                 # \usepackage[utf8]{inputenc}
-                bytes_ = b'{\\char' + str(ord(c)).encode("ascii") + b'}'
+                if self.binary_mode:
+                    bytes_ = b'{\\char' + str(ord(c)).encode("ascii") + b'}'
+                else:
+                    bytes_ = u'{\\char' + str(ord(c)) + u'}'
                 return bytes_, (lexer.Token(name='chars', text=bytes_),)
             else:
                 raise ValueError(
@@ -737,17 +746,17 @@ class LatexIncrementalDecoder(lexer.LatexIncrementalDecoder):
                     # match!! flush buffer, and translate last bit
                     # exclude last i tokens
                     for token in self.token_buffer[:-i]:
-                        yield token.decode(self.inputenc)
+                        yield self.decode_token(token)
                     yield unicode_text
                     self.token_buffer = []
                     break
             # flush tokens that can no longer match
             while len(self.token_buffer) >= self.table.max_length:
-                yield self.token_buffer.pop(0).decode(self.inputenc)
+                yield self.decode_token(self.token_buffer.pop(0))
         # also flush the buffer at the end
         if final:
             for token in self.token_buffer:
-                yield token.decode(self.inputenc)
+                yield self.decode_token(token)
             self.token_buffer = []
 
 
@@ -772,22 +781,38 @@ class LatexCodec(codecs.Codec):
         )
 
 
+class UnicodeLatexIncrementalDecoder(LatexIncrementalDecoder):
+    table = _ULATEX_UNICODE_TABLE
+    binary_mode = False
+
+
+class UnicodeLatexIncrementalEncoder(LatexIncrementalEncoder):
+    table = _ULATEX_UNICODE_TABLE
+    binary_mode = False
+
+
 def find_latex(encoding):
     """Return a :class:`codecs.CodecInfo` instance for the requested
     LaTeX *encoding*, which must be equal to ``latex``,
     or to ``latex+<encoding>``
     where ``<encoding>`` describes another encoding.
     """
-    # check if requested codec info is for latex encoding
-    if not encoding.startswith('latex'):
+    encoding, _, inputenc_ = encoding.partition(u"+")
+    if not inputenc_:
+        inputenc_ = "ascii"
+    if encoding == "latex":
+        IncEnc = LatexIncrementalEncoder
+        DecEnc = LatexIncrementalDecoder
+    elif encoding == "ulatex":
+        IncEnc = UnicodeLatexIncrementalEncoder
+        DecEnc = UnicodeLatexIncrementalDecoder
+    else:
         return None
-    # set up all classes with correct latex input encoding
-    inputenc_ = encoding[6:] if encoding.startswith('latex+') else 'ascii'
 
-    class IncrementalEncoder_(LatexIncrementalEncoder):
+    class IncrementalEncoder_(IncEnc):
         inputenc = inputenc_
 
-    class IncrementalDecoder_(LatexIncrementalDecoder):
+    class IncrementalDecoder_(DecEnc):
         inputenc = inputenc_
 
     class Codec(LatexCodec):
@@ -803,8 +828,8 @@ def find_latex(encoding):
     return codecs.CodecInfo(
         encode=Codec().encode,
         decode=Codec().decode,
-        incrementalencoder=IncrementalEncoder_,
-        incrementaldecoder=IncrementalDecoder_,
+        incrementalencoder=Codec.IncrementalEncoder,
+        incrementaldecoder=Codec.IncrementalDecoder,
         streamreader=StreamReader,
         streamwriter=StreamWriter,
     )

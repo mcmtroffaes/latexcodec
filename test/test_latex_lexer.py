@@ -1,17 +1,16 @@
+# -*- coding: utf-8 -*-
+
 """Tests for the tex lexer."""
 
 import nose.tools
 from unittest import TestCase
 
 from latexcodec.lexer import (
-    LatexLexer, LatexIncrementalLexer, LatexIncrementalDecoder,
-    LatexIncrementalEncoder, Token)
-
-
-def test_token_create():
-    t = Token()
-    nose.tools.assert_equal(t.name, 'unknown')
-    nose.tools.assert_equal(t.text, b'')
+    LatexLexer, UnicodeLatexLexer,
+    LatexIncrementalLexer,
+    LatexIncrementalDecoder, UnicodeLatexIncrementalDecoder,
+    LatexIncrementalEncoder, UnicodeLatexIncrementalEncoder,
+    Token)
 
 
 def test_token_create_with_args():
@@ -22,30 +21,34 @@ def test_token_create_with_args():
 
 @nose.tools.raises(AttributeError)
 def test_token_assign_name():
-    t = Token()
+    t = Token('hello', b'world')
     t.name = 'test'
 
 
 @nose.tools.raises(AttributeError)
 def test_token_assign_text():
-    t = Token()
+    t = Token('hello', b'world')
     t.text = 'test'
 
 
 @nose.tools.raises(AttributeError)
 def test_token_assign_other():
-    t = Token()
+    t = Token('hello', b'world')
     t.blabla = 'test'
 
 
 class BaseLatexLexerTest(TestCase):
 
     errors = 'strict'
+    Lexer = None
 
     def setUp(self):
-        self.lexer = LatexLexer(errors=self.errors)
+        self.lexer = self.Lexer(errors=self.errors)
 
     def lex_it(self, latex_code, latex_tokens, final=False):
+        if not self.lexer.binary_mode:
+            latex_code = latex_code.decode("ascii")
+            latex_tokens = [token.decode("ascii") for token in latex_tokens]
         tokens = self.lexer.get_raw_tokens(latex_code, final=final)
         self.assertEqual(
             list(token.text for token in tokens),
@@ -56,6 +59,8 @@ class BaseLatexLexerTest(TestCase):
 
 
 class LatexLexerTest(BaseLatexLexerTest):
+
+    Lexer = LatexLexer
 
     def test_null(self):
         self.lex_it(b'', [], final=True)
@@ -164,16 +169,26 @@ class LatexLexerTest(BaseLatexLexerTest):
         self.lex_it(b'#', [b'#'], final=True)
 
 
-class BaseTexLexerTest(TestCase):
+class UnicodeLatexLexerTest(LatexLexerTest):
+    Lexer = UnicodeLatexLexer
+
+
+class BaseLatexIncrementalDecoderTest(TestCase):
 
     """Tex lexer fixture."""
 
     errors = 'strict'
+    IncrementalDecoder = None
 
     def setUp(self):
-        self.lexer = LatexIncrementalDecoder(self.errors)
+        self.lexer = self.IncrementalDecoder(self.errors)
+
+    def fix(self, s):
+        return s if self.lexer.binary_mode else s.decode("ascii")
 
     def lex_it(self, latex_code, latex_tokens, final=False):
+        latex_code = self.fix(latex_code)
+        latex_tokens = [self.fix(token) for token in latex_tokens]
         tokens = self.lexer.get_tokens(latex_code, final=final)
         self.assertEqual(
             list(token.text for token in tokens),
@@ -183,7 +198,9 @@ class BaseTexLexerTest(TestCase):
         del self.lexer
 
 
-class TexLexerTest(BaseTexLexerTest):
+class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
+
+    IncrementalDecoder = LatexIncrementalDecoder
 
     def test_null(self):
         self.lex_it(b'', [], final=True)
@@ -253,15 +270,15 @@ class TexLexerTest(BaseTexLexerTest):
 
     def test_buffer_decode(self):
         self.assertEqual(
-            self.lexer.decode(b'hello!  [#1] This \\i'),
+            self.lexer.decode(self.fix(b'hello!  [#1] This \\i')),
             u'hello! [#1] This ',
         )
         self.assertEqual(
-            self.lexer.decode(b's\\   \\^ a \ntest.\n'),
+            self.lexer.decode(self.fix(b's\\   \\^ a \ntest.\n')),
             u'\\is \\ \\^a test.',
         )
         self.assertEqual(
-            self.lexer.decode(b'    \nHey.\n\n\# x \#x', final=True),
+            self.lexer.decode(self.fix(b'    \nHey.\n\n\# x \#x'), final=True),
             u' \\par Hey. \\par \\# x \\#x',
         )
 
@@ -273,11 +290,11 @@ class TexLexerTest(BaseTexLexerTest):
         state = self.lexer.getstate()
         self.assertEqual(self.lexer.state, 'M')
         self.assertEqual(self.lexer.raw_buffer.name, 'control_word')
-        self.assertEqual(self.lexer.raw_buffer.text, b'\\t')
+        self.assertEqual(self.lexer.raw_buffer.text, self.fix(b'\\t'))
         self.lexer.reset()
         self.assertEqual(self.lexer.state, 'N')
         self.assertEqual(self.lexer.raw_buffer.name, 'unknown')
-        self.assertEqual(self.lexer.raw_buffer.text, b'')
+        self.assertEqual(self.lexer.raw_buffer.text, self.fix(b''))
         self.lex_it(
             b'here',
             b'h|e|r|e'.split(b'|'),
@@ -286,7 +303,7 @@ class TexLexerTest(BaseTexLexerTest):
         self.lexer.setstate(state)
         self.assertEqual(self.lexer.state, 'M')
         self.assertEqual(self.lexer.raw_buffer.name, 'control_word')
-        self.assertEqual(self.lexer.raw_buffer.text, b'\\t')
+        self.assertEqual(self.lexer.raw_buffer.text, self.fix(b'\\t'))
         self.lex_it(
             b'here',
             [b'\\there'],
@@ -328,9 +345,14 @@ class TexLexerTest(BaseTexLexerTest):
         self.lex_it(b'#', [b'#'], final=True)
 
 
-class TexLexerReplaceTest(BaseTexLexerTest):
+class UnicodeLatexIncrementalDecoderTest(LatexIncrementalDecoderTest):
+    IncrementalDecoder = UnicodeLatexIncrementalDecoder
+
+
+class LatexIncrementalDecoderReplaceTest(BaseLatexIncrementalDecoderTest):
 
     errors = 'replace'
+    IncrementalDecoder = LatexIncrementalDecoder
 
     def test_errors_replace(self):
         self.lex_it(
@@ -340,9 +362,10 @@ class TexLexerReplaceTest(BaseTexLexerTest):
         )
 
 
-class TexLexerIgnoreTest(BaseTexLexerTest):
+class LatexIncrementalDecoderIgnoreTest(BaseLatexIncrementalDecoderTest):
 
     errors = 'ignore'
+    IncrementalDecoder = LatexIncrementalDecoder
 
     def test_errors_ignore(self):
         self.lex_it(
@@ -352,9 +375,10 @@ class TexLexerIgnoreTest(BaseTexLexerTest):
         )
 
 
-class TexLexerInvalidErrorTest(BaseTexLexerTest):
+class LatexIncrementalDecoderInvalidErrorTest(BaseLatexIncrementalDecoderTest):
 
     errors = '**baderror**'
+    IncrementalDecoder = LatexIncrementalDecoder
 
     @nose.tools.raises(NotImplementedError)
     def test_errors_invalid(self):
@@ -418,9 +442,10 @@ class LatexIncrementalEncoderTest(TestCase):
     """Encoder test fixture."""
 
     errors = 'strict'
+    IncrementalEncoder = LatexIncrementalEncoder
 
     def setUp(self):
-        self.encoder = LatexIncrementalEncoder(self.errors)
+        self.encoder = self.IncrementalEncoder(self.errors)
 
     def encode(self, latex_code, latex_bytes, final=False):
         result = self.encoder.encode(latex_code, final=final)
@@ -431,12 +456,27 @@ class LatexIncrementalEncoderTest(TestCase):
 
     @nose.tools.raises(TypeError)
     def test_invalid_type(self):
-        self.encoder.encode(object())
+        self.encoder.encode(object(), final=True)
 
     @nose.tools.raises(ValueError)
     def test_invalid_code(self):
         # default encoding is ascii, \u00ff is not ascii translatable
-        self.encoder.encode(u"\u00ff")
+        self.encoder.encode(u"\u00ff", final=True)
 
     def test_hello(self):
-        self.encode(u'hello', b'hello')
+        self.encode(
+            u'hello', b'hello' if self.encoder.binary_mode else u'hello',
+            final=True)
+
+    def test_unicode_tokens(self):
+        self.assertEqual(
+            list(self.encoder.get_unicode_tokens(
+                u"ĄąĄ̊ą̊ĘęĮįǪǫǬǭŲųY̨y̨", final=True)),
+            u"Ą|ą|Ą̊|ą̊|Ę|ę|Į|į|Ǫ|ǫ|Ǭ|ǭ|Ų|ų|Y̨|y̨".split(u"|"))
+
+
+class UnicodeLatexIncrementalEncoderTest(LatexIncrementalEncoderTest):
+    IncrementalEncoder = UnicodeLatexIncrementalEncoder
+
+    def test_invalid_code(self):
+        pass
