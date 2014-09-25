@@ -568,8 +568,7 @@ class LatexUnicodeTable:
         """
         if mode == 'math':
             # also register text version
-            self.register(unicode_text, b'$' + latex_text + b'$',
-                          mode='text',
+            self.register(unicode_text, b'$' + latex_text + b'$', mode='text',
                           package=package, decode=decode, encode=encode)
             # XXX for the time being, we do not perform in-math substitutions
             return
