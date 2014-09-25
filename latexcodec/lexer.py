@@ -25,6 +25,22 @@
     .. autoclass:: LatexIncrementalEncoder
        :show-inheritance:
        :members:
+
+    .. autoclass:: UnicodeLatexLexer
+       :show-inheritance:
+       :members:
+
+    .. autoclass:: UnicodeLatexIncrementalLexer
+       :show-inheritance:
+       :members:
+
+    .. autoclass:: UnicodeLatexIncrementalDecoder
+       :show-inheritance:
+       :members:
+
+    .. autoclass:: UnicodeLatexIncrementalEncoder
+       :show-inheritance:
+       :members:
 """
 
 # Copyright (c) 2003, 2008 David Eppstein
@@ -471,3 +487,19 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
             # API requires that the encode method raises a ValueError
             # in this case
             raise ValueError(e)
+
+
+class UnicodeLatexLexer(LatexLexer):
+    binary_mode = False
+
+
+class UnicodeLatexIncrementalLexer(LatexIncrementalLexer):
+    binary_mode = False
+
+
+class UnicodeLatexIncrementalDecoder(LatexIncrementalDecoder):
+    binary_mode = False
+
+
+class UnicodeLatexIncrementalEncoder(LatexIncrementalEncoder):
+    binary_mode = False

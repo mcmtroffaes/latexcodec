@@ -6,9 +6,10 @@ import nose.tools
 from unittest import TestCase
 
 from latexcodec.lexer import (
-    LatexLexer,
+    LatexLexer, UnicodeLatexLexer,
     LatexIncrementalLexer,
-    LatexIncrementalDecoder, LatexIncrementalEncoder,
+    LatexIncrementalDecoder, UnicodeLatexIncrementalDecoder,
+    LatexIncrementalEncoder, UnicodeLatexIncrementalEncoder,
     Token)
 
 
@@ -168,9 +169,8 @@ class LatexLexerTest(BaseLatexLexerTest):
         self.lex_it(b'#', [b'#'], final=True)
 
 
-class LatexUnicodeLexerTest(LatexLexerTest):
-    class Lexer(LatexLexer):
-        binary_mode = False
+class UnicodeLatexLexerTest(LatexLexerTest):
+    Lexer = UnicodeLatexLexer
 
 
 class BaseLatexIncrementalDecoderTest(TestCase):
@@ -345,9 +345,8 @@ class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
         self.lex_it(b'#', [b'#'], final=True)
 
 
-class LatexUnicodeIncrementalDecoderTest(LatexIncrementalDecoderTest):
-    class IncrementalDecoder(LatexIncrementalDecoder):
-        binary_mode = False
+class UnicodeLatexIncrementalDecoderTest(LatexIncrementalDecoderTest):
+    IncrementalDecoder = UnicodeLatexIncrementalDecoder
 
 
 class LatexIncrementalDecoderReplaceTest(BaseLatexIncrementalDecoderTest):
@@ -476,9 +475,8 @@ class LatexIncrementalEncoderTest(TestCase):
             u"Ą|ą|Ą̊|ą̊|Ę|ę|Į|į|Ǫ|ǫ|Ǭ|ǭ|Ų|ų|Y̨|y̨".split(u"|"))
 
 
-class LatexUnicodeIncrementalEncoderTest(LatexIncrementalEncoderTest):
-    class IncrementalEncoder(LatexIncrementalEncoder):
-        binary_mode = False
+class UnicodeLatexIncrementalEncoderTest(LatexIncrementalEncoderTest):
+    IncrementalEncoder = UnicodeLatexIncrementalEncoder
 
     def test_invalid_code(self):
         pass
