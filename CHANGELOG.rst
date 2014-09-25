@@ -1,6 +1,9 @@
 1.0.2 (in development)
 ----------------------
 
+* New ``ulatex`` codec which works as a text transform on unicode
+  strings.
+
 1.0.1 (24 September 2014)
 -------------------------
 
