@@ -805,7 +805,7 @@ def find_latex(encoding):
     """
     encoding, _, inputenc_ = encoding.partition(u"+")
     if not inputenc_:
-        inputenc_ = 'ascii'
+        inputenc_ = "ascii"
     if encoding == "latex":
         class IncrementalEncoder_(LatexIncrementalEncoder):
             inputenc = inputenc_

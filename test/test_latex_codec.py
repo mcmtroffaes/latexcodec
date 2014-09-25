@@ -59,7 +59,7 @@ class TestDecoder(TestCase):
 
     @nose.tools.raises(TypeError)
     def test_invalid_type(self):
-        self.decode(object(), object())
+        codecs.getdecoder("latex")(object())
 
     @nose.tools.raises(ValueError)
     def test_invalid_code(self):
@@ -224,7 +224,7 @@ class TestEncoder(TestCase):
 
     @nose.tools.raises(TypeError)
     def test_invalid_type(self):
-        self.encode(object(), object())
+        codecs.getencoder("latex")(object())
 
     # note concerning test_invalid_code_* methods:
     # u'\u2328' (0x2328 = 9000) is unicode for keyboard symbol
@@ -370,10 +370,6 @@ class TestUnicodeDecoder(TestDecoder):
         decoded, n = codecs.getdecoder('ulatex')(text_latex)
         self.assertEqual((decoded, n), (text_utf8, len(text_latex)))
 
-    def test_invalid_type(self):
-        # not applicable here
-        pass
-
 
 class TestUnicodeEncoder(TestEncoder):
 
@@ -383,7 +379,3 @@ class TestUnicodeEncoder(TestEncoder):
         text_latex = text_latex.decode(inputenc if inputenc else 'ascii')
         encoded, n = codecs.getencoder(encoding)(text_utf8, errors=errors)
         self.assertEqual((encoded, n), (text_latex, len(text_utf8)))
-
-    def test_invalid_type(self):
-        # not applicable here
-        pass
