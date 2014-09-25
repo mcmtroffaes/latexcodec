@@ -678,13 +678,16 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
                     "don't know how to translate {0} into latex"
                     .format(repr(c)))
             elif self.errors == 'ignore':
-                return b'', (lexer.Token("unknown", b""),)
+                return self.emptychar, (lexer.Token("unknown", self.emptychar),)
             elif self.errors == 'replace':
                 # use the \\char command
                 # this assumes
                 # \usepackage[T1]{fontenc}
                 # \usepackage[utf8]{inputenc}
-                bytes_ = b'{\\char' + str(ord(c)).encode("ascii") + b'}'
+                if self.binary_mode:
+                    bytes_ = b'{\\char' + str(ord(c)).encode("ascii") + b'}'
+                else:
+                    bytes_ = u'{\\char' + str(ord(c)) + u'}'
                 return bytes_, (lexer.Token(name='chars', text=bytes_),)
             else:
                 raise ValueError(
