@@ -437,7 +437,7 @@ class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
         self.lex_it(b'#', [b'#'], final=True)
 
 
-class TexLexerReplaceTest(BaseLatexIncrementalDecoderTest):
+class LatexIncrementalDecoderReplaceTest(BaseLatexIncrementalDecoderTest):
 
     errors = 'replace'
 
@@ -449,7 +449,7 @@ class TexLexerReplaceTest(BaseLatexIncrementalDecoderTest):
         )
 
 
-class TexLexerIgnoreTest(BaseLatexIncrementalDecoderTest):
+class LatexIncrementalDecoderIgnoreTest(BaseLatexIncrementalDecoderTest):
 
     errors = 'ignore'
 
@@ -461,7 +461,7 @@ class TexLexerIgnoreTest(BaseLatexIncrementalDecoderTest):
         )
 
 
-class TexLexerInvalidErrorTest(BaseLatexIncrementalDecoderTest):
+class LatexIncrementalDecoderInvalidErrorTest(BaseLatexIncrementalDecoderTest):
 
     errors = '**baderror**'
 
