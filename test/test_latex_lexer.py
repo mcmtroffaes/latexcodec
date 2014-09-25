@@ -273,7 +273,7 @@ class LatexUnicodeLexerTest(BaseLatexLexerTest):
         self.lex_it(u'#', [u'#'], final=True)
 
 
-class BaseTexLexerTest(TestCase):
+class BaseLatexIncrementalDecoderTest(TestCase):
 
     """Tex lexer fixture."""
 
@@ -292,7 +292,7 @@ class BaseTexLexerTest(TestCase):
         del self.lexer
 
 
-class TexLexerTest(BaseTexLexerTest):
+class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
 
     def test_null(self):
         self.lex_it(b'', [], final=True)
@@ -437,7 +437,7 @@ class TexLexerTest(BaseTexLexerTest):
         self.lex_it(b'#', [b'#'], final=True)
 
 
-class TexLexerReplaceTest(BaseTexLexerTest):
+class TexLexerReplaceTest(BaseLatexIncrementalDecoderTest):
 
     errors = 'replace'
 
@@ -449,7 +449,7 @@ class TexLexerReplaceTest(BaseTexLexerTest):
         )
 
 
-class TexLexerIgnoreTest(BaseTexLexerTest):
+class TexLexerIgnoreTest(BaseLatexIncrementalDecoderTest):
 
     errors = 'ignore'
 
@@ -461,7 +461,7 @@ class TexLexerIgnoreTest(BaseTexLexerTest):
         )
 
 
-class TexLexerInvalidErrorTest(BaseTexLexerTest):
+class TexLexerInvalidErrorTest(BaseLatexIncrementalDecoderTest):
 
     errors = '**baderror**'
 
