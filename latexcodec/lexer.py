@@ -398,6 +398,11 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
     inputenc = "ascii"
     """Input encoding. **Must** extend ascii."""
 
+    binary_mode = True
+    """Whether this encoder processes binary data (bytes) or text data
+    (unicode).
+    """
+
     def __init__(self, errors='strict'):
         """Initialize the codec."""
         self.errors = errors
@@ -422,6 +427,10 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
         """Split unicode into tokens so that every token starts with a
         non-combining character.
         """
+        if not isinstance(unicode_, string_types):
+            raise TypeError(
+                "expected unicode for encode input, but got {0} instead"
+                .format(unicode_.__class__.__name__))
         for c in unicode_:
             if not unicodedata.combining(c):
                 for token in self.flush_unicode_tokens():
@@ -432,7 +441,7 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
                 yield token
 
     def flush_unicode_tokens(self):
-        """Flush the raw token buffer."""
+        """Flush the buffer."""
         if self.buffer:
             yield self.buffer
             self.buffer = u""
@@ -442,12 +451,12 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
         process the unicode in some other way (for example, for character
         translation).
         """
-        if not isinstance(unicode_, string_types):
-            raise TypeError(
-                "expected unicode for encode input, but got {0} instead"
-                .format(unicode_.__class__.__name__))
-        for token in self.get_unicode_tokens(unicode_, final=final):
-            yield token.encode(self.inputenc, self.errors)
+        if self.binary_mode:
+            for token in self.get_unicode_tokens(unicode_, final=final):
+                yield token.encode(self.inputenc, self.errors)
+        else:
+            for token in self.get_unicode_tokens(unicode_, final=final):
+                yield token
 
     def encode(self, unicode_, final=False):
         """Encode the *unicode_* string into LaTeX :class:`bytes`.
