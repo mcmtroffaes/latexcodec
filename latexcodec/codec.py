@@ -92,6 +92,8 @@ class LatexUnicodeTable:
         self.unicode_map = {}
         self.max_length = 0
         self.latex_map = {}
+        self.curly_left = b'{' if self.lexer.binary_mode else u'{'
+        self.curly_right = b'}' if self.lexer.binary_mode else u'}'
         self.register_all()
 
     def register_all(self):
@@ -564,15 +566,18 @@ class LatexUnicodeTable:
         :param bool encode: Whether this translation applies to encoding
             (default: ``True``).
         """
-        if package is not None:
-            # TODO implement packages
-            pass
         if mode == 'math':
             # also register text version
-            self.register(unicode_text, b'$' + latex_text + b'$', mode='text',
+            self.register(unicode_text, b'$' + latex_text + b'$',
+                          mode='text',
                           package=package, decode=decode, encode=encode)
             # XXX for the time being, we do not perform in-math substitutions
             return
+        if not self.lexer.binary_mode:
+            latex_text = latex_text.decode("ascii")
+        if package is not None:
+            # TODO implement packages
+            pass
         # tokenize, and register unicode translation
         self.lexer.reset()
         self.lexer.state = 'M'
@@ -589,8 +594,8 @@ class LatexUnicodeTable:
                 and tokens[0].name.startswith('control')
                     and tokens[1].name == 'chars'):
                 alt_tokens = (
-                    tokens[0], lexer.Token('chars', b'{'),
-                    tokens[1], lexer.Token('chars', b'}'),
+                    tokens[0], lexer.Token('chars', self.curly_left),
+                    tokens[1], lexer.Token('chars', self.curly_right),
                 )
                 if alt_tokens not in self.unicode_map:
                     self.max_length = max(self.max_length, len(alt_tokens))
@@ -599,7 +604,10 @@ class LatexUnicodeTable:
             assert len(unicode_text) == 1
             self.latex_map[unicode_text] = (latex_text, tokens)
 
+
 _LATEX_UNICODE_TABLE = LatexUnicodeTable(lexer.LatexIncrementalDecoder())
+_ULATEX_UNICODE_TABLE = LatexUnicodeTable(
+    lexer.UnicodeLatexIncrementalDecoder())
 
 # incremental encoder does not need a buffer
 # but decoder does
