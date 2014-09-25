@@ -443,9 +443,10 @@ class LatexIncrementalEncoderTest(TestCase):
     """Encoder test fixture."""
 
     errors = 'strict'
+    IncrementalEncoder = LatexIncrementalEncoder
 
     def setUp(self):
-        self.encoder = LatexIncrementalEncoder(self.errors)
+        self.encoder = self.IncrementalEncoder(self.errors)
 
     def encode(self, latex_code, latex_bytes, final=False):
         result = self.encoder.encode(latex_code, final=final)
@@ -464,10 +465,19 @@ class LatexIncrementalEncoderTest(TestCase):
         self.encoder.encode(u"\u00ff", final=True)
 
     def test_hello(self):
-        self.encode(u'hello', b'hello', final=True)
+        self.encode(
+            u'hello', b'hello' if self.encoder.binary_mode else u'hello',
+            final=True)
 
     def test_unicode_tokens(self):
         self.assertEqual(
             list(self.encoder.get_unicode_tokens(
                 u"ĄąĄ̊ą̊ĘęĮįǪǫǬǭŲųY̨y̨", final=True)),
             u"Ą|ą|Ą̊|ą̊|Ę|ę|Į|į|Ǫ|ǫ|Ǭ|ǭ|Ų|ų|Y̨|y̨".split(u"|"))
+
+class LatexUnicodeIncrementalEncoderTest(LatexIncrementalEncoderTest):
+    class IncrementalEncoder(LatexIncrementalEncoder):
+        binary_mode = False
+
+    def test_invalid_code(self):
+        pass

@@ -465,7 +465,8 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
         the resulting :class:`bytes` together.
         """
         try:
-            return b''.join(self.get_latex_bytes(unicode_, final=final))
+            return (b'' if self.binary_mode else u'').join(
+                self.get_latex_bytes(unicode_, final=final))
         except UnicodeEncodeError as e:
             # API requires that the encode method raises a ValueError
             # in this case
