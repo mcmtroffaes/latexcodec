@@ -74,7 +74,7 @@ class MetaRegexpLexer(type):
     def __init__(cls, name, bases, dct):
         super(MetaRegexpLexer, cls).__init__(name, bases, dct)
         regexp_string = b"|".join(
-            b"(?P<" + name.encode() + b">" + regexp + b")"
+            b"(?P<" + name.encode("ascii") + b">" + regexp + b")"
             for name, regexp in cls.tokens)
         if not cls.binary_mode:
             regexp_string = regexp_string.decode("ascii")
