@@ -38,10 +38,8 @@ class BaseLatexLexerTest(TestCase):
 
     errors = 'strict'
 
-    LexerClass = None
-
     def setUp(self):
-        self.lexer = self.LexerClass(errors=self.errors)
+        self.lexer = LatexLexer(errors=self.errors)
 
     def lex_it(self, latex_code, latex_tokens, final=False):
         tokens = self.lexer.get_raw_tokens(latex_code, final=final)
@@ -54,8 +52,6 @@ class BaseLatexLexerTest(TestCase):
 
 
 class LatexLexerTest(BaseLatexLexerTest):
-
-    LexerClass = LatexLexer
 
     def test_null(self):
         self.lex_it(b'', [], final=True)
@@ -166,7 +162,8 @@ class LatexLexerTest(BaseLatexLexerTest):
 
 class LatexUnicodeLexerTest(BaseLatexLexerTest):
 
-    LexerClass = LatexUnicodeLexer
+    def setUp(self):
+        self.lexer = LatexUnicodeLexer(errors=self.errors)
 
     def test_null(self):
         self.lex_it(u'', [], final=True)

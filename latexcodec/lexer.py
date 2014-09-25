@@ -54,7 +54,7 @@
 import codecs
 import collections
 import re
-from six import string_types
+from six import add_metaclass, binary_type, string_types
 
 
 Token = collections.namedtuple("Token", "name text")
@@ -65,17 +65,35 @@ Token = collections.namedtuple("Token", "name text")
 # but of course we don't decode yet until later
 
 
+class MetaRegexpLexer(type):
+
+    """Metaclass for :class:`RegexpLexer`. Compiles tokens into a
+    regular expression.
+    """
+
+    def __init__(cls, name, bases, dct):
+        super(MetaRegexpLexer, cls).__init__(name, bases, dct)
+        regexp_string = b"|".join(
+            b"(?P<" + name.encode() + b">" + regexp + b")"
+            for name, regexp in cls.tokens)
+        if not cls.binary_mode:
+            regexp_string = regexp_string.decode("ascii")
+        cls.regexp = re.compile(regexp_string, re.DOTALL)
+        cls.emptytoken = Token(u"unknown", b"" if cls.binary_mode else u"")
+
+
+@add_metaclass(MetaRegexpLexer)
 class RegexpLexer(codecs.IncrementalDecoder):
 
     """Abstract base class for regexp based lexers."""
 
-    def regexp(self):
-        """Return compiled regular expression for lexing."""
-        raise NotImplementedError
+    tokens = ()
+    """Tuple containing all token regular expressions."""
 
-    def emptytoken(self):
-        """Empty token."""
-        raise NotImplementedError
+    binary_mode = True
+    """Whether this lexer processes binary data (bytes) or text data
+    (unicode).
+    """
 
     def __init__(self, errors='strict'):
         """Initialize the codec."""
@@ -85,7 +103,7 @@ class RegexpLexer(codecs.IncrementalDecoder):
     def reset(self):
         """Reset state."""
         # buffer for storing last (possibly incomplete) token
-        self.raw_buffer = self.emptytoken()
+        self.raw_buffer = self.emptytoken
 
     def getstate(self):
         """Get state."""
@@ -107,8 +125,8 @@ class RegexpLexer(codecs.IncrementalDecoder):
         """
         if self.raw_buffer.text:
             bytes_ = self.raw_buffer.text + bytes_
-        self.raw_buffer = self.emptytoken()
-        for match in self.regexp().finditer(bytes_):
+        self.raw_buffer = self.emptytoken
+        for match in self.regexp.finditer(bytes_):
             for name, regexp in self.tokens:
                 text = match.group(name)
                 if text is not None:
@@ -126,7 +144,7 @@ class RegexpLexer(codecs.IncrementalDecoder):
         """Flush the raw token buffer."""
         if self.raw_buffer.text:
             yield self.raw_buffer
-            self.raw_buffer = self.emptytoken()
+            self.raw_buffer = self.emptytoken
 
 
 class LatexLexer(RegexpLexer):
@@ -134,7 +152,7 @@ class LatexLexer(RegexpLexer):
     """A very simple lexer for tex/latex bytes."""
 
     # implementation note: every token **must** be decodable by inputenc
-    tokens = [
+    tokens = (
         # comment: for ease, and for speed, we handle it as a token
         (u'comment', br'%.*?\n'),
         # control tokens
@@ -174,49 +192,19 @@ class LatexLexer(RegexpLexer):
         # (such as a lone '\' at the end of a buffer)
         # is never emitted, but used internally by the buffer
         (u'unknown', br'.'),
-    ]
+    )
     """List of token names, and the regular expressions they match."""
 
-    def __init__(self, errors='strict'):
+    def __init__(self, errors='strict', binary_mode=True):
         """Initialize the codec."""
         super(LatexLexer, self).__init__(errors=errors)
-        self._regexp = re.compile(
-            b"|".join(
-                b"(?P<" + name.encode() + b">" + regexp + b")"
-                for name, regexp in self.tokens),
-            re.DOTALL)
-
-    def regexp(self):
-        return self._regexp
-
-    def emptytoken(self):
-        return Token("unknown", b"")
 
 
-class LatexUnicodeLexer(RegexpLexer):
+class LatexUnicodeLexer(LatexLexer):
 
     """A very simple lexer for tex/latex unicode."""
 
-    # implementation note: every token **must** be decodable by inputenc
-    tokens = [(name, regexp.decode("ascii"))
-              for (name, regexp) in LatexLexer.tokens]
-
-    """List of token names, and the regular expressions they match."""
-
-    def __init__(self, errors='strict'):
-        """Initialize the codec."""
-        super(LatexUnicodeLexer, self).__init__(errors=errors)
-        self._regexp = re.compile(
-            u"|".join(
-                u"(?P<" + name + u">" + regexp + u")"
-                for name, regexp in self.tokens),
-            re.DOTALL)
-
-    def regexp(self):
-        return self._regexp
-
-    def emptytoken(self):
-        return Token("unknown", u"")
+    binary_mode = False
 
 
 class LatexIncrementalLexer(LatexLexer):
@@ -231,7 +219,7 @@ class LatexIncrementalLexer(LatexLexer):
     """
 
     def reset(self):
-        LatexLexer.reset(self)
+        super(LatexIncrementalLexer, self).reset()
         # three possible states:
         # newline (N), skipping spaces (S), and middle of line (M)
         self.state = 'N'
@@ -371,9 +359,9 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
         # in python 3, the token text can be a memoryview
         # which do not have a decode method; must cast to bytes explicitly
         if token.name == 'control_word':
-            return bytes(token.text).decode(self.inputenc) + u' '
+            return binary_type(token.text).decode(self.inputenc) + u' '
         else:
-            return bytes(token.text).decode(self.inputenc)
+            return binary_type(token.text).decode(self.inputenc)
 
     def get_unicode_tokens(self, bytes_, final=False):
         """Decode every token in :attr:`inputenc` encoding. Override to
