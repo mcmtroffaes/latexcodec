@@ -366,11 +366,22 @@ class TestUnicodeDecoder(TestDecoder):
 
     def decode(self, text_utf8, text_latex, inputenc=None):
         """Main test function."""
-        if inputenc is None:
-            inputenc = "ascii"
         text_latex = text_latex.decode(inputenc if inputenc else "ascii")
         decoded, n = codecs.getdecoder('ulatex')(text_latex)
         self.assertEqual((decoded, n), (text_utf8, len(text_latex)))
+
+    def test_invalid_type(self):
+        # not applicable here
+        pass
+
+
+class TestUnicodeEncoder(TestEncoder):
+
+    def encode(self, text_utf8, text_latex, inputenc=None, errors='strict'):
+        """Main test function."""
+        text_latex = text_latex.decode(inputenc if inputenc else "ascii")
+        encoded, n = codecs.getencoder('ulatex')(text_utf8, errors=errors)
+        self.assertEqual((encoded, n), (text_latex, len(text_utf8)))
 
     def test_invalid_type(self):
         # not applicable here

@@ -25,22 +25,6 @@
     .. autoclass:: LatexIncrementalEncoder
        :show-inheritance:
        :members:
-
-    .. autoclass:: UnicodeLatexLexer
-       :show-inheritance:
-       :members:
-
-    .. autoclass:: UnicodeLatexIncrementalLexer
-       :show-inheritance:
-       :members:
-
-    .. autoclass:: UnicodeLatexIncrementalDecoder
-       :show-inheritance:
-       :members:
-
-    .. autoclass:: UnicodeLatexIncrementalEncoder
-       :show-inheritance:
-       :members:
 """
 
 # Copyright (c) 2003, 2008 David Eppstein
@@ -89,18 +73,15 @@ class MetaRegexpLexer(type):
     """
 
     def __init__(cls, name, bases, dct):
+        fixit = lambda s: s if cls.binary_mode else s.decode("ascii")
         super(MetaRegexpLexer, cls).__init__(name, bases, dct)
-        regexp_string = b"|".join(
+        regexp_string = fixit(b"|".join(
             b"(?P<" + name.encode("ascii") + b">" + regexp + b")"
-            for name, regexp in cls.tokens)
-        if not cls.binary_mode:
-            regexp_string = regexp_string.decode("ascii")
+            for name, regexp in cls.tokens))
         cls.regexp = re.compile(regexp_string, re.DOTALL)
-        cls.emptytoken = Token(u"unknown", b"" if cls.binary_mode else u"")
-        cls.partoken = Token(
-            "control_word", b"\\par" if cls.binary_mode else u"\\par")
-        cls.spacetoken = Token(
-            "space", b" " if cls.binary_mode else u" ")
+        cls.emptytoken = Token(u"unknown", fixit(b""))
+        cls.partoken = Token("control_word", fixit(b"\\par"))
+        cls.spacetoken = Token("space", fixit(b" "))
         cls.replacetoken = Token(
             "chars", b"?" if cls.binary_mode else u"\ufffd")
 
@@ -490,10 +471,6 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
 
 
 class UnicodeLatexLexer(LatexLexer):
-    binary_mode = False
-
-
-class UnicodeLatexIncrementalLexer(LatexIncrementalLexer):
     binary_mode = False
 
 

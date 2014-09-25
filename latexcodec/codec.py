@@ -625,6 +625,10 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
     def __init__(self, errors='strict'):
         lexer.LatexIncrementalEncoder.__init__(self, errors=errors)
         self.reset()
+        fixit = lambda s: s if self.binary_mode else s.decode("ascii")
+        self.emptychar = fixit(b"")
+        self.spacechar = fixit(b" ")
+        self.controlspacechar = fixit(b"\\ ")
 
     def reset(self):
         self.state = 'M'
@@ -634,14 +638,14 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
         if self.state == 'S':
             # in space eating mode
             # control space needed?
-            if bytes_.startswith(b' '):
+            if bytes_.startswith(self.spacechar):
                 # replace by control space
-                return b'\\ ', bytes_[1:]
+                return self.controlspacechar, bytes_[1:]
             else:
                 # insert space (it is eaten, but needed for separation)
-                return b' ', bytes_
+                return self.spacechar, bytes_
         else:
-            return b'', bytes_
+            return self.emptychar, bytes_
 
     def _get_latex_bytes_tokens_from_char(self, c):
         # if ascii, try latex equivalents
@@ -652,16 +656,19 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
             except KeyError:
                 pass
         # next, try input encoding
-        try:
-            bytes_ = c.encode(self.inputenc, 'strict')
-        except UnicodeEncodeError:
-            pass
-        else:
-            return bytes_, (lexer.Token(name='chars', text=bytes_),)
+        if self.binary_mode:
+            try:
+                bytes_ = c.encode(self.inputenc, 'strict')
+            except UnicodeEncodeError:
+                pass
+            else:
+                return bytes_, (lexer.Token(name='chars', text=bytes_),)
         # next, try latex equivalents of common unicode characters
         try:
             return self.table.latex_map[c]
         except KeyError:
+            if not self.binary_mode:
+                return c, (lexer.Token(name='chars', text=c),)
             # translation failed
             if self.errors == 'strict':
                 raise UnicodeEncodeError(
