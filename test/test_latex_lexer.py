@@ -167,7 +167,6 @@ class LatexLexerTest(BaseLatexLexerTest):
 
 
 class LatexUnicodeLexerTest(LatexLexerTest):
-
     class Lexer(LatexLexer):
         binary_mode = False
 
@@ -177,9 +176,10 @@ class BaseLatexIncrementalDecoderTest(TestCase):
     """Tex lexer fixture."""
 
     errors = 'strict'
+    IncrementalDecoder = None
 
     def setUp(self):
-        self.lexer = LatexIncrementalDecoder(self.errors)
+        self.lexer = self.IncrementalDecoder(self.errors)
 
     def lex_it(self, latex_code, latex_tokens, final=False):
         tokens = self.lexer.get_tokens(latex_code, final=final)
@@ -192,6 +192,8 @@ class BaseLatexIncrementalDecoderTest(TestCase):
 
 
 class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
+
+    IncrementalDecoder = LatexIncrementalDecoder
 
     def test_null(self):
         self.lex_it(b'', [], final=True)
@@ -339,6 +341,7 @@ class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
 class LatexIncrementalDecoderReplaceTest(BaseLatexIncrementalDecoderTest):
 
     errors = 'replace'
+    IncrementalDecoder = LatexIncrementalDecoder
 
     def test_errors_replace(self):
         self.lex_it(
@@ -351,6 +354,7 @@ class LatexIncrementalDecoderReplaceTest(BaseLatexIncrementalDecoderTest):
 class LatexIncrementalDecoderIgnoreTest(BaseLatexIncrementalDecoderTest):
 
     errors = 'ignore'
+    IncrementalDecoder = LatexIncrementalDecoder
 
     def test_errors_ignore(self):
         self.lex_it(
@@ -363,6 +367,7 @@ class LatexIncrementalDecoderIgnoreTest(BaseLatexIncrementalDecoderTest):
 class LatexIncrementalDecoderInvalidErrorTest(BaseLatexIncrementalDecoderTest):
 
     errors = '**baderror**'
+    IncrementalDecoder = LatexIncrementalDecoder
 
     @nose.tools.raises(NotImplementedError)
     def test_errors_invalid(self):
