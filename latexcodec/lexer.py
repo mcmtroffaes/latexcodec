@@ -84,6 +84,8 @@ class MetaRegexpLexer(type):
         cls.spacetoken = Token("space", fixit(b" "))
         cls.replacetoken = Token(
             "chars", b"?" if cls.binary_mode else u"\ufffd")
+        cls.curlylefttoken = Token("chars", b"{" if cls.binary_mode else u"{")
+        cls.curlyrighttoken = Token("chars", b"}" if cls.binary_mode else u"}")
 
 
 @add_metaclass(MetaRegexpLexer)

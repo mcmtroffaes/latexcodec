@@ -92,8 +92,6 @@ class LatexUnicodeTable:
         self.unicode_map = {}
         self.max_length = 0
         self.latex_map = {}
-        self.curly_left = b'{' if self.lexer.binary_mode else u'{'
-        self.curly_right = b'}' if self.lexer.binary_mode else u'}'
         self.register_all()
 
     def register_all(self):
@@ -592,10 +590,8 @@ class LatexUnicodeTable:
             if (len(tokens) == 2
                 and tokens[0].name.startswith('control')
                     and tokens[1].name == 'chars'):
-                alt_tokens = (
-                    tokens[0], lexer.Token('chars', self.curly_left),
-                    tokens[1], lexer.Token('chars', self.curly_right),
-                )
+                alt_tokens = (tokens[0], self.lexer.curlylefttoken, tokens[1],
+                              self.lexer.curlyrighttoken)
                 if alt_tokens not in self.unicode_map:
                     self.max_length = max(self.max_length, len(alt_tokens))
                     self.unicode_map[alt_tokens] = u"{" + unicode_text + u"}"
