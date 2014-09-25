@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """Tests for the tex lexer."""
 
 import nose.tools
@@ -454,12 +456,18 @@ class LatexIncrementalEncoderTest(TestCase):
 
     @nose.tools.raises(TypeError)
     def test_invalid_type(self):
-        self.encoder.encode(object())
+        self.encoder.encode(object(), final=True)
 
     @nose.tools.raises(ValueError)
     def test_invalid_code(self):
         # default encoding is ascii, \u00ff is not ascii translatable
-        self.encoder.encode(u"\u00ff")
+        self.encoder.encode(u"\u00ff", final=True)
 
     def test_hello(self):
-        self.encode(u'hello', b'hello')
+        self.encode(u'hello', b'hello', final=True)
+
+    def test_unicode_tokens(self):
+        self.assertEqual(
+            list(self.encoder.get_unicode_tokens(
+                u"ĄąĄ̊ą̊ĘęĮįǪǫǬǭŲųY̨y̨", final=True)),
+            u"Ą|ą|Ą̊|ą̊|Ę|ę|Į|į|Ǫ|ǫ|Ǭ|ǭ|Ų|ų|Y̨|y̨".split(u"|"))

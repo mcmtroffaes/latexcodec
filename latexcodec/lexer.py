@@ -55,6 +55,7 @@ import codecs
 import collections
 import re
 from six import add_metaclass, binary_type, string_types
+import unicodedata
 
 
 Token = collections.namedtuple("Token", "name text")
@@ -397,6 +398,45 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
     inputenc = "ascii"
     """Input encoding. **Must** extend ascii."""
 
+    def __init__(self, errors='strict'):
+        """Initialize the codec."""
+        self.errors = errors
+        self.reset()
+
+    def reset(self):
+        """Reset state."""
+        # buffer for storing last (possibly incomplete) token
+        self.buffer = u""
+
+    def getstate(self):
+        """Get state."""
+        return self.buffer
+
+    def setstate(self, state):
+        """Set state. The *state* must correspond to the return value
+        of a previous :meth:`getstate` call.
+        """
+        self.buffer = state
+
+    def get_unicode_tokens(self, unicode_, final=False):
+        """Split unicode into tokens so that every token starts with a
+        non-combining character.
+        """
+        for c in unicode_:
+            if not unicodedata.combining(c):
+                for token in self.flush_unicode_tokens():
+                    yield token
+            self.buffer += c
+        if final:
+            for token in self.flush_unicode_tokens():
+                yield token
+
+    def flush_unicode_tokens(self):
+        """Flush the raw token buffer."""
+        if self.buffer:
+            yield self.buffer
+            self.buffer = u""
+
     def get_latex_bytes(self, unicode_, final=False):
         """Encode every character in :attr:`inputenc` encoding. Override to
         process the unicode in some other way (for example, for character
@@ -406,8 +446,8 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
             raise TypeError(
                 "expected unicode for encode input, but got {0} instead"
                 .format(unicode_.__class__.__name__))
-        for c in unicode_:
-            yield c.encode(self.inputenc, self.errors)
+        for token in self.get_unicode_tokens(unicode_, final=final):
+            yield token.encode(self.inputenc, self.errors)
 
     def encode(self, unicode_, final=False):
         """Encode the *unicode_* string into LaTeX :class:`bytes`.
