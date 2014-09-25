@@ -782,12 +782,12 @@ class LatexCodec(codecs.Codec):
 
 class UnicodeLatexIncrementalDecoder(LatexIncrementalDecoder):
     table = _ULATEX_UNICODE_TABLE
-    binary_mode = True
+    binary_mode = False
 
 
 class UnicodeLatexIncrementalEncoder(LatexIncrementalEncoder):
     table = _ULATEX_UNICODE_TABLE
-    binary_mode = True
+    binary_mode = False
 
 
 def find_latex(encoding):
