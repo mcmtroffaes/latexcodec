@@ -780,39 +780,70 @@ class LatexCodec(codecs.Codec):
         )
 
 
+class UnicodeLatexIncrementalDecoder(LatexIncrementalDecoder):
+    table = _ULATEX_UNICODE_TABLE
+    binary_mode = True
+
+
+class UnicodeLatexIncrementalEncoder(LatexIncrementalEncoder):
+    table = _ULATEX_UNICODE_TABLE
+    binary_mode = True
+
+
 def find_latex(encoding):
     """Return a :class:`codecs.CodecInfo` instance for the requested
     LaTeX *encoding*, which must be equal to ``latex``,
     or to ``latex+<encoding>``
     where ``<encoding>`` describes another encoding.
     """
+
     # check if requested codec info is for latex encoding
-    if not encoding.startswith('latex'):
+    if encoding == 'ulatex':
+        class Codec(LatexCodec):
+            IncrementalEncoder = UnicodeLatexIncrementalEncoder
+            IncrementalDecoder = UnicodeLatexIncrementalDecoder
+
+        class StreamWriter(Codec, codecs.StreamWriter):
+            pass
+
+        class StreamReader(Codec, codecs.StreamReader):
+            pass
+
+        return codecs.CodecInfo(
+            encode=Codec().encode,
+            decode=Codec().decode,
+            incrementalencoder=UnicodeLatexIncrementalEncoder,
+            incrementaldecoder=UnicodeLatexIncrementalDecoder,
+            streamreader=StreamReader,
+            streamwriter=StreamWriter,
+        )
+    elif encoding.startswith('latex'):
+        # set up all classes with correct latex input encoding
+        inputenc_ = encoding[6:] if encoding.startswith('latex+') else 'ascii'
+
+        class IncrementalEncoder_(LatexIncrementalEncoder):
+            inputenc = inputenc_
+
+        class IncrementalDecoder_(LatexIncrementalDecoder):
+            inputenc = inputenc_
+
+        class Codec(LatexCodec):
+            IncrementalEncoder = IncrementalEncoder_
+            IncrementalDecoder = IncrementalDecoder_
+
+        class StreamWriter(Codec, codecs.StreamWriter):
+            pass
+
+        class StreamReader(Codec, codecs.StreamReader):
+            pass
+
+        return codecs.CodecInfo(
+            encode=Codec().encode,
+            decode=Codec().decode,
+            incrementalencoder=IncrementalEncoder_,
+            incrementaldecoder=IncrementalDecoder_,
+            streamreader=StreamReader,
+            streamwriter=StreamWriter,
+        )
+    else:
         return None
-    # set up all classes with correct latex input encoding
-    inputenc_ = encoding[6:] if encoding.startswith('latex+') else 'ascii'
-
-    class IncrementalEncoder_(LatexIncrementalEncoder):
-        inputenc = inputenc_
-
-    class IncrementalDecoder_(LatexIncrementalDecoder):
-        inputenc = inputenc_
-
-    class Codec(LatexCodec):
-        IncrementalEncoder = IncrementalEncoder_
-        IncrementalDecoder = IncrementalDecoder_
-
-    class StreamWriter(Codec, codecs.StreamWriter):
-        pass
-
-    class StreamReader(Codec, codecs.StreamReader):
-        pass
-
-    return codecs.CodecInfo(
-        encode=Codec().encode,
-        decode=Codec().decode,
-        incrementalencoder=IncrementalEncoder_,
-        incrementaldecoder=IncrementalDecoder_,
-        streamreader=StreamReader,
-        streamwriter=StreamWriter,
-    )
