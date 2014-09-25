@@ -181,10 +181,12 @@ class BaseLatexIncrementalDecoderTest(TestCase):
     def setUp(self):
         self.lexer = self.IncrementalDecoder(self.errors)
 
+    def fix(self, s):
+        return s if self.lexer.binary_mode else s.decode("ascii")
+
     def lex_it(self, latex_code, latex_tokens, final=False):
-        if not self.lexer.binary_mode:
-            latex_code = latex_code.decode("ascii")
-            latex_tokens = [token.decode("ascii") for token in latex_tokens]
+        latex_code = self.fix(latex_code)
+        latex_tokens = [self.fix(token) for token in latex_tokens]
         tokens = self.lexer.get_tokens(latex_code, final=final)
         self.assertEqual(
             list(token.text for token in tokens),
@@ -265,17 +267,16 @@ class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
         )
 
     def test_buffer_decode(self):
-        fix_mode = lambda s: s if self.lexer.binary_mode else s.decode("ascii")
         self.assertEqual(
-            self.lexer.decode(fix_mode(b'hello!  [#1] This \\i')),
+            self.lexer.decode(self.fix(b'hello!  [#1] This \\i')),
             u'hello! [#1] This ',
         )
         self.assertEqual(
-            self.lexer.decode(fix_mode(b's\\   \\^ a \ntest.\n')),
+            self.lexer.decode(self.fix(b's\\   \\^ a \ntest.\n')),
             u'\\is \\ \\^a test.',
         )
         self.assertEqual(
-            self.lexer.decode(fix_mode(b'    \nHey.\n\n\# x \#x'), final=True),
+            self.lexer.decode(self.fix(b'    \nHey.\n\n\# x \#x'), final=True),
             u' \\par Hey. \\par \\# x \\#x',
         )
 
@@ -287,13 +288,11 @@ class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
         state = self.lexer.getstate()
         self.assertEqual(self.lexer.state, 'M')
         self.assertEqual(self.lexer.raw_buffer.name, 'control_word')
-        self.assertEqual(self.lexer.raw_buffer.text,
-                         b'\\t' if self.lexer.binary_mode else u'\\t')
+        self.assertEqual(self.lexer.raw_buffer.text, self.fix(b'\\t'))
         self.lexer.reset()
         self.assertEqual(self.lexer.state, 'N')
         self.assertEqual(self.lexer.raw_buffer.name, 'unknown')
-        self.assertEqual(self.lexer.raw_buffer.text,
-                         b'' if self.lexer.binary_mode else u'')
+        self.assertEqual(self.lexer.raw_buffer.text, self.fix(b''))
         self.lex_it(
             b'here',
             b'h|e|r|e'.split(b'|'),
@@ -302,8 +301,7 @@ class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
         self.lexer.setstate(state)
         self.assertEqual(self.lexer.state, 'M')
         self.assertEqual(self.lexer.raw_buffer.name, 'control_word')
-        self.assertEqual(self.lexer.raw_buffer.text,
-                         b'\\t' if self.lexer.binary_mode else u'\\t')
+        self.assertEqual(self.lexer.raw_buffer.text, self.fix(b'\\t'))
         self.lex_it(
             b'here',
             [b'\\there'],
