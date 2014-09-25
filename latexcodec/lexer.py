@@ -131,33 +131,33 @@ class RegexpLexer(codecs.IncrementalDecoder):
 
 class LatexLexer(RegexpLexer):
 
-    """A very simple lexer for tex/latex code."""
+    """A very simple lexer for tex/latex bytes."""
 
     # implementation note: every token **must** be decodable by inputenc
     tokens = [
         # comment: for ease, and for speed, we handle it as a token
-        ('comment', br'%.*?\n'),
+        (u'comment', br'%.*?\n'),
         # control tokens
         # in latex, some control tokens skip following whitespace
         # ('control-word' and 'control-symbol')
         # others do not ('control-symbol-x')
         # XXX TBT says no control symbols skip whitespace (except '\ ')
         # XXX but tests reveal otherwise?
-        ('control_word', br'[\\][a-zA-Z]+'),
-        ('control_symbol', br'[\\][~' br"'" br'"` =^!]'),
+        (u'control_word', br'[\\][a-zA-Z]+'),
+        (u'control_symbol', br'[\\][~' br"'" br'"` =^!]'),
         # TODO should only match ascii
-        ('control_symbol_x', br'[\\][^a-zA-Z]'),
+        (u'control_symbol_x', br'[\\][^a-zA-Z]'),
         # parameter tokens
         # also support a lone hash so we can lex things like b'#a'
-        ('parameter', br'\#[0-9]|\#'),
+        (u'parameter', br'\#[0-9]|\#'),
         # any remaining characters; for ease we also handle space and
         # newline as tokens
-        ('space', br' '),
-        ('newline', br'\n'),
-        ('mathshift', br'[$]'),
+        (u'space', br' '),
+        (u'newline', br'\n'),
+        (u'mathshift', br'[$]'),
         # note: some chars joined together to make it easier to detect
         # symbols that have a special function (i.e. --, ---, etc.)
-        ('chars',
+        (u'chars',
          br'---|--|-|[`][`]'
          br"|['][']"
          br'|[?][`]|[!][`]'
@@ -173,7 +173,7 @@ class LatexLexer(RegexpLexer):
         # trailing garbage which we cannot decode otherwise
         # (such as a lone '\' at the end of a buffer)
         # is never emitted, but used internally by the buffer
-        ('unknown', br'.'),
+        (u'unknown', br'.'),
     ]
     """List of token names, and the regular expressions they match."""
 
@@ -191,6 +191,33 @@ class LatexLexer(RegexpLexer):
 
     def emptytoken(self):
         return Token("unknown", b"")
+
+
+class LatexUnicodeLexer(RegexpLexer):
+
+    """A very simple lexer for tex/latex unicode."""
+
+    # implementation note: every token **must** be decodable by inputenc
+    tokens = [(name, regexp.decode("ascii"))
+              for (name, regexp) in LatexLexer.tokens]
+
+    """List of token names, and the regular expressions they match."""
+
+    def __init__(self, errors='strict'):
+        """Initialize the codec."""
+        super(LatexUnicodeLexer, self).__init__(errors=errors)
+        self._regexp = re.compile(
+            u"|".join(
+                u"(?P<" + name + u">" + regexp + u")"
+                for name, regexp in self.tokens),
+            re.DOTALL)
+
+    def regexp(self):
+        return self._regexp
+
+    def emptytoken(self):
+        return Token("unknown", u"")
+
 
 class LatexIncrementalLexer(LatexLexer):
 
