@@ -475,6 +475,7 @@ class LatexIncrementalEncoderTest(TestCase):
                 u"ĄąĄ̊ą̊ĘęĮįǪǫǬǭŲųY̨y̨", final=True)),
             u"Ą|ą|Ą̊|ą̊|Ę|ę|Į|į|Ǫ|ǫ|Ǭ|ǭ|Ų|ų|Y̨|y̨".split(u"|"))
 
+
 class LatexUnicodeIncrementalEncoderTest(LatexIncrementalEncoderTest):
     class IncrementalEncoder(LatexIncrementalEncoder):
         binary_mode = False
