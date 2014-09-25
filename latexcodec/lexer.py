@@ -66,26 +66,37 @@ Token = collections.namedtuple("Token", "name text")
 # but of course we don't decode yet until later
 
 
-class MetaRegexpLexer(type):
+class MetaLatexCoder(type):
+
+    def __init__(cls, name, bases, dct):
+        super(MetaLatexCoder, cls).__init__(name, bases, dct)
+        cls.emptytoken = Token(u"unknown", cls._fixit(b""))
+        cls.partoken = Token("control_word", cls._fixit(b"\\par"))
+        cls.spacetoken = Token("space", cls._fixit(b" "))
+        cls.replacetoken = Token(
+            "chars", b"?" if cls.binary_mode else u"\ufffd")
+        cls.curlylefttoken = Token("chars", cls._fixit(b"{"))
+        cls.curlyrighttoken = Token("chars", cls._fixit(b"}"))
+        cls.emptychar = cls._fixit(b"")
+        cls.spacechar = cls._fixit(b" ")
+        cls.controlspacechar = cls._fixit(b"\\ ")
+
+    def _fixit(cls, bytes_):
+        return bytes_ if cls.binary_mode else bytes_.decode("ascii")
+
+
+class MetaRegexpLexer(MetaLatexCoder):
 
     """Metaclass for :class:`RegexpLexer`. Compiles tokens into a
     regular expression.
     """
 
     def __init__(cls, name, bases, dct):
-        fixit = lambda s: s if cls.binary_mode else s.decode("ascii")
         super(MetaRegexpLexer, cls).__init__(name, bases, dct)
-        regexp_string = fixit(b"|".join(
+        regexp_string = cls._fixit(b"|".join(
             b"(?P<" + name.encode("ascii") + b">" + regexp + b")"
             for name, regexp in cls.tokens))
         cls.regexp = re.compile(regexp_string, re.DOTALL)
-        cls.emptytoken = Token(u"unknown", fixit(b""))
-        cls.partoken = Token("control_word", fixit(b"\\par"))
-        cls.spacetoken = Token("space", fixit(b" "))
-        cls.replacetoken = Token(
-            "chars", b"?" if cls.binary_mode else u"\ufffd")
-        cls.curlylefttoken = Token("chars", b"{" if cls.binary_mode else u"{")
-        cls.curlyrighttoken = Token("chars", b"}" if cls.binary_mode else u"}")
 
 
 @add_metaclass(MetaRegexpLexer)
@@ -385,6 +396,7 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
             raise ValueError(e)
 
 
+@add_metaclass(MetaLatexCoder)
 class LatexIncrementalEncoder(codecs.IncrementalEncoder):
 
     """Simple incremental encoder for LaTeX. Transforms unicode into
@@ -464,7 +476,7 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
         the resulting :class:`bytes` together.
         """
         try:
-            return (b'' if self.binary_mode else u'').join(
+            return self.emptychar.join(
                 self.get_latex_bytes(unicode_, final=final))
         except UnicodeEncodeError as e:
             # API requires that the encode method raises a ValueError

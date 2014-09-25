@@ -620,10 +620,6 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
     def __init__(self, errors='strict'):
         lexer.LatexIncrementalEncoder.__init__(self, errors=errors)
         self.reset()
-        fixit = lambda s: s if self.binary_mode else s.decode("ascii")
-        self.emptychar = fixit(b"")
-        self.spacechar = fixit(b" ")
-        self.controlspacechar = fixit(b"\\ ")
 
     def reset(self):
         self.state = 'M'
@@ -673,8 +669,7 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
                     "don't know how to translate {0} into latex"
                     .format(repr(c)))
             elif self.errors == 'ignore':
-                return self.emptychar, (lexer.Token("unknown",
-                                                    self.emptychar),)
+                return self.emptychar, (self.emptytoken,)
             elif self.errors == 'replace':
                 # use the \\char command
                 # this assumes
