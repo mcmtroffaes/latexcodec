@@ -379,8 +379,9 @@ class TestUnicodeEncoder(TestEncoder):
 
     def encode(self, text_utf8, text_latex, inputenc=None, errors='strict'):
         """Main test function."""
-        text_latex = text_latex.decode(inputenc if inputenc else "ascii")
-        encoded, n = codecs.getencoder('ulatex')(text_utf8, errors=errors)
+        encoding = 'ulatex+' + inputenc if inputenc else 'ulatex'
+        text_latex = text_latex.decode(inputenc if inputenc else 'ascii')
+        encoded, n = codecs.getencoder(encoding)(text_utf8, errors=errors)
         self.assertEqual((encoded, n), (text_latex, len(text_utf8)))
 
     def test_invalid_type(self):
