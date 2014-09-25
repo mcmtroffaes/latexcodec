@@ -360,3 +360,18 @@ class TestIncrementalEncoder(TestEncoder):
             encoder.encode(text_utf8_part, final)
             for text_utf8_part, final in split_input(text_utf8))
         self.assertEqual(text_latex, b''.join(encoded_parts))
+
+
+class TestUnicodeDecoder(TestDecoder):
+
+    def decode(self, text_utf8, text_latex, inputenc=None):
+        """Main test function."""
+        if inputenc is None:
+            inputenc = "ascii"
+        text_latex = text_latex.decode(inputenc if inputenc else "ascii")
+        decoded, n = codecs.getdecoder('ulatex')(text_latex)
+        self.assertEqual((decoded, n), (text_utf8, len(text_latex)))
+
+    def test_invalid_type(self):
+        # not applicable here
+        pass
