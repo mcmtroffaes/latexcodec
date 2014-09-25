@@ -338,6 +338,11 @@ class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
         self.lex_it(b'#', [b'#'], final=True)
 
 
+class LatexUnicodeIncrementalDecoderTest(LatexIncrementalDecoderTest):
+    class IncrementalDecoder(LatexIncrementalDecoder):
+        binary_mode = False
+
+
 class LatexIncrementalDecoderReplaceTest(BaseLatexIncrementalDecoderTest):
 
     errors = 'replace'
