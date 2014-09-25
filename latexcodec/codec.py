@@ -677,7 +677,8 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
                     "don't know how to translate {0} into latex"
                     .format(repr(c)))
             elif self.errors == 'ignore':
-                return self.emptychar, (lexer.Token("unknown", self.emptychar),)
+                return self.emptychar, (lexer.Token("unknown",
+                                                    self.emptychar),)
             elif self.errors == 'replace':
                 # use the \\char command
                 # this assumes
@@ -809,17 +810,19 @@ def find_latex(encoding):
     if not inputenc_:
         inputenc_ = "ascii"
     if encoding == "latex":
-        class IncrementalEncoder_(LatexIncrementalEncoder):
-            inputenc = inputenc_
-        class IncrementalDecoder_(LatexIncrementalDecoder):
-            inputenc = inputenc_
+        IncEnc = LatexIncrementalEncoder
+        DecEnc = LatexIncrementalDecoder
     elif encoding == "ulatex":
-        class IncrementalEncoder_(UnicodeLatexIncrementalEncoder):
-            inputenc = inputenc_
-        class IncrementalDecoder_(UnicodeLatexIncrementalDecoder):
-            inputenc = inputenc_
+        IncEnc = UnicodeLatexIncrementalEncoder
+        DecEnc = UnicodeLatexIncrementalDecoder
     else:
         return None
+
+    class IncrementalEncoder_(IncEnc):
+        inputenc = inputenc_
+
+    class IncrementalDecoder_(DecEnc):
+        inputenc = inputenc_
 
     class Codec(LatexCodec):
         IncrementalEncoder = IncrementalEncoder_
