@@ -196,13 +196,6 @@ class LatexLexer(RegexpLexer):
     """List of token names, and the regular expressions they match."""
 
 
-class LatexUnicodeLexer(LatexLexer):
-
-    """A very simple lexer for tex/latex unicode."""
-
-    binary_mode = False
-
-
 class LatexIncrementalLexer(LatexLexer):
 
     """A very simple incremental lexer for tex/latex code. Roughly

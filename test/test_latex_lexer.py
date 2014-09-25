@@ -4,7 +4,7 @@ import nose.tools
 from unittest import TestCase
 
 from latexcodec.lexer import (
-    LatexLexer, LatexUnicodeLexer,
+    LatexLexer,
     LatexIncrementalLexer,
     LatexIncrementalDecoder, LatexIncrementalEncoder,
     Token)
@@ -37,9 +37,15 @@ def test_token_assign_other():
 class BaseLatexLexerTest(TestCase):
 
     errors = 'strict'
-    lexer = None
+    Lexer = None
+
+    def setUp(self):
+        self.lexer = self.Lexer(errors=self.errors)
 
     def lex_it(self, latex_code, latex_tokens, final=False):
+        if not self.lexer.binary_mode:
+            latex_code = latex_code.decode("ascii")
+            latex_tokens = [token.decode("ascii") for token in latex_tokens]
         tokens = self.lexer.get_raw_tokens(latex_code, final=final)
         self.assertEqual(
             list(token.text for token in tokens),
@@ -51,8 +57,7 @@ class BaseLatexLexerTest(TestCase):
 
 class LatexLexerTest(BaseLatexLexerTest):
 
-    def setUp(self):
-        self.lexer = LatexLexer(errors=self.errors)
+    Lexer = LatexLexer
 
     def test_null(self):
         self.lex_it(b'', [], final=True)
@@ -161,116 +166,10 @@ class LatexLexerTest(BaseLatexLexerTest):
         self.lex_it(b'#', [b'#'], final=True)
 
 
-class LatexUnicodeLexerTest(BaseLatexLexerTest):
+class LatexUnicodeLexerTest(LatexLexerTest):
 
-    def setUp(self):
-        self.lexer = LatexUnicodeLexer(errors=self.errors)
-
-    def test_null(self):
-        self.lex_it(u'', [], final=True)
-
-    def test_hello(self):
-        self.lex_it(
-            u'hello!  [#1] This \\is\\   \\^ a \ntest.\n'
-            u'    \nHey.\n\n\# x \#x',
-            u'h|e|l|l|o|!| | |[|#1|]| |T|h|i|s| |\\is|\\ | | |\\^| |a| '
-            u'|\n|t|e|s|t|.|\n| | | | |\n|H|e|y|.|\n|\n'
-            u'|\\#| |x| |\\#|x'.split(u'|'),
-            final=True
-        )
-
-    def test_comment(self):
-        self.lex_it(
-            u'test% some comment\ntest',
-            u't|e|s|t|% some comment\n|t|e|s|t'.split(u'|'),
-            final=True
-        )
-
-    def test_comment_newline(self):
-        self.lex_it(
-            u'test% some comment\n\ntest',
-            u't|e|s|t|% some comment\n|\n|t|e|s|t'.split(u'|'),
-            final=True
-        )
-
-    def test_control(self):
-        self.lex_it(
-            u'\\hello\\world',
-            u'\\hello|\\world'.split(u'|'),
-            final=True
-        )
-
-    def test_control_whitespace(self):
-        self.lex_it(
-            u'\\hello   \\world   ',
-            u'\\hello| | | |\\world| | | '.split(u'|'),
-            final=True
-        )
-
-    def test_controlx(self):
-        self.lex_it(
-            u'\\#\\&',
-            u'\\#|\\&'.split(u'|'),
-            final=True
-        )
-
-    def test_controlx_whitespace(self):
-        self.lex_it(
-            u'\\#    \\&   ',
-            u'\\#| | | | |\\&| | | '.split(u'|'),
-            final=True
-        )
-
-    def test_buffer(self):
-        self.lex_it(
-            u'hi\\t',
-            u'h|i'.split(u'|'),
-        )
-        self.lex_it(
-            u'here',
-            [u'\\there'],
-            final=True,
-        )
-
-    def test_state(self):
-        self.lex_it(
-            u'hi\\t',
-            u'h|i'.split(u'|'),
-        )
-        state = self.lexer.getstate()
-        self.lexer.reset()
-        self.lex_it(
-            u'here',
-            u'h|e|r|e'.split(u'|'),
-            final=True,
-        )
-        self.lexer.setstate(state)
-        self.lex_it(
-            u'here',
-            [u'\\there'],
-            final=True,
-        )
-
-    @nose.tools.raises(NotImplementedError)
-    def test_decode(self):
-            self.lexer.decode(u'')
-
-    def test_final_backslash(self):
-        self.lex_it(
-            u'notsogood\\',
-            u'n|o|t|s|o|g|o|o|d|\\'.split(u'|'),
-            final=True
-        )
-
-    def test_final_comment(self):
-        self.lex_it(
-            u'hello%',
-            u'h|e|l|l|o|%'.split(u'|'),
-            final=True
-        )
-
-    def test_hash(self):
-        self.lex_it(u'#', [u'#'], final=True)
+    class Lexer(LatexLexer):
+        binary_mode = False
 
 
 class BaseLatexIncrementalDecoderTest(TestCase):
