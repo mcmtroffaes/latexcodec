@@ -80,6 +80,12 @@ class MetaRegexpLexer(type):
             regexp_string = regexp_string.decode("ascii")
         cls.regexp = re.compile(regexp_string, re.DOTALL)
         cls.emptytoken = Token(u"unknown", b"" if cls.binary_mode else u"")
+        cls.partoken = Token(
+            "control_word", b"\\par" if cls.binary_mode else u"\\par")
+        cls.spacetoken = Token(
+            "space", b" " if cls.binary_mode else u" ")
+        cls.replacetoken = Token(
+            "chars", b"?" if cls.binary_mode else u"\ufffd")
 
 
 @add_metaclass(MetaRegexpLexer)
@@ -243,14 +249,14 @@ class LatexIncrementalLexer(LatexLexer):
             if token.name == 'newline':
                 if self.state == 'N':
                     # if state was 'N', generate new paragraph
-                    yield Token('control_word', b'\\par')
+                    yield self.partoken
                 elif self.state == 'S':
                     # switch to 'N' state, do not generate a space
                     self.state = 'N'
                 elif self.state == 'M':
                     # switch to 'N' state, generate a space
                     self.state = 'N'
-                    yield Token('space', b' ')
+                    yield self.spacetoken
                 else:
                     raise AssertionError(
                         "unknown tex state {0!r}".format(self.state))
@@ -308,7 +314,7 @@ class LatexIncrementalLexer(LatexLexer):
                     # do nothing
                     pass
                 elif self.errors == 'replace':
-                    yield Token('chars', b'?' * len(token.text))
+                    yield self.replacetoken
                 else:
                     raise NotImplementedError(
                         "error mode {0!r} not supported".format(self.errors))
@@ -347,10 +353,11 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
         """
         # in python 3, the token text can be a memoryview
         # which do not have a decode method; must cast to bytes explicitly
-        if token.name == 'control_word':
-            return binary_type(token.text).decode(self.inputenc) + u' '
+        if self.binary_mode:
+            text = binary_type(token.text).decode(self.inputenc)
         else:
-            return binary_type(token.text).decode(self.inputenc)
+            text = token.text
+        return text if token.name != 'control_word' else text + u' '
 
     def get_unicode_tokens(self, bytes_, final=False):
         """Decode every token in :attr:`inputenc` encoding. Override to

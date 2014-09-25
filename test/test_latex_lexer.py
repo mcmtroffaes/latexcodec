@@ -265,16 +265,17 @@ class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
         )
 
     def test_buffer_decode(self):
+        fix_mode = lambda s: s if self.lexer.binary_mode else s.decode("ascii")
         self.assertEqual(
-            self.lexer.decode(b'hello!  [#1] This \\i'),
+            self.lexer.decode(fix_mode(b'hello!  [#1] This \\i')),
             u'hello! [#1] This ',
         )
         self.assertEqual(
-            self.lexer.decode(b's\\   \\^ a \ntest.\n'),
+            self.lexer.decode(fix_mode(b's\\   \\^ a \ntest.\n')),
             u'\\is \\ \\^a test.',
         )
         self.assertEqual(
-            self.lexer.decode(b'    \nHey.\n\n\# x \#x', final=True),
+            self.lexer.decode(fix_mode(b'    \nHey.\n\n\# x \#x'), final=True),
             u' \\par Hey. \\par \\# x \\#x',
         )
 
@@ -286,11 +287,13 @@ class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
         state = self.lexer.getstate()
         self.assertEqual(self.lexer.state, 'M')
         self.assertEqual(self.lexer.raw_buffer.name, 'control_word')
-        self.assertEqual(self.lexer.raw_buffer.text, b'\\t')
+        self.assertEqual(self.lexer.raw_buffer.text,
+                         b'\\t' if self.lexer.binary_mode else u'\\t')
         self.lexer.reset()
         self.assertEqual(self.lexer.state, 'N')
         self.assertEqual(self.lexer.raw_buffer.name, 'unknown')
-        self.assertEqual(self.lexer.raw_buffer.text, b'')
+        self.assertEqual(self.lexer.raw_buffer.text,
+                         b'' if self.lexer.binary_mode else u'')
         self.lex_it(
             b'here',
             b'h|e|r|e'.split(b'|'),
@@ -299,7 +302,8 @@ class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
         self.lexer.setstate(state)
         self.assertEqual(self.lexer.state, 'M')
         self.assertEqual(self.lexer.raw_buffer.name, 'control_word')
-        self.assertEqual(self.lexer.raw_buffer.text, b'\\t')
+        self.assertEqual(self.lexer.raw_buffer.text,
+                         b'\\t' if self.lexer.binary_mode else u'\\t')
         self.lex_it(
             b'here',
             [b'\\there'],
