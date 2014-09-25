@@ -302,6 +302,10 @@ class LatexIncrementalLexer(LatexLexer):
                 yield token
             elif token.name == 'unknown':
                 if self.errors == 'strict':
+                    # hack around a bug in Python: UnicodeDecodeError
+                    # expects binary input
+                    if not self.binary_mode:
+                        bytes_ = bytes_.encode("utf8")
                     # current position within bytes_
                     # this is the position right after the unknown token
                     raise UnicodeDecodeError(
