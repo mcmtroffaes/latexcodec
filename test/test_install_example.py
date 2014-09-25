@@ -8,12 +8,15 @@ def test_install_example_1():
     text_unicode = u"ångström"
     assert text_unicode.encode("latex") == b'\\aa ngstr\\"om'
 
+
 def test_install_example_2():
+    import codecs
     import latexcodec  # noqa
     text_latex = u"\\'el\\`eve"
-    assert text_latex.decode("ulatex") == u"élève"
+    assert codecs.decode(text_latex, "ulatex") == u"élève"
     text_unicode = u"ångström"
-    assert text_unicode.encode("ulatex") == u'\\aa ngstr\\"om'
+    assert codecs.encode(text_unicode, "ulatex") == u'\\aa ngstr\\"om'
+
 
 def test_install_example_3():
     import latexcodec  # noqa

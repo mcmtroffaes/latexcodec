@@ -15,15 +15,18 @@ to be used as an encoding:
     text_unicode = u"ångström"
     assert text_unicode.encode("latex") == b'\\aa ngstr\\"om'
 
-There are also a ``ulatex`` encoding for text transforms:
+There are also a ``ulatex`` encoding for text transforms.
+The simplest way to use this codec goes through the codecs module
+(as for all text transform codecs on Python):
 
 .. code-block:: python
 
+    import codecs
     import latexcodec
     text_latex = u"\\'el\\`eve"
-    assert text_latex.decode("ulatex") == u"élève"
+    assert codecs.decode(text_latex, "ulatex") == u"élève"
     text_unicode = u"ångström"
-    assert text_unicode.encode("ulatex") == u'\\aa ngstr\\"om'
+    assert codecs.encode(text_unicode, "ulatex") == u'\\aa ngstr\\"om'
 
 By default, the LaTeX input is assumed to be ascii, as per standard LaTeX.
 However, you can also specify an extra codec
