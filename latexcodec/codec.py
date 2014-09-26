@@ -618,10 +618,11 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
     """Translation table."""
 
     def __init__(self, errors='strict'):
-        lexer.LatexIncrementalEncoder.__init__(self, errors=errors)
+        super(LatexIncrementalEncoder, self).__init__(errors=errors)
         self.reset()
 
     def reset(self):
+        super(LatexIncrementalEncoder, self).reset()
         self.state = 'M'
 
     def get_space_bytes(self, bytes_):
