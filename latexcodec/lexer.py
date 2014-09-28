@@ -144,15 +144,11 @@ class RegexpLexer(codecs.IncrementalDecoder):
             bytes_ = self.raw_buffer.text + bytes_
         self.raw_buffer = self.emptytoken
         for match in self.regexp.finditer(bytes_):
-            for name, regexp in self.tokens:
-                text = match.group(name)
-                if text is not None:
-                    # yield the buffer token(s)
-                    for token in self.flush_raw_tokens():
-                        yield token
-                    # fill buffer with next token
-                    self.raw_buffer = Token(name, text)
-                    break
+            # yield the buffer token
+            if self.raw_buffer.text:
+                yield self.raw_buffer
+            # fill buffer with next token
+            self.raw_buffer = Token(match.lastgroup, match.group(0))
         if final:
             for token in self.flush_raw_tokens():
                 yield token
