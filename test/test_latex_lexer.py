@@ -474,6 +474,20 @@ class LatexIncrementalEncoderTest(TestCase):
                 u"ĄąĄ̊ą̊ĘęĮįǪǫǬǭŲųY̨y̨", final=True)),
             u"Ą|ą|Ą̊|ą̊|Ę|ę|Į|į|Ǫ|ǫ|Ǭ|ǭ|Ų|ų|Y̨|y̨".split(u"|"))
 
+    def test_state(self):
+        self.assertEqual(
+            list(self.encoder.get_unicode_tokens(
+                u"Ą", final=False)), [])
+        state = self.encoder.getstate()
+        self.encoder.reset()
+        self.assertEqual(
+            list(self.encoder.get_unicode_tokens(
+                u"ABC", final=True)), [u"A", u"B", u"C"])
+        self.encoder.setstate(state)
+        self.assertEqual(
+            list(self.encoder.get_unicode_tokens(
+                u"̊", final=True)), [u"Ą̊"])
+
 
 class UnicodeLatexIncrementalEncoderTest(LatexIncrementalEncoderTest):
     IncrementalEncoder = UnicodeLatexIncrementalEncoder
