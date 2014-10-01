@@ -179,6 +179,9 @@ class TestDecoder(TestCase):
         self.decode(u"\\textogonekcentered {Ō}\\textogonekcentered {ō}",
                     br'\textogonekcentered{\=O}\textogonekcentered{\=o}')
 
+    def test_math_spacing(self):
+        self.decode(u'This is a ψ test.', br'This is a $\psi$ test.')
+
 
 class TestStreamDecoder(TestDecoder):
 
@@ -335,6 +338,9 @@ class TestEncoder(TestCase):
     def test_ogonek2(self):
         self.encode(u"Ǭǭ",
                     br'\textogonekcentered{\=O}\textogonekcentered{\=o}')
+
+    def test_math_spacing(self):
+        self.encode(u'This is a ψ test.', br'This is a $\psi$ test.')
 
 
 class TestStreamEncoder(TestEncoder):
