@@ -184,7 +184,7 @@ class TestDecoder(TestCase):
 
     def test_double_math(self):
         # currently no attempt to translate maths inside $$
-        self.decode(u'This is a $$\psi$$ test.', br'This is a $$\psi$$ test.')
+        self.decode(u'This is a $$\psi $$ test.', br'This is a $$\psi$$ test.')
 
 
 class TestStreamDecoder(TestDecoder):

@@ -189,7 +189,7 @@ class LatexLexer(RegexpLexer):
         # newline as tokens
         (u'space', br' '),
         (u'newline', br'\n'),
-        (u'mathshift', br'[$]'),
+        (u'mathshift', br'[$][$]|[$]'),
         # note: some chars joined together to make it easier to detect
         # symbols that have a special function (i.e. --, ---, etc.)
         (u'chars',
