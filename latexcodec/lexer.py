@@ -288,6 +288,7 @@ class LatexIncrementalLexer(LatexLexer):
                         "unknown state {0!r}".format(self.state))
             elif token.name == 'mathshift':
                 self.inline_math = not self.inline_math
+                self.state = 'M'
                 yield token
             elif token.name == 'parameter':
                 self.state = 'M'
