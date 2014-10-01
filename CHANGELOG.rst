@@ -4,6 +4,9 @@
 * New ``ulatex`` codec which works as a text transform on unicode
   strings.
 
+* Fix spacing when translating math (see issue #29, reported by
+  beltiste).
+
 1.0.1 (24 September 2014)
 -------------------------
 
