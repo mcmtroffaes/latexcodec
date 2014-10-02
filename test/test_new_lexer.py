@@ -3,8 +3,7 @@
 """Tests for the new tex lexer."""
 
 from latexcodec._new_lexer import (
-    latex_groups, make_pattern, make_lexer, make_incremental_lexer,
-    is_lexer_binary, get_lexer_empty_text)
+    latex_groups, make_pattern, make_lexer, make_incremental_lexer)
 import nose.tools
 from unittest import TestCase
 
@@ -15,8 +14,6 @@ def test_lexer_binary():
     nose.tools.assert_equal(
         list(token.text for token in lexer(b'hello world')),
         [b'hello', b' ', b'world'])
-    nose.tools.assert_true(is_lexer_binary(lexer))
-    nose.tools.assert_equal(get_lexer_empty_text(lexer), b'')
 
 
 def test_lexer_unicode():
@@ -25,8 +22,6 @@ def test_lexer_unicode():
     nose.tools.assert_equal(
         list(token.text for token in lexer(u'нɛℓℓσ ωσяℓ∂')),
         [u'нɛℓℓσ', u' ', u'ωσяℓ∂'])
-    nose.tools.assert_false(is_lexer_binary(lexer))
-    nose.tools.assert_equal(get_lexer_empty_text(lexer), u'')
 
 
 def test_incremental_lexer_binary():

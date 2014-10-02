@@ -101,57 +101,35 @@ def make_lexer(pattern):
     return lexer
 
 
-def is_lexer_binary(lexer):
-    # lexer.__closure__[0].cell_contents is compiled pattern from closure
-    return isinstance(
-        lexer.__closure__[0].cell_contents.pattern, six.binary_type)
-
-
-def get_lexer_empty_text(lexer):
-    return b'' if is_lexer_binary(lexer) else u''
-
-
 def make_incremental_lexer(lexer):
     """A generator which acts as an incremental lexer by keeping the
     last matched token in a buffer.
     """
     def incremental_lexer():
-        empty_text = get_lexer_empty_text(lexer)
         tokens = []
-        text = empty_text
+        buf = None
         while True:
             msg = yield tokens
             if msg is not None:
-                text += msg
-                tokens = list(lexer(text))
-                text = tokens.pop().text if tokens else empty_text
+                tokens = list(lexer(buf.text + msg) if buf else lexer(msg))
+                buf = tokens.pop() if tokens else None
             else:
-                tokens = list(lexer(text))
-                text = empty_text
+                tokens = list(lexer(buf.text)) if buf else []
+                buf = None
     return incremental_lexer()
 
 
-def get_incremental_lexer_lexer(incremental_lexer):
-    # magic here
-    return incremental_lexer.__closure__[0].cell_contents
-
-
-def get_incremental_lexer_empty_text(incremental_lexer):
-    return get_lexer_empty_text(get_incremental_lexer_lexer(incremental_lexer))
-
-
 def get_state(incremental_lexer):
-    empty_text = get_incremental_lexer_empty_text(incremental_lexer)
-    return empty_text.join(
-        token.text for token in incremental_lexer.send(None))
+    tokens = incremental_lexer.send(None)
+    if tokens:
+        assert len(tokens) == 1
+        state = tokens[0].text
+        incremental_lexer.send(state)
+        return state
+    else:
+        return None
 
 
 def set_state(incremental_lexer, state):
-    empty_text = get_incremental_lexer_empty_text(incremental_lexer)
-    incremental_lexer.send(empty_text)
+    incremental_lexer.send(None)
     incremental_lexer.send(state)
-
-
-def flush(incremental_lexer):
-    empty_text = get_incremental_lexer_empty_text(incremental_lexer)
-    incremental_lexer.send(empty_text)
