@@ -105,18 +105,16 @@ def make_incremental_lexer(lexer):
     """A generator which acts as an incremental lexer by keeping the
     last matched token in a buffer.
     """
-    def incremental_lexer():
-        tokens = []
-        buf = None
-        while True:
-            msg = yield tokens
-            if msg is not None:
-                tokens = list(lexer(buf.text + msg) if buf else lexer(msg))
-                buf = tokens.pop() if tokens else None
-            else:
-                tokens = list(lexer(buf.text)) if buf else []
-                buf = None
-    return incremental_lexer()
+    tokens = []
+    buf = None
+    while True:
+        msg = yield tokens
+        if msg is not None:
+            tokens = list(lexer(buf.text + msg) if buf else lexer(msg))
+            buf = tokens.pop() if tokens else None
+        else:
+            tokens = list(lexer(buf.text)) if buf else []
+            buf = None
 
 
 def get_state(incremental_lexer):
