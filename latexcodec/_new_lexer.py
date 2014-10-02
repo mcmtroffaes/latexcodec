@@ -33,56 +33,6 @@ import six
 Token = collections.namedtuple("Token", "name text")
 
 
-def latex_groups(binary=True):
-    """List of token names, and the regular expressions they match."""
-    binary_groups = (
-        # comment: for ease, and for speed, we handle it as a token
-        (b'comment', br'%.*?\n'),
-        # control tokens
-        # in latex, some control tokens skip following whitespace
-        # ('control-word' and 'control-symbol')
-        # others do not ('control-symbol-x')
-        # XXX TBT says no control symbols skip whitespace (except '\ ')
-        # XXX but tests reveal otherwise?
-        (b'control_word', br'[\\][a-zA-Z]+'),
-        (b'control_symbol', br'[\\][~' br"'" br'"` =^!]'),
-        # TODO should only match ascii
-        (b'control_symbol_x', br'[\\][^a-zA-Z]'),
-        # parameter tokens
-        # also support a lone hash so we can lex things like b'#a'
-        (b'parameter', br'\#[0-9]|\#'),
-        # any remaining characters; for ease we also handle space and
-        # newline as tokens
-        (b'space', br' '),
-        (b'newline', br'\n'),
-        (b'mathshift', br'[$][$]|[$]'),
-        # note: some chars joined together to make it easier to detect
-        # symbols that have a special function (i.e. --, ---, etc.)
-        (b'chars',
-         br'---|--|-|[`][`]'
-         br"|['][']"
-         br'|[?][`]|[!][`]'
-         # separate chars because brackets are optional
-         # e.g. fran\\c cais = fran\\c{c}ais in latex
-         # so only way to detect \\c acting on c only is this way
-         br'|[0-9a-zA-Z{}]'
-         # we have to join everything else together to support
-         # multibyte encodings: every token must be decodable!!
-         # this means for instance that \\c öké is NOT equivalent to
-         # \\c{ö}ké
-         br'|[^ %#$\n\\]+'),
-        # trailing garbage which we cannot decode otherwise
-        # (such as a lone '\' at the end of a buffer)
-        # is never emitted, but used internally by the buffer
-        (b'unknown', br'.'),
-    )
-    if binary:
-        return binary_groups
-    else:
-        return tuple(tuple(item.decode("ascii") for item in row)
-                     for row in binary_groups)
-
-
 def make_pattern(groups):
     is_binary = isinstance(groups[0][0], six.binary_type)
     if is_binary:
@@ -97,7 +47,7 @@ def make_pattern(groups):
 def make_lexer(pattern):
     def lexer(text):
         for match in pattern.finditer(text):
-            yield Token(match.lastgroup, match.group(0))
+            yield Token(match.lastindex, match.group(0))
     return lexer
 
 
