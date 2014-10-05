@@ -34,6 +34,7 @@ Token = collections.namedtuple("Token", "name text")
 
 
 def make_pattern(groups):
+    """Compile a regular expression pattern from the given groups."""
     is_binary = isinstance(groups[0][0], six.binary_type)
     if is_binary:
         pattern = b"|".join(b"(?P<" + name + b">" + regexp + b")"
@@ -45,6 +46,9 @@ def make_pattern(groups):
 
 
 def make_lexer(pattern):
+    """Create a lexer function from a given compiled regular expression
+    pattern.
+    """
     def lexer(text):
         for match in pattern.finditer(text):
             yield Token(match.lastindex, match.group(0))
@@ -52,8 +56,9 @@ def make_lexer(pattern):
 
 
 def make_incremental_lexer(lexer):
-    """A generator which acts as an incremental lexer by keeping the
-    last matched token in a buffer.
+    """A generator which acts as an incremental lexer by keeping the last
+    matched token in a buffer. For this to work, the lexer must be
+    able to match incomplete tokens at the end of the input.
     """
     tokens = []
     buf = None
