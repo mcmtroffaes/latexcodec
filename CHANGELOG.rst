@@ -7,6 +7,8 @@
 * Fix spacing when translating math (see issue #29, reported by
   beltiste).
 
+* Performance improvements in latex to unicode translation.
+
 1.0.1 (24 September 2014)
 -------------------------
 
