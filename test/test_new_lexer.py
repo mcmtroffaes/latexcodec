@@ -3,7 +3,7 @@
 """Tests for the new lexer."""
 
 from latexcodec._new_lexer import (
-    make_pattern, make_lexer, make_incremental_lexer)
+    make_pattern, make_lexer, make_incremental_lexer, get_state, set_state)
 import nose.tools
 from unittest import TestCase
 
@@ -56,3 +56,23 @@ def test_incremental_lexer_unicode():
     nose.tools.assert_equal(send(None), [u'ѡɸʀλδ'])
     nose.tools.assert_equal(send(u'հελλɸ ѡɸʀλδ'), [u'հελλɸ', u' '])
     nose.tools.assert_equal(send(None), [u'ѡɸʀλδ'])
+
+def test_incremental_lexer_state():
+    groups = ((b'one', b'hello'), (b'two', b'world'), (b'three', b' '),
+              (b'unknown', b'.+'))
+    ilexer = make_incremental_lexer(make_lexer(make_pattern(groups)))
+    ilexer.send(None)
+
+    def send(text):
+        return list(token.text for token in ilexer.send(text))
+
+    nose.tools.assert_is_none(get_state(ilexer))
+    nose.tools.assert_equal(send(b'he'), [])
+    nose.tools.assert_equal(send(b'llo w'), [b'hello', b' '])
+    state = get_state(ilexer)
+    nose.tools.assert_equal(state, b'w')
+    nose.tools.assert_equal(send(b'orld'), [])
+    nose.tools.assert_equal(send(None), [b'world'])
+    set_state(ilexer, state)
+    nose.tools.assert_equal(send(b'orld'), [])
+    nose.tools.assert_equal(send(None), [b'world'])
