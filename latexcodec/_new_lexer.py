@@ -30,7 +30,7 @@ import re
 import six
 
 
-Token = collections.namedtuple("Token", "name text")
+Token = collections.namedtuple("Token", "group text")
 
 
 def make_pattern(groups):
@@ -55,34 +55,42 @@ def make_lexer(pattern):
     return lexer
 
 
-def make_incremental_lexer(lexer):
+def _is_consumed(iterable):
+    try:
+        six.next(iterable)
+    except StopIteration:
+        return True
+    else:
+        return False
+
+
+def make_incremental_lexer(lexer, func):
     """A generator which acts as an incremental lexer by keeping the last
     matched token in a buffer. For this to work, the lexer must be
     able to match incomplete tokens at the end of the input.
     """
-    tokens = []
-    buf = None
-    while True:
-        msg = yield tokens
-        if msg is not None:
-            tokens = list(lexer(buf.text + msg) if buf else lexer(msg))
-            buf = tokens.pop() if tokens else None
+    def ilexer(state, text):
+        def init(tokens):
+            # "nonlocal state" emulation through init.state
+            # see http://stackoverflow.com/a/16032631/2863746
+            try:
+                previous_token = six.next(tokens)
+                init.state = previous_token.text
+            except StopIteration:
+                return
+            else:
+                for token in tokens:
+                    yield previous_token
+                    init.state = token.text
+                    previous_token = token
+
+        if text is not None:
+            init.state = state
+            init_tokens = init(lexer((state + text) if state else text))
         else:
-            tokens = list(lexer(buf.text)) if buf else []
-            buf = None
-
-
-def get_state(incremental_lexer):
-    tokens = incremental_lexer.send(None)
-    if tokens:
-        assert len(tokens) == 1
-        state = tokens[0].text
-        incremental_lexer.send(state)
-        return state
-    else:
-        return None
-
-
-def set_state(incremental_lexer, state):
-    incremental_lexer.send(None)
-    incremental_lexer.send(state)
+            init.state = None
+            init_tokens = lexer(state) if state else ()
+        result = func(init_tokens)
+        assert _is_consumed(init_tokens)
+        return result, init.state
+    return ilexer
