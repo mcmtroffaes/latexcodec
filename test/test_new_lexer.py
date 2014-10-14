@@ -41,6 +41,8 @@ def test_incremental_lexer_binary():
     state = test(state, None, [b'world'])
     state = test(None, b'hello world', [b'hello', b' '])
     state = test(state, None, [b'world'])
+    state = test(None, b'', [])
+    state = test(state, None, [])
 
 
 def test_incremental_lexer_unicode():
@@ -61,3 +63,13 @@ def test_incremental_lexer_unicode():
     state = test(state, None, [u'ѡɸʀλδ'])
     state = test(None, u'հελλɸ ѡɸʀλδ', [u'հελλɸ', u' '])
     state = test(state, None, [u'ѡɸʀλδ'])
+    state = test(None, u'', [])
+    state = test(state, None, [])
+
+
+def test_incremental_lexer_bad_func():
+    groups = ((u'char', u'.'),)
+    lexer = make_lexer(make_pattern(groups))
+    func = lambda tokens: tokens
+    ilexer = make_incremental_lexer(lexer, func)
+    nose.tools.assert_raises(ValueError, lambda: ilexer(None, u'hello'))

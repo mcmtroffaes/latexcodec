@@ -64,6 +64,11 @@ def _is_consumed(iterable):
         return False
 
 
+def _empty_iterator():
+    return
+    yield
+
+
 def make_incremental_lexer(lexer, func):
     """A generator which acts as an incremental lexer by keeping the last
     matched token in a buffer. For this to work, the lexer must be
@@ -89,8 +94,9 @@ def make_incremental_lexer(lexer, func):
             init_tokens = init(lexer((state + text) if state else text))
         else:
             init.state = None
-            init_tokens = lexer(state) if state else ()
+            init_tokens = lexer(state) if state else _empty_iterator()
         result = func(init_tokens)
-        assert _is_consumed(init_tokens)
+        if not _is_consumed(init_tokens):
+            raise ValueError('func must consume all tokens')
         return result, init.state
     return ilexer
