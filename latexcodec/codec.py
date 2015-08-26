@@ -111,6 +111,7 @@ class LatexUnicodeTable:
         self.register(u'\N{RIGHT SINGLE QUOTATION MARK}', b"'", decode=False)
         self.register(u'\N{LEFT DOUBLE QUOTATION MARK}', b'``')
         self.register(u'\N{RIGHT DOUBLE QUOTATION MARK}', b"''")
+        self.register(u'\N{DOUBLE LOW-9 QUOTATION MARK}', b'\\glqq')
         self.register(u'\N{DAGGER}', b'\\dag')
         self.register(u'\N{DOUBLE DAGGER}', b'\\ddag')
 
