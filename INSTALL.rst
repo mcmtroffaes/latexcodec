@@ -51,7 +51,14 @@ Limitations
 
 * Not all unicode characters are registered. If you find any missing,
   please report them on the tracker:
-
   https://github.com/mcmtroffaes/latexcodec/issues
 
 * Unicode combining characters are currently not handled.
+
+* By design, the codec never removes curly brackets. This is because
+  it is very hard to guess whether brackets are part of a command or
+  not (this would require a full latex parser). Moreover, bibtex uses
+  curly brackets as a guard against case conversion, in which case
+  automatic removal of curly brackets may not be desired at all, even
+  if they are not part of a command. Also see:
+  http://stackoverflow.com/a/19754245/2863746
