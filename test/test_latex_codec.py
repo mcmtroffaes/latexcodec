@@ -179,8 +179,11 @@ class TestDecoder(TestCase):
         self.decode(u"\\textogonekcentered {Ō}\\textogonekcentered {ō}",
                     br'\textogonekcentered{\=O}\textogonekcentered{\=o}')
 
-    def test_math_spacing(self):
+    def test_math_spacing_dollar(self):
         self.decode(u'This is a ψ test.', br'This is a $\psi$ test.')
+
+    def test_math_spacing_brace(self):
+        self.decode(u'This is a ψ test.', br'This is a \(\psi\) test.')
 
     def test_double_math(self):
         # currently no attempt to translate maths inside $$
