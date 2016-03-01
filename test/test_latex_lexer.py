@@ -168,6 +168,9 @@ class LatexLexerTest(BaseLatexLexerTest):
     def test_hash(self):
         self.lex_it(b'#', [b'#'], final=True)
 
+    def test_tab(self):
+        self.lex_it(b'\c\tc', b'\c|\t|c'.split(b'|'), final=True)
+
 
 class UnicodeLatexLexerTest(LatexLexerTest):
     Lexer = UnicodeLatexLexer
@@ -343,6 +346,9 @@ class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
 
     def test_hash(self):
         self.lex_it(b'#', [b'#'], final=True)
+
+    def test_tab(self):
+        self.lex_it(b'\c\tc', b'\c|c'.split(b'|'), final=True)
 
 
 class UnicodeLatexIncrementalDecoderTest(LatexIncrementalDecoderTest):
