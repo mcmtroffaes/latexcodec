@@ -9,6 +9,9 @@
 
 * Performance improvements in latex to unicode translation.
 
+* Treat tab character as a space character (see discussion in issue
+  #40, raised by xuhdev).
+
 1.0.1 (24 September 2014)
 -------------------------
 
