@@ -183,7 +183,9 @@ class LatexLexer(RegexpLexer):
         (u'parameter', br'\#[0-9]|\#'),
         # any remaining characters; for ease we also handle space and
         # newline as tokens
-        (u'space', br' '),
+        # XXX TBT does not mention \t to be a space character as well
+        # XXX but tests reveal otherwise?
+        (u'space', br' |\t'),
         (u'newline', br'\n'),
         (u'mathshift', br'[$][$]|[$]'),
         # note: some chars joined together to make it easier to detect
@@ -232,8 +234,8 @@ class LatexIncrementalLexer(LatexLexer):
         # state 'M' is most common, so let that be zero
         return (
             self.raw_buffer,
-            {'M': 0, 'N': 1, 'S': 2}[self.state]
-            | (4 if self.inline_math else 0)
+            {'M': 0, 'N': 1, 'S': 2}[self.state] |
+            (4 if self.inline_math else 0)
         )
 
     def setstate(self, state):
