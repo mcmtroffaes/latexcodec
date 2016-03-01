@@ -1,5 +1,5 @@
-1.0.2 (in development)
-----------------------
+1.0.2 (1 March 2016)
+--------------------
 
 * New ``ulatex`` codec which works as a text transform on unicode
   strings.
@@ -8,6 +8,9 @@
   beltiste).
 
 * Performance improvements in latex to unicode translation.
+
+* Support old-style math mode (see pull request #40, contributed by
+  xuhdev).
 
 * Treat tab character as a space character (see discussion in issue
   #40, raised by xuhdev).
