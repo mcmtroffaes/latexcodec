@@ -183,6 +183,8 @@ class LatexLexer(RegexpLexer):
         (u'parameter', br'\#[0-9]|\#'),
         # any remaining characters; for ease we also handle space and
         # newline as tokens
+        # XXX TBT does not mention \t to be a space character as well
+        # XXX but tests reveal otherwise?
         (u'space', br' |\t'),
         (u'newline', br'\n'),
         (u'mathshift', br'[$][$]|[$]'),
