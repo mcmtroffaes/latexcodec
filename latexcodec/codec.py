@@ -115,6 +115,15 @@ class LatexUnicodeTable:
         self.register(u'\N{DAGGER}', b'\\dag')
         self.register(u'\N{DOUBLE DAGGER}', b'\\ddag')
 
+        self.register(u'\\', b'\\textbackslash', encode=False)
+        self.register(u'\\', b'\\backslash', mode='math', encode=False)
+
+        self.register(u'\N{TILDE OPERATOR}', b'\\sim', mode='math')
+        self.register(u'\N{MODIFIER LETTER LOW TILDE}',
+                      b'\\texttildelow', package='textcomp')
+        self.register(u'\N{SMALL TILDE}', b'\\~{}')
+        self.register(u'~', b'\\textasciitilde')
+
         self.register(u'\N{BULLET}', b'\\bullet', mode='math')
         self.register(u'\N{BULLET}', b'\\textbullet', package='textcomp')
 
@@ -437,7 +446,6 @@ class LatexUnicodeTable:
         self.register(u'\N{DOT ABOVE}', b'\\.{}')
         self.register(u'\N{RING ABOVE}', b'\\r{}')
         self.register(u'\N{OGONEK}', b'\\k{}')
-        self.register(u'\N{SMALL TILDE}', b'\\~{}')
         self.register(u'\N{DOUBLE ACUTE ACCENT}', b'\\H{}')
         self.register(u'\N{LATIN SMALL LIGATURE FI}', b'fi', decode=False)
         self.register(u'\N{LATIN SMALL LIGATURE FL}', b'fl', decode=False)

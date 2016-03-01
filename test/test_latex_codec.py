@@ -189,6 +189,15 @@ class TestDecoder(TestCase):
         # currently no attempt to translate maths inside $$
         self.decode(u'This is a $$\psi $$ test.', br'This is a $$\psi$$ test.')
 
+    def test_tilde(self):
+        self.decode(u'This is a ˜, ˷, ∼ and ~test.',
+                    (br'This is a \~{}, \texttildelow, '
+                     br'$\sim$ and \textasciitilde test.'))
+
+    def test_backslash(self):
+        self.decode(u'This is a \\ \\test.',
+                    br'This is a $\backslash$ \textbackslash test.')
+
 
 class TestStreamDecoder(TestDecoder):
 
@@ -352,6 +361,11 @@ class TestEncoder(TestCase):
     def test_double_math(self):
         # currently no attempt to translate maths inside $$
         self.encode(u'This is a $$\psi$$ test.', br'This is a $$\psi$$ test.')
+
+    def test_tilde(self):
+        self.encode(u'This is a ˜, ˷, ∼ and ~test.',
+                    (br'This is a \~{}, \texttildelow , '
+                     br'$\sim$ and \textasciitilde test.'))
 
 
 class TestStreamEncoder(TestEncoder):
