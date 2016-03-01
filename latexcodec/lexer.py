@@ -234,8 +234,8 @@ class LatexIncrementalLexer(LatexLexer):
         # state 'M' is most common, so let that be zero
         return (
             self.raw_buffer,
-            {'M': 0, 'N': 1, 'S': 2}[self.state]
-            | (4 if self.inline_math else 0)
+            {'M': 0, 'N': 1, 'S': 2}[self.state] |
+            (4 if self.inline_math else 0)
         )
 
     def setstate(self, state):

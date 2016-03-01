@@ -587,9 +587,9 @@ class LatexUnicodeTable:
             # for instance, "\'{e}" for "\'e", "\c{c}" for "\c c", etc.
             # note: we do not remove brackets (they sometimes matter,
             # e.g. bibtex uses them to prevent lower case transformation)
-            if (len(tokens) == 2
-                and tokens[0].name.startswith('control')
-                    and tokens[1].name == 'chars'):
+            if (len(tokens) == 2 and
+                tokens[0].name.startswith('control') and
+                    tokens[1].name == 'chars'):
                 alt_tokens = (tokens[0], self.lexer.curlylefttoken, tokens[1],
                               self.lexer.curlyrighttoken)
                 if alt_tokens not in self.unicode_map:
