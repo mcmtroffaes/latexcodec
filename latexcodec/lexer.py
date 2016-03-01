@@ -183,7 +183,7 @@ class LatexLexer(RegexpLexer):
         (u'parameter', br'\#[0-9]|\#'),
         # any remaining characters; for ease we also handle space and
         # newline as tokens
-        (u'space', br' '),
+        (u'space', br' |\t'),
         (u'newline', br'\n'),
         (u'mathshift', br'[$][$]|[$]'),
         # note: some chars joined together to make it easier to detect
