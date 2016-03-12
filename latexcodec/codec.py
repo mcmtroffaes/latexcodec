@@ -693,6 +693,8 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
                 else:
                     bytes_ = u'{\\char' + str(ord(c)) + u'}'
                 return bytes_, (lexer.Token(name='chars', text=bytes_),)
+            elif self.errors == 'keep' and not self.binary_mode:
+                return c,  (lexer.Token(name='chars', text=c),)
             else:
                 raise ValueError(
                     "latex codec does not support {0} errors"

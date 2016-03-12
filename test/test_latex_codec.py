@@ -423,9 +423,15 @@ class TestUnicodeEncoder(TestEncoder):
     def test_ulatex_utf8(self):
         self.uencode(u'# ψ', u'\# ψ', 'utf8')
 
+    # the following tests rely on the fact that \u2328 is not in our
+    # translation table
+
     @nose.tools.raises(ValueError)
     def test_ulatex_ascii_invalid(self):
         self.uencode(u'# \u2328', u'', 'ascii')
 
     def test_ulatex_utf8_invalid(self):
-        self.uencode(u'# \u2328', u'\# \u2328', 'utf8')
+        self.uencode(u'# ψ \u2328', u'\# ψ \u2328', 'utf8')
+
+    def test_invalid_code_keep(self):
+        self.uencode(u'# ψ \u2328', u'\# $\psi$ \u2328', 'ascii', 'keep')
