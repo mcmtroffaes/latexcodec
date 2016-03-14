@@ -410,3 +410,22 @@ class TestUnicodeEncoder(TestEncoder):
         text_latex = text_latex.decode(inputenc if inputenc else 'ascii')
         encoded, n = codecs.getencoder(encoding)(text_utf8, errors=errors)
         self.assertEqual((encoded, n), (text_latex, len(text_utf8)))
+
+    def uencode(self, text_utf8, text_ulatex, inputenc=None, errors='strict'):
+        """Main test function."""
+        encoding = 'ulatex+' + inputenc if inputenc else 'ulatex'
+        encoded, n = codecs.getencoder(encoding)(text_utf8, errors=errors)
+        self.assertEqual((encoded, n), (text_ulatex, len(text_utf8)))
+
+    def test_ulatex_ascii(self):
+        self.uencode(u'# ψ', u'\# $\psi$', 'ascii')
+
+    def test_ulatex_utf8(self):
+        self.uencode(u'# ψ', u'\# ψ', 'utf8')
+
+    @nose.tools.raises(ValueError)
+    def test_ulatex_ascii_invalid(self):
+        self.uencode(u'# \u2328', u'', 'ascii')
+
+    def test_ulatex_utf8_invalid(self):
+        self.uencode(u'# \u2328', u'\# \u2328', 'utf8')
