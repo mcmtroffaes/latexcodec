@@ -259,6 +259,11 @@ class TestEncoder(TestCase):
     def test_invalid_code_replace(self):
         self.encode(u'\u2328', b'{\\char9000}', 'ascii', 'replace')
 
+    def test_invalid_code_skip(self):
+        import codecs
+        self.assertEqual(
+            codecs.encode(u'\u2328', 'ulatex', 'skip'), u'\u2328')
+
     @nose.tools.raises(ValueError)
     def test_invalid_code_baderror(self):
         self.encode(u'\u2328', b'', 'ascii', '**baderror**')

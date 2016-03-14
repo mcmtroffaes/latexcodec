@@ -693,10 +693,12 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
                 else:
                     bytes_ = u'{\\char' + str(ord(c)) + u'}'
                 return bytes_, (lexer.Token(name='chars', text=bytes_),)
+            elif self.errors == 'skip' and not self.binary_mode:
+                return c,  (lexer.Token(name='chars', text=c),)
             else:
                 raise ValueError(
-                    "latex codec does not support {0} errors"
-                    .format(self.errors))
+                    "{1}latex codec does not support {0} errors"
+                    .format(self.errors, '' if self.binary_mode else 'u'))
 
     def get_latex_bytes(self, unicode_, final=False):
         if not isinstance(unicode_, string_types):
