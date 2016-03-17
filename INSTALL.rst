@@ -56,15 +56,16 @@ possible, use the ``ulatex+utf8`` codec, which should never fail.
 
 .. code-block::
 
+    import codecs
     import latexcodec
     text_unicode = u'⌨'  # \u2328 = keyboard symbol, currently not translated
     try:
         # raises a value error as \u2328 cannot be encoded into latex
-        text_unicode.encode("ulatex+ascii")
+        codecs.encode(text_unicode, "ulatex+ascii")
     except ValueError:
         pass
-    assert text_unicode.encode("ulatex+ascii", errors="keep") == u'⌨'
-    assert text_unicode.encode("ulatex+utf8") == u'⌨'
+    assert codecs.encode(text_unicode, "ulatex+ascii", "keep") == u'⌨'
+    assert codecs.encode(text_unicode, "ulatex+utf8") == u'⌨'
 
 Limitations
 -----------
