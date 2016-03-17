@@ -26,3 +26,15 @@ def test_install_example_3():
     text_unicode = u"ţ"
     assert text_unicode.encode("latex+latin1") == b'\\c t'  # ţ is not latin1
     assert text_unicode.encode("latex+latin2") == b'\xfe'   # but it is latin2
+
+
+def test_install_example_4():
+    import latexcodec  # noqa
+    text_unicode = u'⌨'  # \u2328 = keyboard symbol, currently not translated
+    try:
+        # raises a value error as \u2328 cannot be encoded into latex
+        text_unicode.encode("ulatex+ascii")
+    except ValueError:
+        pass
+    assert text_unicode.encode("ulatex+ascii", errors="keep") == u'⌨'
+    assert text_unicode.encode("ulatex+utf8") == u'⌨'
