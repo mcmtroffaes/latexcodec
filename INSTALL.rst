@@ -46,6 +46,27 @@ The following code snippet demonstrates this behaviour:
     assert text_unicode.encode("latex+latin1") == b'\\c t'  # ţ is not latin1
     assert text_unicode.encode("latex+latin2") == b'\xfe'   # but it is latin2
 
+When encoding using the ``ulatex`` codec, you have the option to pass
+through characters that cannot be encoded in the desired encoding, by
+using the ``'keep'`` error. This can be a useful fallback option if
+you want to encode as much as possible, whilst still retaining as much
+as possible of the original code when encoding fails. If instead you
+want to translate to LaTeX but keep as much of the unicode as
+possible, use the ``ulatex+utf8`` codec, which should never fail.
+
+.. code-block::
+
+    import codecs
+    import latexcodec
+    text_unicode = u'⌨'  # \u2328 = keyboard symbol, currently not translated
+    try:
+        # raises a value error as \u2328 cannot be encoded into latex
+        codecs.encode(text_unicode, "ulatex+ascii")
+    except ValueError:
+        pass
+    assert codecs.encode(text_unicode, "ulatex+ascii", "keep") == u'⌨'
+    assert codecs.encode(text_unicode, "ulatex+utf8") == u'⌨'
+
 Limitations
 -----------
 
