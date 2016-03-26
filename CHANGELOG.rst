@@ -1,5 +1,8 @@
-1.0.3 (in development)
-----------------------
+1.0.3 (26 March 2016)
+---------------------
+
+* New ``'keep'`` error for the ulatex encoder to keep unicode characters
+  that cannot be translated (contributed by xuhdev, see pull requestion #45).
 
 1.0.2 (1 March 2016)
 --------------------
