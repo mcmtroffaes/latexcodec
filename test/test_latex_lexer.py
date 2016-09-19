@@ -13,6 +13,20 @@ from latexcodec.lexer import (
     Token)
 
 
+class MockLexer(LatexLexer):
+    tokens = (
+        (u'chars', br'mock'),
+        (u'unknown', br'.'),
+        )
+
+
+class MockIncrementalDecoder(LatexIncrementalDecoder):
+    tokens = (
+        (u'chars', br'mock'),
+        (u'unknown', br'.'),
+        )
+
+
 def test_token_create_with_args():
     t = Token('hello', b'world')
     nose.tools.assert_equal(t.name, 'hello')
@@ -78,14 +92,14 @@ class LatexLexerTest(BaseLatexLexerTest):
     def test_comment(self):
         self.lex_it(
             b'test% some comment\ntest',
-            b't|e|s|t|% some comment\n|t|e|s|t'.split(b'|'),
+            b't|e|s|t|% some comment|\n|t|e|s|t'.split(b'|'),
             final=True
         )
 
     def test_comment_newline(self):
         self.lex_it(
             b'test% some comment\n\ntest',
-            b't|e|s|t|% some comment\n|\n|t|e|s|t'.split(b'|'),
+            b't|e|s|t|% some comment|\n|\n|t|e|s|t'.split(b'|'),
             final=True
         )
 
@@ -170,6 +184,14 @@ class LatexLexerTest(BaseLatexLexerTest):
 
     def test_tab(self):
         self.lex_it(b'\c\tc', b'\c|\t|c'.split(b'|'), final=True)
+
+    def test_percent(self):
+        self.lex_it(b'This is a \\% test.',
+                    b'T|h|i|s| |i|s| |a| |\\%| |t|e|s|t|.'.split(b'|'), final=True)
+        self.lex_it(b'\\% %test',
+                    b'\\%| |%test'.split(b'|'), final=True)
+        self.lex_it(b'\\% %test\nhi',
+                    b'\\%| |%test|\n|h|i'.split(b'|'), final=True)
 
 
 class UnicodeLatexLexerTest(LatexLexerTest):
@@ -335,12 +357,10 @@ class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
             final=True
         )
 
-    # counterintuitive?
-    @nose.tools.raises(UnicodeDecodeError)
     def test_final_comment(self):
         self.lex_it(
             b'hello%',
-            [b'hello'],
+            b'h|e|l|l|o'.split(b'|'),
             final=True
         )
 
@@ -358,12 +378,12 @@ class UnicodeLatexIncrementalDecoderTest(LatexIncrementalDecoderTest):
 class LatexIncrementalDecoderReplaceTest(BaseLatexIncrementalDecoderTest):
 
     errors = 'replace'
-    IncrementalDecoder = LatexIncrementalDecoder
+    IncrementalDecoder = MockIncrementalDecoder
 
     def test_errors_replace(self):
         self.lex_it(
-            b'hello%',
-            b'h|e|l|l|o|?'.split(b'|'),
+            b'helmocklo',
+            b'?|?|?|mock|?|?'.split(b'|'),
             final=True
         )
 
@@ -371,12 +391,12 @@ class LatexIncrementalDecoderReplaceTest(BaseLatexIncrementalDecoderTest):
 class LatexIncrementalDecoderIgnoreTest(BaseLatexIncrementalDecoderTest):
 
     errors = 'ignore'
-    IncrementalDecoder = LatexIncrementalDecoder
+    IncrementalDecoder = MockIncrementalDecoder
 
     def test_errors_ignore(self):
         self.lex_it(
-            b'hello%',
-            b'h|e|l|l|o'.split(b'|'),
+            b'helmocklo',
+            b'mock'.split(b'|'),
             final=True
         )
 
@@ -384,13 +404,13 @@ class LatexIncrementalDecoderIgnoreTest(BaseLatexIncrementalDecoderTest):
 class LatexIncrementalDecoderInvalidErrorTest(BaseLatexIncrementalDecoderTest):
 
     errors = '**baderror**'
-    IncrementalDecoder = LatexIncrementalDecoder
+    IncrementalDecoder = MockIncrementalDecoder
 
     @nose.tools.raises(NotImplementedError)
     def test_errors_invalid(self):
         self.lex_it(
-            b'hello%',
-            b'h|e|l|l|o'.split(b'|'),
+            b'helmocklo',
+            b'?|?|?|mock|?|?'.split(b'|'),
             final=True
         )
 

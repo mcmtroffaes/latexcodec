@@ -103,6 +103,7 @@ class LatexUnicodeTable:
         self.register(u'\n\n', b' \\par', encode=False)
         self.register(u'\n\n', b'\\par', encode=False)
         self.register(u' ', b'\\ ', encode=False)
+        self.register(u'%', b'\\%')
         self.register(u'\N{EN DASH}', b'--')
         self.register(u'\N{EN DASH}', b'\\textendash')
         self.register(u'\N{EM DASH}', b'---')

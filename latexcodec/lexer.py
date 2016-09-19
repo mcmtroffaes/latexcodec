@@ -167,7 +167,7 @@ class LatexLexer(RegexpLexer):
     # implementation note: every token **must** be decodable by inputenc
     tokens = (
         # comment: for ease, and for speed, we handle it as a token
-        (u'comment', br'%.*?\n'),
+        (u'comment', br'(?<![\\])%[^\n]*'),
         # control tokens
         # in latex, some control tokens skip following whitespace
         # ('control-word' and 'control-symbol')
@@ -304,9 +304,9 @@ class LatexIncrementalLexer(LatexLexer):
                 self.state = 'M'
                 yield token
             elif token.name == 'comment':
-                # go to newline mode, no token is generated
-                # note: comment includes the newline
-                self.state = 'N'
+                # no token is generated
+                # note: comment does not include the newline
+                self.state = 'S'
             elif token.name == 'chars':
                 self.state = 'M'
                 yield token

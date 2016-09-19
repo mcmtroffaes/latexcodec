@@ -198,6 +198,10 @@ class TestDecoder(TestCase):
         self.decode(u'This is a \\ \\test.',
                     br'This is a $\backslash$ \textbackslash test.')
 
+    def test_percent(self):
+        self.decode(u'This is a % test.',
+                    br'This is a \% test.')
+
 
 class TestStreamDecoder(TestDecoder):
 
@@ -366,6 +370,10 @@ class TestEncoder(TestCase):
         self.encode(u'This is a ˜, ˷, ∼ and ~test.',
                     (br'This is a \~{}, \texttildelow , '
                      br'$\sim$ and \textasciitilde test.'))
+
+    def test_percent(self):
+        self.encode(u'This is a % test.',
+                    br'This is a \% test.')
 
 
 class TestStreamEncoder(TestEncoder):
