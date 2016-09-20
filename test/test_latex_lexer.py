@@ -187,7 +187,8 @@ class LatexLexerTest(BaseLatexLexerTest):
 
     def test_percent(self):
         self.lex_it(b'This is a \\% test.',
-                    b'T|h|i|s| |i|s| |a| |\\%| |t|e|s|t|.'.split(b'|'), final=True)
+                    b'T|h|i|s| |i|s| |a| |\\%| |t|e|s|t|.'.split(b'|'),
+                    final=True)
         self.lex_it(b'\\% %test',
                     b'\\%| |%test'.split(b'|'), final=True)
         self.lex_it(b'\\% %test\nhi',
