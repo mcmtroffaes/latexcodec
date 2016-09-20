@@ -1,3 +1,9 @@
+1.0.4 (in development)
+----------------------
+
+* Fix encoding and decoding of percent sign (reported by jgosmann, see
+  issue #48).
+
 1.0.3 (26 March 2016)
 ---------------------
 
