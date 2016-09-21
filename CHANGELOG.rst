@@ -1,4 +1,4 @@
-1.0.4 (20 September 2016)
+1.0.4 (21 September 2016)
 -------------------------
 
 * Fix encoding and decoding of percent sign (reported by jgosmann, see
