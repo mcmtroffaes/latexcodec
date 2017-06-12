@@ -54,7 +54,7 @@ as possible of the original code when encoding fails. If instead you
 want to translate to LaTeX but keep as much of the unicode as
 possible, use the ``ulatex+utf8`` codec, which should never fail.
 
-.. code-block::
+.. code-block:: python
 
     import codecs
     import latexcodec
