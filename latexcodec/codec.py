@@ -559,6 +559,16 @@ class LatexUnicodeTable:
         # match the full latex string... so decoding disabled for now
         self.register(u'Ǭ', br'\textogonekcentered{\=O}', decode=False)
         self.register(u'ǭ', br'\textogonekcentered{\=o}', decode=False)
+        self.register(u'ℕ', br'\mathbb{N}', mode='math')
+        self.register(u'ℕ', br'\mathbb N', mode='math', decode=False)
+        self.register(u'ℤ', br'\mathbb{Z}', mode='math')
+        self.register(u'ℤ', br'\mathbb Z', mode='math', decode=False)
+        self.register(u'ℚ', br'\mathbb{Q}', mode='math')
+        self.register(u'ℚ', br'\mathbb Q', mode='math', decode=False)
+        self.register(u'ℝ', br'\mathbb{R}', mode='math')
+        self.register(u'ℝ', br'\mathbb R', mode='math', decode=False)
+        self.register(u'ℂ', br'\mathbb{C}', mode='math')
+        self.register(u'ℂ', br'\mathbb C', mode='math', decode=False)
 
     def register(self, unicode_text, latex_text, mode='text', package=None,
                  decode=True, encode=True):
