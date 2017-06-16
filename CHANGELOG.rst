@@ -1,5 +1,9 @@
-1.0.5 (in development)
-----------------------
+1.0.5 (16 June 2017)
+--------------------
+
+* More maths symbols (naturals, reals, ...).
+
+* Fix lower case z with accents (reported by AndrewSwann, see issue #51).
 
 1.0.4 (21 September 2016)
 -------------------------
