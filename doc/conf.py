@@ -15,7 +15,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 project = u'latexcodec'
 copyright = u'2011-2014, Matthias C. M. Troffaes'
-with open("../VERSION", "rb") as version_file:
+with open("../VERSION") as version_file:
     release = version_file.read().strip()
 version = '.'.join(release.split('.')[:2])
 exclude_patterns = ['_build']
