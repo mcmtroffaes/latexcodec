@@ -3,6 +3,8 @@
 # latexcodec documentation build configuration file, created by
 # sphinx-quickstart on Wed Aug  3 15:45:22 2011.
 
+from io import open
+
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
@@ -15,7 +17,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 project = u'latexcodec'
 copyright = u'2011-2014, Matthias C. M. Troffaes'
-with open("../VERSION", "rb") as version_file:
+with open("../VERSION") as version_file:
     release = version_file.read().strip()
 version = '.'.join(release.split('.')[:2])
 exclude_patterns = ['_build']
