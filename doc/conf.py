@@ -3,6 +3,8 @@
 # latexcodec documentation build configuration file, created by
 # sphinx-quickstart on Wed Aug  3 15:45:22 2011.
 
+from io import open
+
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
