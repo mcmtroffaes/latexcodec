@@ -124,7 +124,6 @@ class LatexUnicodeTable:
                       b'\\texttildelow', package='textcomp')
         self.register(u'\N{SMALL TILDE}', b'\\~{}')
         self.register(u'~', b'\\textasciitilde')
-
         self.register(u'\N{BULLET}', b'\\bullet', mode='math')
         self.register(u'\N{BULLET}', b'\\textbullet', package='textcomp')
 
@@ -132,6 +131,7 @@ class LatexUnicodeTable:
         self.register(u'\N{LOW LINE}', b'\\_')
         self.register(u'\N{AMPERSAND}', b'\\&')
         self.register(u'\N{NO-BREAK SPACE}', b'~')
+
         self.register(u'\N{INVERTED EXCLAMATION MARK}', b'!`')
         self.register(u'\N{CENT SIGN}', b'\\not{c}')
 
@@ -140,6 +140,7 @@ class LatexUnicodeTable:
 
         self.register(u'\N{SECTION SIGN}', b'\\S')
         self.register(u'\N{DIAERESIS}', b'\\"{}')
+        self.register(u'\N{COMBINING DIAERESIS}', b'\\"{}')
         self.register(u'\N{NOT SIGN}', b'\\neg')
         self.register(u'\N{SOFT HYPHEN}', b'\\-')
         self.register(u'\N{MACRON}', b'\\={}')
@@ -149,6 +150,8 @@ class LatexUnicodeTable:
 
         self.register(u'\N{PLUS-MINUS SIGN}', b'\\pm', mode='math')
         self.register(u'\N{PLUS-MINUS SIGN}', b'\\textpm', package='textcomp')
+        self.register(u'\N{MINUS SIGN}', b'-')
+        self.register(u'\N{HYPHEN}', b'-')
 
         self.register(u'\N{SUPERSCRIPT TWO}', b'^2', mode='math')
         self.register(
@@ -545,6 +548,7 @@ class LatexUnicodeTable:
             u'\N{GREEK CAPITAL LETTER OMEGA}',
             b'\\Omega',
             mode='math')
+        self.register(u'\N{GREEK PHI SYMBOL}', b'\\phi', mode='math')
         self.register(u'\N{COPYRIGHT SIGN}', b'\\copyright')
         self.register(u'\N{COPYRIGHT SIGN}', b'\\textcopyright')
         self.register(u'\N{LATIN CAPITAL LETTER A WITH ACUTE}', b"\\'A")
