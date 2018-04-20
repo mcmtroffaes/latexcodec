@@ -375,6 +375,10 @@ class TestEncoder(TestCase):
         self.encode(u'This is a % test.',
                     br'This is a \% test.')
 
+    def test_hyphen(self):
+        self.encode(u'This is a \N{HYPHEN} test.',
+                    br'This is a - test.')
+
 
 class TestStreamEncoder(TestEncoder):
 

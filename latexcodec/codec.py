@@ -141,6 +141,7 @@ class LatexUnicodeTable:
         self.register(u'\N{SECTION SIGN}', b'\\S')
         self.register(u'\N{DIAERESIS}', b'\\"{}')
         self.register(u'\N{NOT SIGN}', b'\\neg')
+        self.register(u'\N{HYPHEN}', b'-', decode=False)
         self.register(u'\N{SOFT HYPHEN}', b'\\-')
         self.register(u'\N{MACRON}', b'\\={}')
 
