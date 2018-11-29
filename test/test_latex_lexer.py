@@ -82,7 +82,7 @@ class LatexLexerTest(BaseLatexLexerTest):
     def test_hello(self):
         self.lex_it(
             b'hello!  [#1] This \\is\\   \\^ a \ntest.\n'
-            b'    \nHey.\n\n\# x \#x',
+            b'    \nHey.\n\n\\# x \\#x',
             br'h|e|l|l|o|!| | |[|#1|]| |T|h|i|s| |\is|\ | | |\^| |a| '
             b'|\n|t|e|s|t|.|\n| | | | |\n|H|e|y|.|\n|\n'
             br'|\#| |x| |\#|x'.split(b'|'),
@@ -183,7 +183,7 @@ class LatexLexerTest(BaseLatexLexerTest):
         self.lex_it(b'#', [b'#'], final=True)
 
     def test_tab(self):
-        self.lex_it(b'\c\tc', b'\c|\t|c'.split(b'|'), final=True)
+        self.lex_it(b'\\c\tc', b'\\c|\t|c'.split(b'|'), final=True)
 
     def test_percent(self):
         self.lex_it(b'This is a \\% test.',
@@ -234,7 +234,7 @@ class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
     def test_hello(self):
         self.lex_it(
             b'hello!  [#1] This \\is\\   \\^ a \ntest.\n'
-            b'    \nHey.\n\n\# x \#x',
+            b'    \nHey.\n\n\\# x \\#x',
             br'h|e|l|l|o|!| |[|#1|]| |T|h|i|s| |\is|\ |\^|a| '
             br'|t|e|s|t|.| |\par|H|e|y|.| '
             br'|\par|\#| |x| |\#|x'.split(b'|'),
@@ -304,7 +304,8 @@ class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
             u'\\is \\ \\^a test.',
         )
         self.assertEqual(
-            self.lexer.decode(self.fix(b'    \nHey.\n\n\# x \#x'), final=True),
+            self.lexer.decode(
+                self.fix(b'    \nHey.\n\n\\# x \\#x'), final=True),
             u' \\par Hey. \\par \\# x \\#x',
         )
 
@@ -369,7 +370,7 @@ class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
         self.lex_it(b'#', [b'#'], final=True)
 
     def test_tab(self):
-        self.lex_it(b'\c\tc', b'\c|c'.split(b'|'), final=True)
+        self.lex_it(b'\\c\tc', b'\\c|c'.split(b'|'), final=True)
 
 
 class UnicodeLatexIncrementalDecoderTest(LatexIncrementalDecoderTest):

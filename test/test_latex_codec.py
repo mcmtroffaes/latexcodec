@@ -187,7 +187,8 @@ class TestDecoder(TestCase):
 
     def test_double_math(self):
         # currently no attempt to translate maths inside $$
-        self.decode(u'This is a $$\psi $$ test.', br'This is a $$\psi$$ test.')
+        self.decode(ur'This is a $$\psi $$ test.',
+                    br'This is a $$\psi$$ test.')
 
     def test_tilde(self):
         self.decode(u'This is a ˜, ˷, ∼ and ~test.',
@@ -364,7 +365,7 @@ class TestEncoder(TestCase):
 
     def test_double_math(self):
         # currently no attempt to translate maths inside $$
-        self.encode(u'This is a $$\psi$$ test.', br'This is a $$\psi$$ test.')
+        self.encode(ur'This is a $$\psi$$ test.', br'This is a $$\psi$$ test.')
 
     def test_tilde(self):
         self.encode(u'This is a ˜, ˷, ∼ and ~test.',
@@ -430,10 +431,10 @@ class TestUnicodeEncoder(TestEncoder):
         self.assertEqual((encoded, n), (text_ulatex, len(text_utf8)))
 
     def test_ulatex_ascii(self):
-        self.uencode(u'# ψ', u'\# $\psi$', 'ascii')
+        self.uencode(ur'# ψ', ur'\# $\psi$', 'ascii')
 
     def test_ulatex_utf8(self):
-        self.uencode(u'# ψ', u'\# ψ', 'utf8')
+        self.uencode(ur'# ψ', ur'\# ψ', 'utf8')
 
     # the following tests rely on the fact that \u2328 is not in our
     # translation table
@@ -443,7 +444,7 @@ class TestUnicodeEncoder(TestEncoder):
         self.uencode(u'# \u2328', u'', 'ascii')
 
     def test_ulatex_utf8_invalid(self):
-        self.uencode(u'# ψ \u2328', u'\# ψ \u2328', 'utf8')
+        self.uencode(u'# ψ \u2328', u'\\# ψ \u2328', 'utf8')
 
     def test_invalid_code_keep(self):
-        self.uencode(u'# ψ \u2328', u'\# $\psi$ \u2328', 'ascii', 'keep')
+        self.uencode(u'# ψ \u2328', u'\\# $\\psi$ \u2328', 'ascii', 'keep')
