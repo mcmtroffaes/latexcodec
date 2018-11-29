@@ -356,7 +356,7 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
 
            Control words get an extra space added at the back to make
            sure separation from the next token, so that decoded token
-           sequences can be :meth:`str.join`\ ed together.
+           sequences can be joined together.
 
            For example, the tokens ``b'\\hello'`` and ``b'world'``
            will correctly result in ``u'\\hello world'`` (remember
