@@ -393,6 +393,7 @@ class TestEncoder(TestCase):
         self.encode(u'This is a − test.',
                     br'This is a $-$ test.')
 
+
 class TestStreamEncoder(TestEncoder):
 
     """Stream encoder tests."""
