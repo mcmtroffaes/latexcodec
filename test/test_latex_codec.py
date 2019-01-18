@@ -207,6 +207,11 @@ class TestDecoder(TestCase):
         self.decode(u'This is a − test.',
                     br'This is a $-$ test.')
 
+    def test_swedish_again(self):
+        self.decode(
+            u"l{å}ren l{Å}ren",
+            br'l{\r a}ren l{\r A}ren')
+
 
 class TestStreamDecoder(TestDecoder):
 

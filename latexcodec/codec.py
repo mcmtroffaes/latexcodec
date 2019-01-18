@@ -191,6 +191,8 @@ class LatexUnicodeTable:
         self.register(u'\N{LATIN CAPITAL LETTER A WITH TILDE}', b'\\~A')
         self.register(u'\N{LATIN CAPITAL LETTER A WITH DIAERESIS}', b'\\"A')
         self.register(u'\N{LATIN CAPITAL LETTER A WITH RING ABOVE}', b'\\AA')
+        self.register(u'\N{LATIN CAPITAL LETTER A WITH RING ABOVE}', b'\\r A',
+                      encode=False)
         self.register(u'\N{LATIN CAPITAL LETTER AE}', b'\\AE')
         self.register(u'\N{LATIN CAPITAL LETTER C WITH CEDILLA}', b'\\c C')
         self.register(u'\N{LATIN CAPITAL LETTER E WITH GRAVE}', b'\\`E')
@@ -220,6 +222,8 @@ class LatexUnicodeTable:
         self.register(u'\N{LATIN SMALL LETTER A WITH TILDE}', b'\\~a')
         self.register(u'\N{LATIN SMALL LETTER A WITH DIAERESIS}', b'\\"a')
         self.register(u'\N{LATIN SMALL LETTER A WITH RING ABOVE}', b'\\aa')
+        self.register(u'\N{LATIN SMALL LETTER A WITH RING ABOVE}', b'\\r a',
+                      encode=False)
         self.register(u'\N{LATIN SMALL LETTER AE}', b'\\ae')
         self.register(u'\N{LATIN SMALL LETTER C WITH CEDILLA}', b'\\c c')
         self.register(u'\N{LATIN SMALL LETTER E WITH GRAVE}', b'\\`e')
