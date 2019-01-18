@@ -1,5 +1,8 @@
-1.0.6 (in development)
-----------------------
+1.0.6 (18 January 2018)
+-----------------------
+
+* More symbols (EM SPACE, MINUS SIGN, GREEK PHI SYMBOL, HYPHEN,
+  alternate encodings of Swedish å and Å).
 
 1.0.5 (16 June 2017)
 --------------------
