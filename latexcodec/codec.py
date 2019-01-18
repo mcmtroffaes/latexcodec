@@ -486,6 +486,7 @@ class LatexUnicodeTable:
             b'\\upsilon',
             mode='math')
         self.register(u'\N{GREEK SMALL LETTER PHI}', b'\\phi', mode='math')
+        self.register(u'\N{GREEK PHI SYMBOL}', b'\\varphi', mode='math')
         self.register(u'\N{GREEK SMALL LETTER CHI}', b'\\chi', mode='math')
         self.register(u'\N{GREEK SMALL LETTER PSI}', b'\\psi', mode='math')
         self.register(u'\N{GREEK SMALL LETTER OMEGA}', b'\\omega', mode='math')
