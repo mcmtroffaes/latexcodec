@@ -148,6 +148,7 @@ class LatexUnicodeTable:
         self.register(u'\N{DEGREE SIGN}', b'^\\circ', mode='math')
         self.register(u'\N{DEGREE SIGN}', b'\\textdegree', package='textcomp')
 
+        self.register(u'\N{MINUS SIGN}', b'-', mode='math')
         self.register(u'\N{PLUS-MINUS SIGN}', b'\\pm', mode='math')
         self.register(u'\N{PLUS-MINUS SIGN}', b'\\textpm', package='textcomp')
 

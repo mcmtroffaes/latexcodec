@@ -203,6 +203,10 @@ class TestDecoder(TestCase):
         self.decode(u'This is a % test.',
                     br'This is a \% test.')
 
+    def test_math_minus(self):
+        self.decode(u'This is a − test.',
+                    br'This is a $-$ test.')
+
 
 class TestStreamDecoder(TestDecoder):
 
@@ -380,6 +384,9 @@ class TestEncoder(TestCase):
         self.encode(u'This is a \N{HYPHEN} test.',
                     br'This is a - test.')
 
+    def test_math_minus(self):
+        self.encode(u'This is a − test.',
+                    br'This is a $-$ test.')
 
 class TestStreamEncoder(TestEncoder):
 
