@@ -139,6 +139,9 @@ class TestDecoder(TestCase):
     def test_space_2(self):
         self.decode(u"æ æ", br'\ae\ \ae')
 
+    def test_space_3(self):
+        self.decode(u"æ æ", br'\ae \quad \ae')
+
     def test_number_sign_1(self):
         self.decode(u"# hello", br'\#\ hello')
 
@@ -338,6 +341,9 @@ class TestEncoder(TestCase):
 
     def test_space_2(self):
         self.encode(u"æ æ", br'\ae\ \ae')
+
+    def test_space_3(self):
+        self.encode(u"æ æ", br'\ae \quad \ae')
 
     def test_number_sign(self):
         # note: no need for control space after \#
