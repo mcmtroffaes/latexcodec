@@ -163,7 +163,7 @@ class LatexLexerTest(BaseLatexLexerTest):
 
     @nose.tools.raises(NotImplementedError)
     def test_decode(self):
-            self.lexer.decode(b'')
+        self.lexer.decode(b'')
 
     def test_final_backslash(self):
         self.lex_it(
