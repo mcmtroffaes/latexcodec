@@ -215,6 +215,9 @@ class TestDecoder(TestCase):
             u"l{å}ren l{Å}ren",
             br'l{\r a}ren l{\r A}ren')
 
+    def test_double_quotes(self):
+        self.decode(u"“a+b”", br"``a+b''")
+
 
 class TestStreamDecoder(TestDecoder):
 
@@ -398,6 +401,9 @@ class TestEncoder(TestCase):
     def test_math_minus(self):
         self.encode(u'This is a − test.',
                     br'This is a $-$ test.')
+
+    def test_double_quotes(self):
+        self.encode(u"“a+b”", br"``a+b''")
 
 
 class TestStreamEncoder(TestEncoder):

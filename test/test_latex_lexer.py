@@ -194,6 +194,9 @@ class LatexLexerTest(BaseLatexLexerTest):
         self.lex_it(b'\\% %test\nhi',
                     b'\\%| |%test|\n|h|i'.split(b'|'), final=True)
 
+    def test_double_quotes(self):
+        self.lex_it(b"``a+b''", b"``|a|+|b|''".split(b'|'), final=True)
+
 
 class UnicodeLatexLexerTest(LatexLexerTest):
     Lexer = UnicodeLatexLexer
