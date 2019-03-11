@@ -424,6 +424,10 @@ class LatexUnicodeTable:
         self.register(
             u'\N{LATIN SMALL LETTER O WITH STROKE AND ACUTE}',
             b"\\'\\o")
+        self.register(u'\N{LATIN CAPITAL LETTER ETH}', b'\\DH')
+        self.register(u'\N{LATIN SMALL LETTER ETH}', b'\\dh')
+        self.register(u'\N{LATIN CAPITAL LETTER THORN}', b'\\TH')
+        self.register(u'\N{LATIN SMALL LETTER THORN}', b'\\th')
         self.register(u'\N{PARTIAL DIFFERENTIAL}', b'\\partial', mode='math')
         self.register(u'\N{N-ARY PRODUCT}', b'\\prod', mode='math')
         self.register(u'\N{N-ARY SUMMATION}', b'\\sum', mode='math')
@@ -562,6 +566,14 @@ class LatexUnicodeTable:
         self.register(
             u'\N{TRADE MARK SIGN}',
             b'\\texttrademark',
+            package='textcomp')
+        self.register(
+            u'\N{REGISTERED SIGN}',
+            b'\\textregistered',
+            package='textcomp')
+        self.register(
+            u'\N{COPYRIGHT SIGN}',
+            b'\\textcopyright',
             package='textcomp')
         # \=O and \=o will be translated into Ō and ō before we can
         # match the full latex string... so decoding disabled for now
