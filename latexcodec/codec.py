@@ -424,6 +424,24 @@ class LatexUnicodeTable:
         self.register(
             u'\N{LATIN SMALL LETTER O WITH STROKE AND ACUTE}',
             b"\\'\\o")
+        self.register(u'\N{LATIN CAPITAL LETTER ETH}', b'\\DH')
+        self.register(u'\N{LATIN SMALL LETTER ETH}', b'\\dh')
+        self.register(u'\N{LATIN CAPITAL LETTER THORN}', b'\\TH')
+        self.register(u'\N{LATIN SMALL LETTER THORN}', b'\\th')
+        self.register(u'\N{LATIN CAPITAL LETTER D WITH DOT BELOW}', b'\\d D')
+        self.register(u'\N{LATIN SMALL LETTER D WITH DOT BELOW}', b'\\d d')
+        self.register(u'\N{LATIN CAPITAL LETTER L WITH DOT BELOW}', b'\\d L')
+        self.register(u'\N{LATIN SMALL LETTER L WITH DOT BELOW}', b'\\d l')
+        self.register(u'\N{LATIN CAPITAL LETTER M WITH DOT BELOW}', b'\\d M')
+        self.register(u'\N{LATIN SMALL LETTER M WITH DOT BELOW}', b'\\d m')
+        self.register(u'\N{LATIN CAPITAL LETTER N WITH DOT BELOW}', b'\\d N')
+        self.register(u'\N{LATIN SMALL LETTER N WITH DOT BELOW}', b'\\d n')
+        self.register(u'\N{LATIN CAPITAL LETTER R WITH DOT BELOW}', b'\\d R')
+        self.register(u'\N{LATIN SMALL LETTER R WITH DOT BELOW}', b'\\d r')
+        self.register(u'\N{LATIN CAPITAL LETTER S WITH DOT BELOW}', b'\\d S')
+        self.register(u'\N{LATIN SMALL LETTER S WITH DOT BELOW}', b'\\d s')
+        self.register(u'\N{LATIN CAPITAL LETTER T WITH DOT BELOW}', b'\\d T')
+        self.register(u'\N{LATIN SMALL LETTER T WITH DOT BELOW}', b'\\d t')
         self.register(u'\N{PARTIAL DIFFERENTIAL}', b'\\partial', mode='math')
         self.register(u'\N{N-ARY PRODUCT}', b'\\prod', mode='math')
         self.register(u'\N{N-ARY SUMMATION}', b'\\sum', mode='math')
@@ -562,6 +580,10 @@ class LatexUnicodeTable:
         self.register(
             u'\N{TRADE MARK SIGN}',
             b'\\texttrademark',
+            package='textcomp')
+        self.register(
+            u'\N{REGISTERED SIGN}',
+            b'\\textregistered',
             package='textcomp')
         # \=O and \=o will be translated into Ō and ō before we can
         # match the full latex string... so decoding disabled for now
