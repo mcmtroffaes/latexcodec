@@ -175,7 +175,7 @@ class LatexLexer(RegexpLexer):
         # XXX TBT says no control symbols skip whitespace (except '\ ')
         # XXX but tests reveal otherwise?
         (u'control_word', br'[\\][a-zA-Z]+'),
-        (u'control_symbol', br'[\\][~' br"'" br'"` =^!]'),
+        (u'control_symbol', br'[\\][~' br"'" br'"` =^!.]'),
         # TODO should only match ascii
         (u'control_symbol_x', br'[\\][^a-zA-Z]'),
         # parameter tokens
