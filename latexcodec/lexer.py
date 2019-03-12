@@ -197,11 +197,9 @@ class LatexLexer(RegexpLexer):
          # separate chars because brackets are optional
          # e.g. fran\\c cais = fran\\c{c}ais in latex
          # so only way to detect \\c acting on c only is this way
-         br'|[0-9a-zA-Z{}]|[+*-/.<>?~]|\[|\]'
+         br'|(?![ %#$\n\\])' b'[\x00-\x7f]'
          # we have to join everything else together to support
          # multibyte encodings: every token must be decodable!!
-         # this means for instance that \\c öké is NOT equivalent to
-         # \\c{ö}ké
          br'|[^ %#$\n\\]+'),
         # trailing garbage which we cannot decode otherwise
         # (such as a lone '\' at the end of a buffer)
