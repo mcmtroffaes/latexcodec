@@ -197,10 +197,10 @@ class LatexLexer(RegexpLexer):
          # separate chars because brackets are optional
          # e.g. fran\\c cais = fran\\c{c}ais in latex
          # so only way to detect \\c acting on c only is this way
-         br'|(?![ %#$\n\\])' b'[\x00-\x7f]'
+         br'|(?![ %#$\n\t\\])' b'[\x00-\x7f]'
          # we have to join everything else together to support
          # multibyte encodings: every token must be decodable!!
-         br'|[^ %#$\n\\]+'),
+         b'|[^\x00-\x7f]+'),
         # trailing garbage which we cannot decode otherwise
         # (such as a lone '\' at the end of a buffer)
         # is never emitted, but used internally by the buffer
