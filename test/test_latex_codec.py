@@ -218,6 +218,9 @@ class TestDecoder(TestCase):
     def test_double_quotes(self):
         self.decode(u"“a+b”", br"``a+b''")
 
+    def test_double_quotes_unicode(self):
+        self.decode(u"“á”", u"``á''".encode("utf8"), "utf8")
+
 
 class TestStreamDecoder(TestDecoder):
 
@@ -404,6 +407,9 @@ class TestEncoder(TestCase):
 
     def test_double_quotes(self):
         self.encode(u"“a+b”", br"``a+b''")
+
+    def test_double_quotes_unicode(self):
+        self.encode(u"“á”", br"``\'a''")
 
 
 class TestStreamEncoder(TestEncoder):
