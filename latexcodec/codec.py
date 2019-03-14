@@ -62,7 +62,7 @@ from __future__ import print_function
 
 import codecs
 import six
-from six import string_types
+from six import string_types, text_type
 from six.moves import range
 
 from latexcodec import lexer
@@ -588,18 +588,18 @@ class LatexUnicodeTable:
             package='textcomp')
         # \=O and \=o will be translated into Ō and ō before we can
         # match the full latex string... so decoding disabled for now
-        self.register(u'Ǭ', six.u(r'\textogonekcentered{\=O}'), decode=False)
-        self.register(u'ǭ', six.u(r'\textogonekcentered{\=o}'), decode=False)
-        self.register(u'ℕ', six.u(r'\mathbb{N}'), mode='math')
-        self.register(u'ℕ', six.u(r'\mathbb N'), mode='math', decode=False)
-        self.register(u'ℤ', six.u(r'\mathbb{Z}'), mode='math')
-        self.register(u'ℤ', six.u(r'\mathbb Z'), mode='math', decode=False)
-        self.register(u'ℚ', six.u(r'\mathbb{Q}'), mode='math')
-        self.register(u'ℚ', six.u(r'\mathbb Q'), mode='math', decode=False)
-        self.register(u'ℝ', six.u(r'\mathbb{R}'), mode='math')
-        self.register(u'ℝ', six.u(r'\mathbb R'), mode='math', decode=False)
-        self.register(u'ℂ', six.u(r'\mathbb{C}'), mode='math')
-        self.register(u'ℂ', six.u(r'\mathbb C'), mode='math', decode=False)
+        self.register(u'Ǭ', text_type(r'\textogonekcentered{\=O}'), decode=False)
+        self.register(u'ǭ', text_type(r'\textogonekcentered{\=o}'), decode=False)
+        self.register(u'ℕ', text_type(r'\mathbb{N}'), mode='math')
+        self.register(u'ℕ', text_type(r'\mathbb N'), mode='math', decode=False)
+        self.register(u'ℤ', text_type(r'\mathbb{Z}'), mode='math')
+        self.register(u'ℤ', text_type(r'\mathbb Z'), mode='math', decode=False)
+        self.register(u'ℚ', text_type(r'\mathbb{Q}'), mode='math')
+        self.register(u'ℚ', text_type(r'\mathbb Q'), mode='math', decode=False)
+        self.register(u'ℝ', text_type(r'\mathbb{R}'), mode='math')
+        self.register(u'ℝ', text_type(r'\mathbb R'), mode='math', decode=False)
+        self.register(u'ℂ', text_type(r'\mathbb{C}'), mode='math')
+        self.register(u'ℂ', text_type(r'\mathbb C'), mode='math', decode=False)
 
     def register(self, unicode_text, latex_text, mode='text', package=None,
                  decode=True, encode=True):
@@ -620,7 +620,7 @@ class LatexUnicodeTable:
             self.register(unicode_text, u'$' + latex_text + u'$', mode='text',
                           package=package, decode=decode, encode=encode)
             self.register(unicode_text,
-                          six.u(r'\(') + latex_text + six.u(r'\)'), mode='text',
+                          text_type(r'\(') + latex_text + text_type(r'\)'), mode='text',
                           package=package, decode=decode, encode=encode)
             # XXX for the time being, we do not perform in-math substitutions
             return
