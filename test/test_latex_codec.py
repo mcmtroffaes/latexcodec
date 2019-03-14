@@ -221,7 +221,10 @@ class TestDecoder(TestCase):
     def test_double_quotes_unicode(self):
         self.decode(u"“á”", u"``á''".encode("utf8"), "utf8")
 
+    def test_double_quotes_gb2312(self):
+        self.decode(u"“你好”", u"``你好''".encode('gb2312'), 'gb2312')
 
+        
 class TestStreamDecoder(TestDecoder):
 
     """Stream decoder tests."""
