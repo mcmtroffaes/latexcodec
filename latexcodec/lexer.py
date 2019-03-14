@@ -85,7 +85,7 @@ class RegexpLexer(codecs.IncrementalDecoder):
     """Abstract base class for regexp based lexers."""
 
     emptytoken = Token(u"unknown", u"")
-    
+
     tokens = ()
     """Tuple containing all token regular expressions."""
 
@@ -146,7 +146,7 @@ class LatexLexer(RegexpLexer):
     replacetoken = Token("chars", u"\ufffd")
     curlylefttoken = Token("chars", u"{")
     curlyrighttoken = Token("chars", u"}")
-        
+
     # implementation note: every token **must** be decodable by inputenc
     tokens = (
         # comment: for ease, and for speed, we handle it as a token
@@ -199,7 +199,7 @@ class LatexIncrementalLexer(LatexLexer):
     * no newline characters: paragraphs are separated by '\\par'
     * spaces following control tokens are compressed
     """
-    
+
     def reset(self):
         super(LatexIncrementalLexer, self).reset()
         # three possible states:
@@ -330,8 +330,8 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
 
     def __init__(self, errors='strict'):
         super(LatexIncrementalDecoder, self).__init__(errors)
-        self.decoder = codecs.getincrementaldecoder(self.inputenc)(errors=errors)
-    
+        self.decoder = codecs.getincrementaldecoder(self.inputenc)(errors)
+
     def decode_token(self, token):
         """Returns the decoded token text.
 
@@ -368,7 +368,8 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
         if self.binary_mode:
             try:
                 # in python 3, the token text can be a memoryview
-                # which do not have a decode method; must cast to bytes explicitly
+                # which do not have a decode method; must cast to
+                # bytes explicitly
                 chars = self.decoder.decode(binary_type(bytes_), final=final)
             except UnicodeDecodeError as e:
                 # API requires that the encode method raises a ValueError
@@ -389,7 +390,7 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
     """
 
     emptytoken = Token(u"unknown", u"")
-    
+
     inputenc = "ascii"
     """Input encoding. **Must** extend ascii."""
 
@@ -397,7 +398,7 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
     """Whether this lexer processes binary data (bytes) or text data
     (unicode).
     """
-    
+
     def __init__(self, errors='strict'):
         """Initialize the codec."""
         self.errors = errors

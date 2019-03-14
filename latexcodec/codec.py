@@ -61,7 +61,6 @@
 from __future__ import print_function
 
 import codecs
-import six
 from six import string_types, text_type
 from six.moves import range
 
@@ -238,7 +237,7 @@ class LatexUnicodeTable:
         self.register(u'\N{LATIN SMALL LETTER I WITH ACUTE}', u"\\'i")
         self.register(u'\N{LATIN SMALL LETTER I WITH CIRCUMFLEX}', u'\\^\\i')
         self.register(u'\N{LATIN SMALL LETTER I WITH CIRCUMFLEX}', u'\\^i')
-        self.register(u'\N{LATIN SMALL LETTER I WITH DIAERESIS}', u'\\"\\i') 
+        self.register(u'\N{LATIN SMALL LETTER I WITH DIAERESIS}', u'\\"\\i')
         self.register(u'\N{LATIN SMALL LETTER I WITH DIAERESIS}', u'\\"i')
         self.register(u'\N{LATIN SMALL LETTER N WITH TILDE}', u'\\~n')
         self.register(u'\N{LATIN SMALL LETTER O WITH GRAVE}', u'\\`o')
@@ -588,8 +587,10 @@ class LatexUnicodeTable:
             package='textcomp')
         # \=O and \=o will be translated into Ō and ō before we can
         # match the full latex string... so decoding disabled for now
-        self.register(u'Ǭ', text_type(r'\textogonekcentered{\=O}'), decode=False)
-        self.register(u'ǭ', text_type(r'\textogonekcentered{\=o}'), decode=False)
+        self.register(u'Ǭ', text_type(r'\textogonekcentered{\=O}'),
+                      decode=False)
+        self.register(u'ǭ', text_type(r'\textogonekcentered{\=o}'),
+                      decode=False)
         self.register(u'ℕ', text_type(r'\mathbb{N}'), mode='math')
         self.register(u'ℕ', text_type(r'\mathbb N'), mode='math', decode=False)
         self.register(u'ℤ', text_type(r'\mathbb{Z}'), mode='math')
@@ -620,8 +621,9 @@ class LatexUnicodeTable:
             self.register(unicode_text, u'$' + latex_text + u'$', mode='text',
                           package=package, decode=decode, encode=encode)
             self.register(unicode_text,
-                          text_type(r'\(') + latex_text + text_type(r'\)'), mode='text',
-                          package=package, decode=decode, encode=encode)
+                          text_type(r'\(') + latex_text + text_type(r'\)'),
+                          mode='text', package=package,
+                          decode=decode, encode=encode)
             # XXX for the time being, we do not perform in-math substitutions
             return
         if package is not None:
