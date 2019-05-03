@@ -1,5 +1,8 @@
-1.0.7 (3 May 2019)
+1.0.8 (in development)
 ----------------------
+
+1.0.7 (3 May 2019)
+------------------
 
 * More symbols (THIN SPACE, various accented characters).
 
