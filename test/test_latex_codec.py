@@ -411,6 +411,9 @@ class TestEncoder(TestCase):
     def test_double_quotes_unicode(self):
         self.encode(u"“á”", br"``\'a''")
 
+    def test_thin_space(self):
+        self.encode(u"a\u2009b", b"a b")
+
 
 class TestStreamEncoder(TestEncoder):
 

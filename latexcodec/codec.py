@@ -104,6 +104,7 @@ class LatexUnicodeTable:
         self.register(u'\n\n', b'\\par', encode=False)
         self.register(u' ', b'\\ ', encode=False)
         self.register(u'\N{EM SPACE}', b'\\quad')
+        self.register(u'\N{THIN SPACE}', b' ', decode=False)
         self.register(u'%', b'\\%')
         self.register(u'\N{EN DASH}', b'--')
         self.register(u'\N{EN DASH}', b'\\textendash')
