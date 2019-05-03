@@ -1,5 +1,10 @@
-1.0.7 (in development)
+1.0.7 (3 May 2019)
 ----------------------
+
+* More symbols (THIN SPACE, various accented characters).
+
+* Fix lexer issue with multibyte encodings (thanks to davidweichiang
+  for reporting).
 
 1.0.6 (18 January 2018)
 -----------------------
