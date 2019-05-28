@@ -61,7 +61,7 @@
 from __future__ import print_function
 
 import codecs
-from six import string_types
+from six import string_types, text_type
 from six.moves import range
 
 from latexcodec import lexer
@@ -100,513 +100,515 @@ class LatexUnicodeTable:
         """
         # TODO complete this list
         # register special symbols
-        self.register(u'\n\n', b' \\par', encode=False)
-        self.register(u'\n\n', b'\\par', encode=False)
-        self.register(u' ', b'\\ ', encode=False)
-        self.register(u'\N{EM SPACE}', b'\\quad')
-        self.register(u'\N{THIN SPACE}', b' ', decode=False)
-        self.register(u'%', b'\\%')
-        self.register(u'\N{EN DASH}', b'--')
-        self.register(u'\N{EN DASH}', b'\\textendash')
-        self.register(u'\N{EM DASH}', b'---')
-        self.register(u'\N{EM DASH}', b'\\textemdash')
-        self.register(u'\N{LEFT SINGLE QUOTATION MARK}', b'`', decode=False)
-        self.register(u'\N{RIGHT SINGLE QUOTATION MARK}', b"'", decode=False)
-        self.register(u'\N{LEFT DOUBLE QUOTATION MARK}', b'``')
-        self.register(u'\N{RIGHT DOUBLE QUOTATION MARK}', b"''")
-        self.register(u'\N{DOUBLE LOW-9 QUOTATION MARK}', b'\\glqq')
-        self.register(u'\N{DAGGER}', b'\\dag')
-        self.register(u'\N{DOUBLE DAGGER}', b'\\ddag')
+        self.register(u'\n\n', u' \\par', encode=False)
+        self.register(u'\n\n', u'\\par', encode=False)
+        self.register(u' ', u'\\ ', encode=False)
+        self.register(u'\N{EM SPACE}', u'\\quad')
+        self.register(u'\N{THIN SPACE}', u' ', decode=False)
+        self.register(u'%', u'\\%')
+        self.register(u'\N{EN DASH}', u'--')
+        self.register(u'\N{EN DASH}', u'\\textendash')
+        self.register(u'\N{EM DASH}', u'---')
+        self.register(u'\N{EM DASH}', u'\\textemdash')
+        self.register(u'\N{LEFT SINGLE QUOTATION MARK}', u'`', decode=False)
+        self.register(u'\N{RIGHT SINGLE QUOTATION MARK}', u"'", decode=False)
+        self.register(u'\N{LEFT DOUBLE QUOTATION MARK}', u'``')
+        self.register(u'\N{RIGHT DOUBLE QUOTATION MARK}', u"''")
+        self.register(u'\N{DOUBLE LOW-9 QUOTATION MARK}', u'\\glqq')
+        self.register(u'\N{DAGGER}', u'\\dag')
+        self.register(u'\N{DOUBLE DAGGER}', u'\\ddag')
 
-        self.register(u'\\', b'\\textbackslash', encode=False)
-        self.register(u'\\', b'\\backslash', mode='math', encode=False)
+        self.register(u'\\', u'\\textbackslash', encode=False)
+        self.register(u'\\', u'\\backslash', mode='math', encode=False)
 
-        self.register(u'\N{TILDE OPERATOR}', b'\\sim', mode='math')
+        self.register(u'\N{TILDE OPERATOR}', u'\\sim', mode='math')
         self.register(u'\N{MODIFIER LETTER LOW TILDE}',
-                      b'\\texttildelow', package='textcomp')
-        self.register(u'\N{SMALL TILDE}', b'\\~{}')
-        self.register(u'~', b'\\textasciitilde')
+                      u'\\texttildelow', package='textcomp')
+        self.register(u'\N{SMALL TILDE}', u'\\~{}')
+        self.register(u'~', u'\\textasciitilde')
 
-        self.register(u'\N{BULLET}', b'\\bullet', mode='math')
-        self.register(u'\N{BULLET}', b'\\textbullet', package='textcomp')
+        self.register(u'\N{BULLET}', u'\\bullet', mode='math')
+        self.register(u'\N{BULLET}', u'\\textbullet', package='textcomp')
 
-        self.register(u'\N{NUMBER SIGN}', b'\\#')
-        self.register(u'\N{LOW LINE}', b'\\_')
-        self.register(u'\N{AMPERSAND}', b'\\&')
-        self.register(u'\N{NO-BREAK SPACE}', b'~')
-        self.register(u'\N{INVERTED EXCLAMATION MARK}', b'!`')
-        self.register(u'\N{CENT SIGN}', b'\\not{c}')
+        self.register(u'\N{NUMBER SIGN}', u'\\#')
+        self.register(u'\N{LOW LINE}', u'\\_')
+        self.register(u'\N{AMPERSAND}', u'\\&')
+        self.register(u'\N{NO-BREAK SPACE}', u'~')
+        self.register(u'\N{INVERTED EXCLAMATION MARK}', u'!`')
+        self.register(u'\N{CENT SIGN}', u'\\not{c}')
 
-        self.register(u'\N{POUND SIGN}', b'\\pounds')
-        self.register(u'\N{POUND SIGN}', b'\\textsterling', package='textcomp')
+        self.register(u'\N{POUND SIGN}', u'\\pounds')
+        self.register(u'\N{POUND SIGN}', u'\\textsterling', package='textcomp')
 
-        self.register(u'\N{SECTION SIGN}', b'\\S')
-        self.register(u'\N{DIAERESIS}', b'\\"{}')
-        self.register(u'\N{NOT SIGN}', b'\\neg')
-        self.register(u'\N{HYPHEN}', b'-', decode=False)
-        self.register(u'\N{SOFT HYPHEN}', b'\\-')
-        self.register(u'\N{MACRON}', b'\\={}')
+        self.register(u'\N{SECTION SIGN}', u'\\S')
+        self.register(u'\N{DIAERESIS}', u'\\"{}')
+        self.register(u'\N{NOT SIGN}', u'\\neg')
+        self.register(u'\N{HYPHEN}', u'-', decode=False)
+        self.register(u'\N{SOFT HYPHEN}', u'\\-')
+        self.register(u'\N{MACRON}', u'\\={}')
 
-        self.register(u'\N{DEGREE SIGN}', b'^\\circ', mode='math')
-        self.register(u'\N{DEGREE SIGN}', b'\\textdegree', package='textcomp')
+        self.register(u'\N{DEGREE SIGN}', u'^\\circ', mode='math')
+        self.register(u'\N{DEGREE SIGN}', u'\\textdegree', package='textcomp')
 
-        self.register(u'\N{MINUS SIGN}', b'-', mode='math')
-        self.register(u'\N{PLUS-MINUS SIGN}', b'\\pm', mode='math')
-        self.register(u'\N{PLUS-MINUS SIGN}', b'\\textpm', package='textcomp')
+        self.register(u'\N{MINUS SIGN}', u'-', mode='math')
+        self.register(u'\N{PLUS-MINUS SIGN}', u'\\pm', mode='math')
+        self.register(u'\N{PLUS-MINUS SIGN}', u'\\textpm', package='textcomp')
 
-        self.register(u'\N{SUPERSCRIPT TWO}', b'^2', mode='math')
+        self.register(u'\N{SUPERSCRIPT TWO}', u'^2', mode='math')
         self.register(
             u'\N{SUPERSCRIPT TWO}',
-            b'\\texttwosuperior',
+            u'\\texttwosuperior',
             package='textcomp')
 
-        self.register(u'\N{SUPERSCRIPT THREE}', b'^3', mode='math')
+        self.register(u'\N{SUPERSCRIPT THREE}', u'^3', mode='math')
         self.register(
             u'\N{SUPERSCRIPT THREE}',
-            b'\\textthreesuperior',
+            u'\\textthreesuperior',
             package='textcomp')
 
-        self.register(u'\N{ACUTE ACCENT}', b"\\'{}")
+        self.register(u'\N{ACUTE ACCENT}', u"\\'{}")
 
-        self.register(u'\N{MICRO SIGN}', b'\\mu', mode='math')
-        self.register(u'\N{MICRO SIGN}', b'\\micro', package='gensymb')
+        self.register(u'\N{MICRO SIGN}', u'\\mu', mode='math')
+        self.register(u'\N{MICRO SIGN}', u'\\micro', package='gensymu')
 
-        self.register(u'\N{PILCROW SIGN}', b'\\P')
+        self.register(u'\N{PILCROW SIGN}', u'\\P')
 
-        self.register(u'\N{MIDDLE DOT}', b'\\cdot', mode='math')
+        self.register(u'\N{MIDDLE DOT}', u'\\cdot', mode='math')
         self.register(
             u'\N{MIDDLE DOT}',
-            b'\\textperiodcentered',
+            u'\\textperiodcentered',
             package='textcomp')
 
-        self.register(u'\N{CEDILLA}', b'\\c{}')
+        self.register(u'\N{CEDILLA}', u'\\c{}')
 
-        self.register(u'\N{SUPERSCRIPT ONE}', b'^1', mode='math')
+        self.register(u'\N{SUPERSCRIPT ONE}', u'^1', mode='math')
         self.register(
             u'\N{SUPERSCRIPT ONE}',
-            b'\\textonesuperior',
+            u'\\textonesuperior',
             package='textcomp')
 
-        self.register(u'\N{INVERTED QUESTION MARK}', b'?`')
-        self.register(u'\N{LATIN CAPITAL LETTER A WITH GRAVE}', b'\\`A')
-        self.register(u'\N{LATIN CAPITAL LETTER A WITH CIRCUMFLEX}', b'\\^A')
-        self.register(u'\N{LATIN CAPITAL LETTER A WITH TILDE}', b'\\~A')
-        self.register(u'\N{LATIN CAPITAL LETTER A WITH DIAERESIS}', b'\\"A')
-        self.register(u'\N{LATIN CAPITAL LETTER A WITH RING ABOVE}', b'\\AA')
-        self.register(u'\N{LATIN CAPITAL LETTER A WITH RING ABOVE}', b'\\r A',
+        self.register(u'\N{INVERTED QUESTION MARK}', u'?`')
+        self.register(u'\N{LATIN CAPITAL LETTER A WITH GRAVE}', u'\\`A')
+        self.register(u'\N{LATIN CAPITAL LETTER A WITH CIRCUMFLEX}', u'\\^A')
+        self.register(u'\N{LATIN CAPITAL LETTER A WITH TILDE}', u'\\~A')
+        self.register(u'\N{LATIN CAPITAL LETTER A WITH DIAERESIS}', u'\\"A')
+        self.register(u'\N{LATIN CAPITAL LETTER A WITH RING ABOVE}', u'\\AA')
+        self.register(u'\N{LATIN CAPITAL LETTER A WITH RING ABOVE}', u'\\r A',
                       encode=False)
-        self.register(u'\N{LATIN CAPITAL LETTER AE}', b'\\AE')
-        self.register(u'\N{LATIN CAPITAL LETTER C WITH CEDILLA}', b'\\c C')
-        self.register(u'\N{LATIN CAPITAL LETTER E WITH GRAVE}', b'\\`E')
-        self.register(u'\N{LATIN CAPITAL LETTER E WITH ACUTE}', b"\\'E")
-        self.register(u'\N{LATIN CAPITAL LETTER E WITH CIRCUMFLEX}', b'\\^E')
-        self.register(u'\N{LATIN CAPITAL LETTER E WITH DIAERESIS}', b'\\"E')
-        self.register(u'\N{LATIN CAPITAL LETTER I WITH GRAVE}', b'\\`I')
-        self.register(u'\N{LATIN CAPITAL LETTER I WITH CIRCUMFLEX}', b'\\^I')
-        self.register(u'\N{LATIN CAPITAL LETTER I WITH DIAERESIS}', b'\\"I')
-        self.register(u'\N{LATIN CAPITAL LETTER N WITH TILDE}', b'\\~N')
-        self.register(u'\N{LATIN CAPITAL LETTER O WITH GRAVE}', b'\\`O')
-        self.register(u'\N{LATIN CAPITAL LETTER O WITH ACUTE}', b"\\'O")
-        self.register(u'\N{LATIN CAPITAL LETTER O WITH CIRCUMFLEX}', b'\\^O')
-        self.register(u'\N{LATIN CAPITAL LETTER O WITH TILDE}', b'\\~O')
-        self.register(u'\N{LATIN CAPITAL LETTER O WITH DIAERESIS}', b'\\"O')
-        self.register(u'\N{MULTIPLICATION SIGN}', b'\\times', mode='math')
-        self.register(u'\N{LATIN CAPITAL LETTER O WITH STROKE}', b'\\O')
-        self.register(u'\N{LATIN CAPITAL LETTER U WITH GRAVE}', b'\\`U')
-        self.register(u'\N{LATIN CAPITAL LETTER U WITH ACUTE}', b"\\'U")
-        self.register(u'\N{LATIN CAPITAL LETTER U WITH CIRCUMFLEX}', b'\\^U')
-        self.register(u'\N{LATIN CAPITAL LETTER U WITH DIAERESIS}', b'\\"U')
-        self.register(u'\N{LATIN CAPITAL LETTER Y WITH ACUTE}', b"\\'Y")
-        self.register(u'\N{LATIN SMALL LETTER SHARP S}', b'\\ss')
-        self.register(u'\N{LATIN SMALL LETTER A WITH GRAVE}', b'\\`a')
-        self.register(u'\N{LATIN SMALL LETTER A WITH ACUTE}', b"\\'a")
-        self.register(u'\N{LATIN SMALL LETTER A WITH CIRCUMFLEX}', b'\\^a')
-        self.register(u'\N{LATIN SMALL LETTER A WITH TILDE}', b'\\~a')
-        self.register(u'\N{LATIN SMALL LETTER A WITH DIAERESIS}', b'\\"a')
-        self.register(u'\N{LATIN SMALL LETTER A WITH RING ABOVE}', b'\\aa')
-        self.register(u'\N{LATIN SMALL LETTER A WITH RING ABOVE}', b'\\r a',
+        self.register(u'\N{LATIN CAPITAL LETTER AE}', u'\\AE')
+        self.register(u'\N{LATIN CAPITAL LETTER C WITH CEDILLA}', u'\\c C')
+        self.register(u'\N{LATIN CAPITAL LETTER E WITH GRAVE}', u'\\`E')
+        self.register(u'\N{LATIN CAPITAL LETTER E WITH ACUTE}', u"\\'E")
+        self.register(u'\N{LATIN CAPITAL LETTER E WITH CIRCUMFLEX}', u'\\^E')
+        self.register(u'\N{LATIN CAPITAL LETTER E WITH DIAERESIS}', u'\\"E')
+        self.register(u'\N{LATIN CAPITAL LETTER I WITH GRAVE}', u'\\`I')
+        self.register(u'\N{LATIN CAPITAL LETTER I WITH CIRCUMFLEX}', u'\\^I')
+        self.register(u'\N{LATIN CAPITAL LETTER I WITH DIAERESIS}', u'\\"I')
+        self.register(u'\N{LATIN CAPITAL LETTER N WITH TILDE}', u'\\~N')
+        self.register(u'\N{LATIN CAPITAL LETTER O WITH GRAVE}', u'\\`O')
+        self.register(u'\N{LATIN CAPITAL LETTER O WITH ACUTE}', u"\\'O")
+        self.register(u'\N{LATIN CAPITAL LETTER O WITH CIRCUMFLEX}', u'\\^O')
+        self.register(u'\N{LATIN CAPITAL LETTER O WITH TILDE}', u'\\~O')
+        self.register(u'\N{LATIN CAPITAL LETTER O WITH DIAERESIS}', u'\\"O')
+        self.register(u'\N{MULTIPLICATION SIGN}', u'\\times', mode='math')
+        self.register(u'\N{LATIN CAPITAL LETTER O WITH STROKE}', u'\\O')
+        self.register(u'\N{LATIN CAPITAL LETTER U WITH GRAVE}', u'\\`U')
+        self.register(u'\N{LATIN CAPITAL LETTER U WITH ACUTE}', u"\\'U")
+        self.register(u'\N{LATIN CAPITAL LETTER U WITH CIRCUMFLEX}', u'\\^U')
+        self.register(u'\N{LATIN CAPITAL LETTER U WITH DIAERESIS}', u'\\"U')
+        self.register(u'\N{LATIN CAPITAL LETTER Y WITH ACUTE}', u"\\'Y")
+        self.register(u'\N{LATIN SMALL LETTER SHARP S}', u'\\ss')
+        self.register(u'\N{LATIN SMALL LETTER A WITH GRAVE}', u'\\`a')
+        self.register(u'\N{LATIN SMALL LETTER A WITH ACUTE}', u"\\'a")
+        self.register(u'\N{LATIN SMALL LETTER A WITH CIRCUMFLEX}', u'\\^a')
+        self.register(u'\N{LATIN SMALL LETTER A WITH TILDE}', u'\\~a')
+        self.register(u'\N{LATIN SMALL LETTER A WITH DIAERESIS}', u'\\"a')
+        self.register(u'\N{LATIN SMALL LETTER A WITH RING ABOVE}', u'\\aa')
+        self.register(u'\N{LATIN SMALL LETTER A WITH RING ABOVE}', u'\\r a',
                       encode=False)
-        self.register(u'\N{LATIN SMALL LETTER AE}', b'\\ae')
-        self.register(u'\N{LATIN SMALL LETTER C WITH CEDILLA}', b'\\c c')
-        self.register(u'\N{LATIN SMALL LETTER E WITH GRAVE}', b'\\`e')
-        self.register(u'\N{LATIN SMALL LETTER E WITH ACUTE}', b"\\'e")
-        self.register(u'\N{LATIN SMALL LETTER E WITH CIRCUMFLEX}', b'\\^e')
-        self.register(u'\N{LATIN SMALL LETTER E WITH DIAERESIS}', b'\\"e')
-        self.register(u'\N{LATIN SMALL LETTER I WITH GRAVE}', b'\\`\\i')
-        self.register(u'\N{LATIN SMALL LETTER I WITH GRAVE}', b'\\`i')
-        self.register(u'\N{LATIN SMALL LETTER I WITH ACUTE}', b"\\'\\i")
-        self.register(u'\N{LATIN SMALL LETTER I WITH ACUTE}', b"\\'i")
-        self.register(u'\N{LATIN SMALL LETTER I WITH CIRCUMFLEX}', b'\\^\\i')
-        self.register(u'\N{LATIN SMALL LETTER I WITH CIRCUMFLEX}', b'\\^i')
-        self.register(u'\N{LATIN SMALL LETTER I WITH DIAERESIS}', b'\\"\\i')
-        self.register(u'\N{LATIN SMALL LETTER I WITH DIAERESIS}', b'\\"i')
-        self.register(u'\N{LATIN SMALL LETTER N WITH TILDE}', b'\\~n')
-        self.register(u'\N{LATIN SMALL LETTER O WITH GRAVE}', b'\\`o')
-        self.register(u'\N{LATIN SMALL LETTER O WITH ACUTE}', b"\\'o")
-        self.register(u'\N{LATIN SMALL LETTER O WITH CIRCUMFLEX}', b'\\^o')
-        self.register(u'\N{LATIN SMALL LETTER O WITH TILDE}', b'\\~o')
-        self.register(u'\N{LATIN SMALL LETTER O WITH DIAERESIS}', b'\\"o')
-        self.register(u'\N{DIVISION SIGN}', b'\\div', mode='math')
-        self.register(u'\N{LATIN SMALL LETTER O WITH STROKE}', b'\\o')
-        self.register(u'\N{LATIN SMALL LETTER U WITH GRAVE}', b'\\`u')
-        self.register(u'\N{LATIN SMALL LETTER U WITH ACUTE}', b"\\'u")
-        self.register(u'\N{LATIN SMALL LETTER U WITH CIRCUMFLEX}', b'\\^u')
-        self.register(u'\N{LATIN SMALL LETTER U WITH DIAERESIS}', b'\\"u')
-        self.register(u'\N{LATIN SMALL LETTER Y WITH ACUTE}', b"\\'y")
-        self.register(u'\N{LATIN SMALL LETTER Y WITH DIAERESIS}', b'\\"y')
-        self.register(u'\N{LATIN CAPITAL LETTER A WITH MACRON}', b'\\=A')
-        self.register(u'\N{LATIN SMALL LETTER A WITH MACRON}', b'\\=a')
-        self.register(u'\N{LATIN CAPITAL LETTER A WITH BREVE}', b'\\u A')
-        self.register(u'\N{LATIN SMALL LETTER A WITH BREVE}', b'\\u a')
-        self.register(u'\N{LATIN CAPITAL LETTER A WITH OGONEK}', b'\\k A')
-        self.register(u'\N{LATIN SMALL LETTER A WITH OGONEK}', b'\\k a')
-        self.register(u'\N{LATIN CAPITAL LETTER C WITH ACUTE}', b"\\'C")
-        self.register(u'\N{LATIN SMALL LETTER C WITH ACUTE}', b"\\'c")
-        self.register(u'\N{LATIN CAPITAL LETTER C WITH CIRCUMFLEX}', b'\\^C')
-        self.register(u'\N{LATIN SMALL LETTER C WITH CIRCUMFLEX}', b'\\^c')
-        self.register(u'\N{LATIN CAPITAL LETTER C WITH DOT ABOVE}', b'\\.C')
-        self.register(u'\N{LATIN SMALL LETTER C WITH DOT ABOVE}', b'\\.c')
-        self.register(u'\N{LATIN CAPITAL LETTER C WITH CARON}', b'\\v C')
-        self.register(u'\N{LATIN SMALL LETTER C WITH CARON}', b'\\v c')
-        self.register(u'\N{LATIN CAPITAL LETTER D WITH CARON}', b'\\v D')
-        self.register(u'\N{LATIN SMALL LETTER D WITH CARON}', b'\\v d')
-        self.register(u'\N{LATIN CAPITAL LETTER E WITH MACRON}', b'\\=E')
-        self.register(u'\N{LATIN SMALL LETTER E WITH MACRON}', b'\\=e')
-        self.register(u'\N{LATIN CAPITAL LETTER E WITH BREVE}', b'\\u E')
-        self.register(u'\N{LATIN SMALL LETTER E WITH BREVE}', b'\\u e')
-        self.register(u'\N{LATIN CAPITAL LETTER E WITH DOT ABOVE}', b'\\.E')
-        self.register(u'\N{LATIN SMALL LETTER E WITH DOT ABOVE}', b'\\.e')
-        self.register(u'\N{LATIN CAPITAL LETTER E WITH OGONEK}', b'\\k E')
-        self.register(u'\N{LATIN SMALL LETTER E WITH OGONEK}', b'\\k e')
-        self.register(u'\N{LATIN CAPITAL LETTER E WITH CARON}', b'\\v E')
-        self.register(u'\N{LATIN SMALL LETTER E WITH CARON}', b'\\v e')
-        self.register(u'\N{LATIN CAPITAL LETTER G WITH CIRCUMFLEX}', b'\\^G')
-        self.register(u'\N{LATIN SMALL LETTER G WITH CIRCUMFLEX}', b'\\^g')
-        self.register(u'\N{LATIN CAPITAL LETTER G WITH BREVE}', b'\\u G')
-        self.register(u'\N{LATIN SMALL LETTER G WITH BREVE}', b'\\u g')
-        self.register(u'\N{LATIN CAPITAL LETTER G WITH DOT ABOVE}', b'\\.G')
-        self.register(u'\N{LATIN SMALL LETTER G WITH DOT ABOVE}', b'\\.g')
-        self.register(u'\N{LATIN CAPITAL LETTER G WITH CEDILLA}', b'\\c G')
-        self.register(u'\N{LATIN SMALL LETTER G WITH CEDILLA}', b'\\c g')
-        self.register(u'\N{LATIN CAPITAL LETTER H WITH CIRCUMFLEX}', b'\\^H')
-        self.register(u'\N{LATIN SMALL LETTER H WITH CIRCUMFLEX}', b'\\^h')
-        self.register(u'\N{LATIN CAPITAL LETTER I WITH TILDE}', b'\\~I')
-        self.register(u'\N{LATIN SMALL LETTER I WITH TILDE}', b'\\~\\i')
-        self.register(u'\N{LATIN SMALL LETTER I WITH TILDE}', b'\\~i')
-        self.register(u'\N{LATIN CAPITAL LETTER I WITH MACRON}', b'\\=I')
-        self.register(u'\N{LATIN SMALL LETTER I WITH MACRON}', b'\\=\\i')
-        self.register(u'\N{LATIN SMALL LETTER I WITH MACRON}', b'\\=i')
-        self.register(u'\N{LATIN CAPITAL LETTER I WITH BREVE}', b'\\u I')
-        self.register(u'\N{LATIN SMALL LETTER I WITH BREVE}', b'\\u\\i')
-        self.register(u'\N{LATIN SMALL LETTER I WITH BREVE}', b'\\u i')
-        self.register(u'\N{LATIN CAPITAL LETTER I WITH OGONEK}', b'\\k I')
-        self.register(u'\N{LATIN SMALL LETTER I WITH OGONEK}', b'\\k i')
-        self.register(u'\N{LATIN CAPITAL LETTER I WITH DOT ABOVE}', b'\\.I')
-        self.register(u'\N{LATIN SMALL LETTER DOTLESS I}', b'\\i')
-        self.register(u'\N{LATIN CAPITAL LIGATURE IJ}', b'IJ', decode=False)
-        self.register(u'\N{LATIN SMALL LIGATURE IJ}', b'ij', decode=False)
-        self.register(u'\N{LATIN CAPITAL LETTER J WITH CIRCUMFLEX}', b'\\^J')
-        self.register(u'\N{LATIN SMALL LETTER J WITH CIRCUMFLEX}', b'\\^\\j')
-        self.register(u'\N{LATIN SMALL LETTER J WITH CIRCUMFLEX}', b'\\^j')
-        self.register(u'\N{LATIN CAPITAL LETTER K WITH CEDILLA}', b'\\c K')
-        self.register(u'\N{LATIN SMALL LETTER K WITH CEDILLA}', b'\\c k')
-        self.register(u'\N{LATIN CAPITAL LETTER L WITH ACUTE}', b"\\'L")
-        self.register(u'\N{LATIN SMALL LETTER L WITH ACUTE}', b"\\'l")
-        self.register(u'\N{LATIN CAPITAL LETTER L WITH CEDILLA}', b'\\c L')
-        self.register(u'\N{LATIN SMALL LETTER L WITH CEDILLA}', b'\\c l')
-        self.register(u'\N{LATIN CAPITAL LETTER L WITH CARON}', b'\\v L')
-        self.register(u'\N{LATIN SMALL LETTER L WITH CARON}', b'\\v l')
-        self.register(u'\N{LATIN CAPITAL LETTER L WITH STROKE}', b'\\L')
-        self.register(u'\N{LATIN SMALL LETTER L WITH STROKE}', b'\\l')
-        self.register(u'\N{LATIN CAPITAL LETTER N WITH ACUTE}', b"\\'N")
-        self.register(u'\N{LATIN SMALL LETTER N WITH ACUTE}', b"\\'n")
-        self.register(u'\N{LATIN CAPITAL LETTER N WITH CEDILLA}', b'\\c N')
-        self.register(u'\N{LATIN SMALL LETTER N WITH CEDILLA}', b'\\c n')
-        self.register(u'\N{LATIN CAPITAL LETTER N WITH CARON}', b'\\v N')
-        self.register(u'\N{LATIN SMALL LETTER N WITH CARON}', b'\\v n')
-        self.register(u'\N{LATIN CAPITAL LETTER O WITH MACRON}', b'\\=O')
-        self.register(u'\N{LATIN SMALL LETTER O WITH MACRON}', b'\\=o')
-        self.register(u'\N{LATIN CAPITAL LETTER O WITH BREVE}', b'\\u O')
-        self.register(u'\N{LATIN SMALL LETTER O WITH BREVE}', b'\\u o')
+        self.register(u'\N{LATIN SMALL LETTER AE}', u'\\ae')
+        self.register(u'\N{LATIN SMALL LETTER C WITH CEDILLA}', u'\\c c')
+        self.register(u'\N{LATIN SMALL LETTER E WITH GRAVE}', u'\\`e')
+        self.register(u'\N{LATIN SMALL LETTER E WITH ACUTE}', u"\\'e")
+        self.register(u'\N{LATIN SMALL LETTER E WITH CIRCUMFLEX}', u'\\^e')
+        self.register(u'\N{LATIN SMALL LETTER E WITH DIAERESIS}', u'\\"e')
+        self.register(u'\N{LATIN SMALL LETTER I WITH GRAVE}', u'\\`\\i')
+        self.register(u'\N{LATIN SMALL LETTER I WITH GRAVE}', u'\\`i')
+        self.register(u'\N{LATIN SMALL LETTER I WITH ACUTE}', u"\\'\\i")
+        self.register(u'\N{LATIN SMALL LETTER I WITH ACUTE}', u"\\'i")
+        self.register(u'\N{LATIN SMALL LETTER I WITH CIRCUMFLEX}', u'\\^\\i')
+        self.register(u'\N{LATIN SMALL LETTER I WITH CIRCUMFLEX}', u'\\^i')
+        self.register(u'\N{LATIN SMALL LETTER I WITH DIAERESIS}', u'\\"\\i')
+        self.register(u'\N{LATIN SMALL LETTER I WITH DIAERESIS}', u'\\"i')
+        self.register(u'\N{LATIN SMALL LETTER N WITH TILDE}', u'\\~n')
+        self.register(u'\N{LATIN SMALL LETTER O WITH GRAVE}', u'\\`o')
+        self.register(u'\N{LATIN SMALL LETTER O WITH ACUTE}', u"\\'o")
+        self.register(u'\N{LATIN SMALL LETTER O WITH CIRCUMFLEX}', u'\\^o')
+        self.register(u'\N{LATIN SMALL LETTER O WITH TILDE}', u'\\~o')
+        self.register(u'\N{LATIN SMALL LETTER O WITH DIAERESIS}', u'\\"o')
+        self.register(u'\N{DIVISION SIGN}', u'\\div', mode='math')
+        self.register(u'\N{LATIN SMALL LETTER O WITH STROKE}', u'\\o')
+        self.register(u'\N{LATIN SMALL LETTER U WITH GRAVE}', u'\\`u')
+        self.register(u'\N{LATIN SMALL LETTER U WITH ACUTE}', u"\\'u")
+        self.register(u'\N{LATIN SMALL LETTER U WITH CIRCUMFLEX}', u'\\^u')
+        self.register(u'\N{LATIN SMALL LETTER U WITH DIAERESIS}', u'\\"u')
+        self.register(u'\N{LATIN SMALL LETTER Y WITH ACUTE}', u"\\'y")
+        self.register(u'\N{LATIN SMALL LETTER Y WITH DIAERESIS}', u'\\"y')
+        self.register(u'\N{LATIN CAPITAL LETTER A WITH MACRON}', u'\\=A')
+        self.register(u'\N{LATIN SMALL LETTER A WITH MACRON}', u'\\=a')
+        self.register(u'\N{LATIN CAPITAL LETTER A WITH BREVE}', u'\\u A')
+        self.register(u'\N{LATIN SMALL LETTER A WITH BREVE}', u'\\u a')
+        self.register(u'\N{LATIN CAPITAL LETTER A WITH OGONEK}', u'\\k A')
+        self.register(u'\N{LATIN SMALL LETTER A WITH OGONEK}', u'\\k a')
+        self.register(u'\N{LATIN CAPITAL LETTER C WITH ACUTE}', u"\\'C")
+        self.register(u'\N{LATIN SMALL LETTER C WITH ACUTE}', u"\\'c")
+        self.register(u'\N{LATIN CAPITAL LETTER C WITH CIRCUMFLEX}', u'\\^C')
+        self.register(u'\N{LATIN SMALL LETTER C WITH CIRCUMFLEX}', u'\\^c')
+        self.register(u'\N{LATIN CAPITAL LETTER C WITH DOT ABOVE}', u'\\.C')
+        self.register(u'\N{LATIN SMALL LETTER C WITH DOT ABOVE}', u'\\.c')
+        self.register(u'\N{LATIN CAPITAL LETTER C WITH CARON}', u'\\v C')
+        self.register(u'\N{LATIN SMALL LETTER C WITH CARON}', u'\\v c')
+        self.register(u'\N{LATIN CAPITAL LETTER D WITH CARON}', u'\\v D')
+        self.register(u'\N{LATIN SMALL LETTER D WITH CARON}', u'\\v d')
+        self.register(u'\N{LATIN CAPITAL LETTER E WITH MACRON}', u'\\=E')
+        self.register(u'\N{LATIN SMALL LETTER E WITH MACRON}', u'\\=e')
+        self.register(u'\N{LATIN CAPITAL LETTER E WITH BREVE}', u'\\u E')
+        self.register(u'\N{LATIN SMALL LETTER E WITH BREVE}', u'\\u e')
+        self.register(u'\N{LATIN CAPITAL LETTER E WITH DOT ABOVE}', u'\\.E')
+        self.register(u'\N{LATIN SMALL LETTER E WITH DOT ABOVE}', u'\\.e')
+        self.register(u'\N{LATIN CAPITAL LETTER E WITH OGONEK}', u'\\k E')
+        self.register(u'\N{LATIN SMALL LETTER E WITH OGONEK}', u'\\k e')
+        self.register(u'\N{LATIN CAPITAL LETTER E WITH CARON}', u'\\v E')
+        self.register(u'\N{LATIN SMALL LETTER E WITH CARON}', u'\\v e')
+        self.register(u'\N{LATIN CAPITAL LETTER G WITH CIRCUMFLEX}', u'\\^G')
+        self.register(u'\N{LATIN SMALL LETTER G WITH CIRCUMFLEX}', u'\\^g')
+        self.register(u'\N{LATIN CAPITAL LETTER G WITH BREVE}', u'\\u G')
+        self.register(u'\N{LATIN SMALL LETTER G WITH BREVE}', u'\\u g')
+        self.register(u'\N{LATIN CAPITAL LETTER G WITH DOT ABOVE}', u'\\.G')
+        self.register(u'\N{LATIN SMALL LETTER G WITH DOT ABOVE}', u'\\.g')
+        self.register(u'\N{LATIN CAPITAL LETTER G WITH CEDILLA}', u'\\c G')
+        self.register(u'\N{LATIN SMALL LETTER G WITH CEDILLA}', u'\\c g')
+        self.register(u'\N{LATIN CAPITAL LETTER H WITH CIRCUMFLEX}', u'\\^H')
+        self.register(u'\N{LATIN SMALL LETTER H WITH CIRCUMFLEX}', u'\\^h')
+        self.register(u'\N{LATIN CAPITAL LETTER I WITH TILDE}', u'\\~I')
+        self.register(u'\N{LATIN SMALL LETTER I WITH TILDE}', u'\\~\\i')
+        self.register(u'\N{LATIN SMALL LETTER I WITH TILDE}', u'\\~i')
+        self.register(u'\N{LATIN CAPITAL LETTER I WITH MACRON}', u'\\=I')
+        self.register(u'\N{LATIN SMALL LETTER I WITH MACRON}', u'\\=\\i')
+        self.register(u'\N{LATIN SMALL LETTER I WITH MACRON}', u'\\=i')
+        self.register(u'\N{LATIN CAPITAL LETTER I WITH BREVE}', u'\\u I')
+        self.register(u'\N{LATIN SMALL LETTER I WITH BREVE}', u'\\u\\i')
+        self.register(u'\N{LATIN SMALL LETTER I WITH BREVE}', u'\\u i')
+        self.register(u'\N{LATIN CAPITAL LETTER I WITH OGONEK}', u'\\k I')
+        self.register(u'\N{LATIN SMALL LETTER I WITH OGONEK}', u'\\k i')
+        self.register(u'\N{LATIN CAPITAL LETTER I WITH DOT ABOVE}', u'\\.I')
+        self.register(u'\N{LATIN SMALL LETTER DOTLESS I}', u'\\i')
+        self.register(u'\N{LATIN CAPITAL LIGATURE IJ}', u'IJ', decode=False)
+        self.register(u'\N{LATIN SMALL LIGATURE IJ}', u'ij', decode=False)
+        self.register(u'\N{LATIN CAPITAL LETTER J WITH CIRCUMFLEX}', u'\\^J')
+        self.register(u'\N{LATIN SMALL LETTER J WITH CIRCUMFLEX}', u'\\^\\j')
+        self.register(u'\N{LATIN SMALL LETTER J WITH CIRCUMFLEX}', u'\\^j')
+        self.register(u'\N{LATIN CAPITAL LETTER K WITH CEDILLA}', u'\\c K')
+        self.register(u'\N{LATIN SMALL LETTER K WITH CEDILLA}', u'\\c k')
+        self.register(u'\N{LATIN CAPITAL LETTER L WITH ACUTE}', u"\\'L")
+        self.register(u'\N{LATIN SMALL LETTER L WITH ACUTE}', u"\\'l")
+        self.register(u'\N{LATIN CAPITAL LETTER L WITH CEDILLA}', u'\\c L')
+        self.register(u'\N{LATIN SMALL LETTER L WITH CEDILLA}', u'\\c l')
+        self.register(u'\N{LATIN CAPITAL LETTER L WITH CARON}', u'\\v L')
+        self.register(u'\N{LATIN SMALL LETTER L WITH CARON}', u'\\v l')
+        self.register(u'\N{LATIN CAPITAL LETTER L WITH STROKE}', u'\\L')
+        self.register(u'\N{LATIN SMALL LETTER L WITH STROKE}', u'\\l')
+        self.register(u'\N{LATIN CAPITAL LETTER N WITH ACUTE}', u"\\'N")
+        self.register(u'\N{LATIN SMALL LETTER N WITH ACUTE}', u"\\'n")
+        self.register(u'\N{LATIN CAPITAL LETTER N WITH CEDILLA}', u'\\c N')
+        self.register(u'\N{LATIN SMALL LETTER N WITH CEDILLA}', u'\\c n')
+        self.register(u'\N{LATIN CAPITAL LETTER N WITH CARON}', u'\\v N')
+        self.register(u'\N{LATIN SMALL LETTER N WITH CARON}', u'\\v n')
+        self.register(u'\N{LATIN CAPITAL LETTER O WITH MACRON}', u'\\=O')
+        self.register(u'\N{LATIN SMALL LETTER O WITH MACRON}', u'\\=o')
+        self.register(u'\N{LATIN CAPITAL LETTER O WITH BREVE}', u'\\u O')
+        self.register(u'\N{LATIN SMALL LETTER O WITH BREVE}', u'\\u o')
         self.register(
             u'\N{LATIN CAPITAL LETTER O WITH DOUBLE ACUTE}',
-            b'\\H O')
-        self.register(u'\N{LATIN SMALL LETTER O WITH DOUBLE ACUTE}', b'\\H o')
-        self.register(u'\N{LATIN CAPITAL LIGATURE OE}', b'\\OE')
-        self.register(u'\N{LATIN SMALL LIGATURE OE}', b'\\oe')
-        self.register(u'\N{LATIN CAPITAL LETTER R WITH ACUTE}', b"\\'R")
-        self.register(u'\N{LATIN SMALL LETTER R WITH ACUTE}', b"\\'r")
-        self.register(u'\N{LATIN CAPITAL LETTER R WITH CEDILLA}', b'\\c R')
-        self.register(u'\N{LATIN SMALL LETTER R WITH CEDILLA}', b'\\c r')
-        self.register(u'\N{LATIN CAPITAL LETTER R WITH CARON}', b'\\v R')
-        self.register(u'\N{LATIN SMALL LETTER R WITH CARON}', b'\\v r')
-        self.register(u'\N{LATIN CAPITAL LETTER S WITH ACUTE}', b"\\'S")
-        self.register(u'\N{LATIN SMALL LETTER S WITH ACUTE}', b"\\'s")
-        self.register(u'\N{LATIN CAPITAL LETTER S WITH CIRCUMFLEX}', b'\\^S')
-        self.register(u'\N{LATIN SMALL LETTER S WITH CIRCUMFLEX}', b'\\^s')
-        self.register(u'\N{LATIN CAPITAL LETTER S WITH CEDILLA}', b'\\c S')
-        self.register(u'\N{LATIN SMALL LETTER S WITH CEDILLA}', b'\\c s')
-        self.register(u'\N{LATIN CAPITAL LETTER S WITH CARON}', b'\\v S')
-        self.register(u'\N{LATIN SMALL LETTER S WITH CARON}', b'\\v s')
-        self.register(u'\N{LATIN CAPITAL LETTER T WITH CEDILLA}', b'\\c T')
-        self.register(u'\N{LATIN SMALL LETTER T WITH CEDILLA}', b'\\c t')
-        self.register(u'\N{LATIN CAPITAL LETTER T WITH CARON}', b'\\v T')
-        self.register(u'\N{LATIN SMALL LETTER T WITH CARON}', b'\\v t')
-        self.register(u'\N{LATIN CAPITAL LETTER U WITH TILDE}', b'\\~U')
-        self.register(u'\N{LATIN SMALL LETTER U WITH TILDE}', b'\\~u')
-        self.register(u'\N{LATIN CAPITAL LETTER U WITH MACRON}', b'\\=U')
-        self.register(u'\N{LATIN SMALL LETTER U WITH MACRON}', b'\\=u')
-        self.register(u'\N{LATIN CAPITAL LETTER U WITH BREVE}', b'\\u U')
-        self.register(u'\N{LATIN SMALL LETTER U WITH BREVE}', b'\\u u')
-        self.register(u'\N{LATIN CAPITAL LETTER U WITH RING ABOVE}', b'\\r U')
-        self.register(u'\N{LATIN SMALL LETTER U WITH RING ABOVE}', b'\\r u')
+            u'\\H O')
+        self.register(u'\N{LATIN SMALL LETTER O WITH DOUBLE ACUTE}', u'\\H o')
+        self.register(u'\N{LATIN CAPITAL LIGATURE OE}', u'\\OE')
+        self.register(u'\N{LATIN SMALL LIGATURE OE}', u'\\oe')
+        self.register(u'\N{LATIN CAPITAL LETTER R WITH ACUTE}', u"\\'R")
+        self.register(u'\N{LATIN SMALL LETTER R WITH ACUTE}', u"\\'r")
+        self.register(u'\N{LATIN CAPITAL LETTER R WITH CEDILLA}', u'\\c R')
+        self.register(u'\N{LATIN SMALL LETTER R WITH CEDILLA}', u'\\c r')
+        self.register(u'\N{LATIN CAPITAL LETTER R WITH CARON}', u'\\v R')
+        self.register(u'\N{LATIN SMALL LETTER R WITH CARON}', u'\\v r')
+        self.register(u'\N{LATIN CAPITAL LETTER S WITH ACUTE}', u"\\'S")
+        self.register(u'\N{LATIN SMALL LETTER S WITH ACUTE}', u"\\'s")
+        self.register(u'\N{LATIN CAPITAL LETTER S WITH CIRCUMFLEX}', u'\\^S')
+        self.register(u'\N{LATIN SMALL LETTER S WITH CIRCUMFLEX}', u'\\^s')
+        self.register(u'\N{LATIN CAPITAL LETTER S WITH CEDILLA}', u'\\c S')
+        self.register(u'\N{LATIN SMALL LETTER S WITH CEDILLA}', u'\\c s')
+        self.register(u'\N{LATIN CAPITAL LETTER S WITH CARON}', u'\\v S')
+        self.register(u'\N{LATIN SMALL LETTER S WITH CARON}', u'\\v s')
+        self.register(u'\N{LATIN CAPITAL LETTER T WITH CEDILLA}', u'\\c T')
+        self.register(u'\N{LATIN SMALL LETTER T WITH CEDILLA}', u'\\c t')
+        self.register(u'\N{LATIN CAPITAL LETTER T WITH CARON}', u'\\v T')
+        self.register(u'\N{LATIN SMALL LETTER T WITH CARON}', u'\\v t')
+        self.register(u'\N{LATIN CAPITAL LETTER U WITH TILDE}', u'\\~U')
+        self.register(u'\N{LATIN SMALL LETTER U WITH TILDE}', u'\\~u')
+        self.register(u'\N{LATIN CAPITAL LETTER U WITH MACRON}', u'\\=U')
+        self.register(u'\N{LATIN SMALL LETTER U WITH MACRON}', u'\\=u')
+        self.register(u'\N{LATIN CAPITAL LETTER U WITH BREVE}', u'\\u U')
+        self.register(u'\N{LATIN SMALL LETTER U WITH BREVE}', u'\\u u')
+        self.register(u'\N{LATIN CAPITAL LETTER U WITH RING ABOVE}', u'\\r U')
+        self.register(u'\N{LATIN SMALL LETTER U WITH RING ABOVE}', u'\\r u')
         self.register(
             u'\N{LATIN CAPITAL LETTER U WITH DOUBLE ACUTE}',
-            b'\\H U')
-        self.register(u'\N{LATIN SMALL LETTER U WITH DOUBLE ACUTE}', b'\\H u')
-        self.register(u'\N{LATIN CAPITAL LETTER U WITH OGONEK}', b'\\k U')
-        self.register(u'\N{LATIN SMALL LETTER U WITH OGONEK}', b'\\k u')
-        self.register(u'\N{LATIN CAPITAL LETTER W WITH CIRCUMFLEX}', b'\\^W')
-        self.register(u'\N{LATIN SMALL LETTER W WITH CIRCUMFLEX}', b'\\^w')
-        self.register(u'\N{LATIN CAPITAL LETTER Y WITH CIRCUMFLEX}', b'\\^Y')
-        self.register(u'\N{LATIN SMALL LETTER Y WITH CIRCUMFLEX}', b'\\^y')
-        self.register(u'\N{LATIN CAPITAL LETTER Y WITH DIAERESIS}', b'\\"Y')
-        self.register(u'\N{LATIN CAPITAL LETTER Z WITH ACUTE}', b"\\'Z")
-        self.register(u'\N{LATIN SMALL LETTER Z WITH ACUTE}', b"\\'z")
-        self.register(u'\N{LATIN CAPITAL LETTER Z WITH DOT ABOVE}', b'\\.Z')
-        self.register(u'\N{LATIN SMALL LETTER Z WITH DOT ABOVE}', b'\\.z')
-        self.register(u'\N{LATIN CAPITAL LETTER Z WITH CARON}', b'\\v Z')
-        self.register(u'\N{LATIN SMALL LETTER Z WITH CARON}', b'\\v z')
-        self.register(u'\N{LATIN CAPITAL LETTER DZ WITH CARON}', b'D\\v Z')
+            u'\\H U')
+        self.register(u'\N{LATIN SMALL LETTER U WITH DOUBLE ACUTE}', u'\\H u')
+        self.register(u'\N{LATIN CAPITAL LETTER U WITH OGONEK}', u'\\k U')
+        self.register(u'\N{LATIN SMALL LETTER U WITH OGONEK}', u'\\k u')
+        self.register(u'\N{LATIN CAPITAL LETTER W WITH CIRCUMFLEX}', u'\\^W')
+        self.register(u'\N{LATIN SMALL LETTER W WITH CIRCUMFLEX}', u'\\^w')
+        self.register(u'\N{LATIN CAPITAL LETTER Y WITH CIRCUMFLEX}', u'\\^Y')
+        self.register(u'\N{LATIN SMALL LETTER Y WITH CIRCUMFLEX}', u'\\^y')
+        self.register(u'\N{LATIN CAPITAL LETTER Y WITH DIAERESIS}', u'\\"Y')
+        self.register(u'\N{LATIN CAPITAL LETTER Z WITH ACUTE}', u"\\'Z")
+        self.register(u'\N{LATIN SMALL LETTER Z WITH ACUTE}', u"\\'z")
+        self.register(u'\N{LATIN CAPITAL LETTER Z WITH DOT ABOVE}', u'\\.Z')
+        self.register(u'\N{LATIN SMALL LETTER Z WITH DOT ABOVE}', u'\\.z')
+        self.register(u'\N{LATIN CAPITAL LETTER Z WITH CARON}', u'\\v Z')
+        self.register(u'\N{LATIN SMALL LETTER Z WITH CARON}', u'\\v z')
+        self.register(u'\N{LATIN CAPITAL LETTER DZ WITH CARON}', u'D\\v Z')
         self.register(
             u'\N{LATIN CAPITAL LETTER D WITH SMALL LETTER Z WITH CARON}',
-            b'D\\v z')
-        self.register(u'\N{LATIN SMALL LETTER DZ WITH CARON}', b'd\\v z')
-        self.register(u'\N{LATIN CAPITAL LETTER LJ}', b'LJ', decode=False)
+            u'D\\v z')
+        self.register(u'\N{LATIN SMALL LETTER DZ WITH CARON}', u'd\\v z')
+        self.register(u'\N{LATIN CAPITAL LETTER LJ}', u'LJ', decode=False)
         self.register(
             u'\N{LATIN CAPITAL LETTER L WITH SMALL LETTER J}',
-            b'Lj',
+            u'Lj',
             decode=False)
-        self.register(u'\N{LATIN SMALL LETTER LJ}', b'lj', decode=False)
-        self.register(u'\N{LATIN CAPITAL LETTER NJ}', b'NJ', decode=False)
+        self.register(u'\N{LATIN SMALL LETTER LJ}', u'lj', decode=False)
+        self.register(u'\N{LATIN CAPITAL LETTER NJ}', u'NJ', decode=False)
         self.register(
             u'\N{LATIN CAPITAL LETTER N WITH SMALL LETTER J}',
-            b'Nj',
+            u'Nj',
             decode=False)
-        self.register(u'\N{LATIN SMALL LETTER NJ}', b'nj', decode=False)
-        self.register(u'\N{LATIN CAPITAL LETTER A WITH CARON}', b'\\v A')
-        self.register(u'\N{LATIN SMALL LETTER A WITH CARON}', b'\\v a')
-        self.register(u'\N{LATIN CAPITAL LETTER I WITH CARON}', b'\\v I')
-        self.register(u'\N{LATIN SMALL LETTER I WITH CARON}', b'\\v\\i')
-        self.register(u'\N{LATIN CAPITAL LETTER O WITH CARON}', b'\\v O')
-        self.register(u'\N{LATIN SMALL LETTER O WITH CARON}', b'\\v o')
-        self.register(u'\N{LATIN CAPITAL LETTER U WITH CARON}', b'\\v U')
-        self.register(u'\N{LATIN SMALL LETTER U WITH CARON}', b'\\v u')
-        self.register(u'\N{LATIN CAPITAL LETTER G WITH CARON}', b'\\v G')
-        self.register(u'\N{LATIN SMALL LETTER G WITH CARON}', b'\\v g')
-        self.register(u'\N{LATIN CAPITAL LETTER K WITH CARON}', b'\\v K')
-        self.register(u'\N{LATIN SMALL LETTER K WITH CARON}', b'\\v k')
-        self.register(u'\N{LATIN CAPITAL LETTER O WITH OGONEK}', b'\\k O')
-        self.register(u'\N{LATIN SMALL LETTER O WITH OGONEK}', b'\\k o')
-        self.register(u'\N{LATIN SMALL LETTER J WITH CARON}', b'\\v\\j')
-        self.register(u'\N{LATIN CAPITAL LETTER DZ}', b'DZ', decode=False)
+        self.register(u'\N{LATIN SMALL LETTER NJ}', u'nj', decode=False)
+        self.register(u'\N{LATIN CAPITAL LETTER A WITH CARON}', u'\\v A')
+        self.register(u'\N{LATIN SMALL LETTER A WITH CARON}', u'\\v a')
+        self.register(u'\N{LATIN CAPITAL LETTER I WITH CARON}', u'\\v I')
+        self.register(u'\N{LATIN SMALL LETTER I WITH CARON}', u'\\v\\i')
+        self.register(u'\N{LATIN CAPITAL LETTER O WITH CARON}', u'\\v O')
+        self.register(u'\N{LATIN SMALL LETTER O WITH CARON}', u'\\v o')
+        self.register(u'\N{LATIN CAPITAL LETTER U WITH CARON}', u'\\v U')
+        self.register(u'\N{LATIN SMALL LETTER U WITH CARON}', u'\\v u')
+        self.register(u'\N{LATIN CAPITAL LETTER G WITH CARON}', u'\\v G')
+        self.register(u'\N{LATIN SMALL LETTER G WITH CARON}', u'\\v g')
+        self.register(u'\N{LATIN CAPITAL LETTER K WITH CARON}', u'\\v K')
+        self.register(u'\N{LATIN SMALL LETTER K WITH CARON}', u'\\v k')
+        self.register(u'\N{LATIN CAPITAL LETTER O WITH OGONEK}', u'\\k O')
+        self.register(u'\N{LATIN SMALL LETTER O WITH OGONEK}', u'\\k o')
+        self.register(u'\N{LATIN SMALL LETTER J WITH CARON}', u'\\v\\j')
+        self.register(u'\N{LATIN CAPITAL LETTER DZ}', u'DZ', decode=False)
         self.register(
             u'\N{LATIN CAPITAL LETTER D WITH SMALL LETTER Z}',
-            b'Dz',
+            u'Dz',
             decode=False)
-        self.register(u'\N{LATIN SMALL LETTER DZ}', b'dz', decode=False)
-        self.register(u'\N{LATIN CAPITAL LETTER G WITH ACUTE}', b"\\'G")
-        self.register(u'\N{LATIN SMALL LETTER G WITH ACUTE}', b"\\'g")
-        self.register(u'\N{LATIN CAPITAL LETTER AE WITH ACUTE}', b"\\'\\AE")
-        self.register(u'\N{LATIN SMALL LETTER AE WITH ACUTE}', b"\\'\\ae")
+        self.register(u'\N{LATIN SMALL LETTER DZ}', u'dz', decode=False)
+        self.register(u'\N{LATIN CAPITAL LETTER G WITH ACUTE}', u"\\'G")
+        self.register(u'\N{LATIN SMALL LETTER G WITH ACUTE}', u"\\'g")
+        self.register(u'\N{LATIN CAPITAL LETTER AE WITH ACUTE}', u"\\'\\AE")
+        self.register(u'\N{LATIN SMALL LETTER AE WITH ACUTE}', u"\\'\\ae")
         self.register(
             u'\N{LATIN CAPITAL LETTER O WITH STROKE AND ACUTE}',
-            b"\\'\\O")
+            u"\\'\\O")
         self.register(
             u'\N{LATIN SMALL LETTER O WITH STROKE AND ACUTE}',
-            b"\\'\\o")
-        self.register(u'\N{LATIN CAPITAL LETTER ETH}', b'\\DH')
-        self.register(u'\N{LATIN SMALL LETTER ETH}', b'\\dh')
-        self.register(u'\N{LATIN CAPITAL LETTER THORN}', b'\\TH')
-        self.register(u'\N{LATIN SMALL LETTER THORN}', b'\\th')
-        self.register(u'\N{LATIN CAPITAL LETTER D WITH DOT BELOW}', b'\\d D')
-        self.register(u'\N{LATIN SMALL LETTER D WITH DOT BELOW}', b'\\d d')
-        self.register(u'\N{LATIN CAPITAL LETTER L WITH DOT BELOW}', b'\\d L')
-        self.register(u'\N{LATIN SMALL LETTER L WITH DOT BELOW}', b'\\d l')
-        self.register(u'\N{LATIN CAPITAL LETTER M WITH DOT BELOW}', b'\\d M')
-        self.register(u'\N{LATIN SMALL LETTER M WITH DOT BELOW}', b'\\d m')
-        self.register(u'\N{LATIN CAPITAL LETTER N WITH DOT BELOW}', b'\\d N')
-        self.register(u'\N{LATIN SMALL LETTER N WITH DOT BELOW}', b'\\d n')
-        self.register(u'\N{LATIN CAPITAL LETTER R WITH DOT BELOW}', b'\\d R')
-        self.register(u'\N{LATIN SMALL LETTER R WITH DOT BELOW}', b'\\d r')
-        self.register(u'\N{LATIN CAPITAL LETTER S WITH DOT BELOW}', b'\\d S')
-        self.register(u'\N{LATIN SMALL LETTER S WITH DOT BELOW}', b'\\d s')
-        self.register(u'\N{LATIN CAPITAL LETTER T WITH DOT BELOW}', b'\\d T')
-        self.register(u'\N{LATIN SMALL LETTER T WITH DOT BELOW}', b'\\d t')
-        self.register(u'\N{PARTIAL DIFFERENTIAL}', b'\\partial', mode='math')
-        self.register(u'\N{N-ARY PRODUCT}', b'\\prod', mode='math')
-        self.register(u'\N{N-ARY SUMMATION}', b'\\sum', mode='math')
-        self.register(u'\N{SQUARE ROOT}', b'\\surd', mode='math')
-        self.register(u'\N{INFINITY}', b'\\infty', mode='math')
-        self.register(u'\N{INTEGRAL}', b'\\int', mode='math')
-        self.register(u'\N{INTERSECTION}', b'\\cap', mode='math')
-        self.register(u'\N{UNION}', b'\\cup', mode='math')
-        self.register(u'\N{RIGHTWARDS ARROW}', b'\\rightarrow', mode='math')
+            u"\\'\\o")
+        self.register(u'\N{LATIN CAPITAL LETTER ETH}', u'\\DH')
+        self.register(u'\N{LATIN SMALL LETTER ETH}', u'\\dh')
+        self.register(u'\N{LATIN CAPITAL LETTER THORN}', u'\\TH')
+        self.register(u'\N{LATIN SMALL LETTER THORN}', u'\\th')
+        self.register(u'\N{LATIN CAPITAL LETTER D WITH DOT BELOW}', u'\\d D')
+        self.register(u'\N{LATIN SMALL LETTER D WITH DOT BELOW}', u'\\d d')
+        self.register(u'\N{LATIN CAPITAL LETTER L WITH DOT BELOW}', u'\\d L')
+        self.register(u'\N{LATIN SMALL LETTER L WITH DOT BELOW}', u'\\d l')
+        self.register(u'\N{LATIN CAPITAL LETTER M WITH DOT BELOW}', u'\\d M')
+        self.register(u'\N{LATIN SMALL LETTER M WITH DOT BELOW}', u'\\d m')
+        self.register(u'\N{LATIN CAPITAL LETTER N WITH DOT BELOW}', u'\\d N')
+        self.register(u'\N{LATIN SMALL LETTER N WITH DOT BELOW}', u'\\d n')
+        self.register(u'\N{LATIN CAPITAL LETTER R WITH DOT BELOW}', u'\\d R')
+        self.register(u'\N{LATIN SMALL LETTER R WITH DOT BELOW}', u'\\d r')
+        self.register(u'\N{LATIN CAPITAL LETTER S WITH DOT BELOW}', u'\\d S')
+        self.register(u'\N{LATIN SMALL LETTER S WITH DOT BELOW}', u'\\d s')
+        self.register(u'\N{LATIN CAPITAL LETTER T WITH DOT BELOW}', u'\\d T')
+        self.register(u'\N{LATIN SMALL LETTER T WITH DOT BELOW}', u'\\d t')
+        self.register(u'\N{PARTIAL DIFFERENTIAL}', u'\\partial', mode='math')
+        self.register(u'\N{N-ARY PRODUCT}', u'\\prod', mode='math')
+        self.register(u'\N{N-ARY SUMMATION}', u'\\sum', mode='math')
+        self.register(u'\N{SQUARE ROOT}', u'\\surd', mode='math')
+        self.register(u'\N{INFINITY}', u'\\infty', mode='math')
+        self.register(u'\N{INTEGRAL}', u'\\int', mode='math')
+        self.register(u'\N{INTERSECTION}', u'\\cap', mode='math')
+        self.register(u'\N{UNION}', u'\\cup', mode='math')
+        self.register(u'\N{RIGHTWARDS ARROW}', u'\\rightarrow', mode='math')
         self.register(
             u'\N{RIGHTWARDS DOUBLE ARROW}',
-            b'\\Rightarrow',
+            u'\\Rightarrow',
             mode='math')
-        self.register(u'\N{LEFTWARDS ARROW}', b'\\leftarrow', mode='math')
+        self.register(u'\N{LEFTWARDS ARROW}', u'\\leftarrow', mode='math')
         self.register(
             u'\N{LEFTWARDS DOUBLE ARROW}',
-            b'\\Leftarrow',
+            u'\\Leftarrow',
             mode='math')
-        self.register(u'\N{LOGICAL OR}', b'\\vee', mode='math')
-        self.register(u'\N{LOGICAL AND}', b'\\wedge', mode='math')
-        self.register(u'\N{ALMOST EQUAL TO}', b'\\approx', mode='math')
-        self.register(u'\N{NOT EQUAL TO}', b'\\neq', mode='math')
-        self.register(u'\N{LESS-THAN OR EQUAL TO}', b'\\leq', mode='math')
-        self.register(u'\N{GREATER-THAN OR EQUAL TO}', b'\\geq', mode='math')
-        self.register(u'\N{MODIFIER LETTER CIRCUMFLEX ACCENT}', b'\\^{}')
-        self.register(u'\N{CARON}', b'\\v{}')
-        self.register(u'\N{BREVE}', b'\\u{}')
-        self.register(u'\N{DOT ABOVE}', b'\\.{}')
-        self.register(u'\N{RING ABOVE}', b'\\r{}')
-        self.register(u'\N{OGONEK}', b'\\k{}')
-        self.register(u'\N{DOUBLE ACUTE ACCENT}', b'\\H{}')
-        self.register(u'\N{LATIN SMALL LIGATURE FI}', b'fi', decode=False)
-        self.register(u'\N{LATIN SMALL LIGATURE FL}', b'fl', decode=False)
-        self.register(u'\N{LATIN SMALL LIGATURE FF}', b'ff', decode=False)
+        self.register(u'\N{LOGICAL OR}', u'\\vee', mode='math')
+        self.register(u'\N{LOGICAL AND}', u'\\wedge', mode='math')
+        self.register(u'\N{ALMOST EQUAL TO}', u'\\approx', mode='math')
+        self.register(u'\N{NOT EQUAL TO}', u'\\neq', mode='math')
+        self.register(u'\N{LESS-THAN OR EQUAL TO}', u'\\leq', mode='math')
+        self.register(u'\N{GREATER-THAN OR EQUAL TO}', u'\\geq', mode='math')
+        self.register(u'\N{MODIFIER LETTER CIRCUMFLEX ACCENT}', u'\\^{}')
+        self.register(u'\N{CARON}', u'\\v{}')
+        self.register(u'\N{BREVE}', u'\\u{}')
+        self.register(u'\N{DOT ABOVE}', u'\\.{}')
+        self.register(u'\N{RING ABOVE}', u'\\r{}')
+        self.register(u'\N{OGONEK}', u'\\k{}')
+        self.register(u'\N{DOUBLE ACUTE ACCENT}', u'\\H{}')
+        self.register(u'\N{LATIN SMALL LIGATURE FI}', u'fi', decode=False)
+        self.register(u'\N{LATIN SMALL LIGATURE FL}', u'fl', decode=False)
+        self.register(u'\N{LATIN SMALL LIGATURE FF}', u'ff', decode=False)
 
-        self.register(u'\N{GREEK SMALL LETTER ALPHA}', b'\\alpha', mode='math')
-        self.register(u'\N{GREEK SMALL LETTER BETA}', b'\\beta', mode='math')
-        self.register(u'\N{GREEK SMALL LETTER GAMMA}', b'\\gamma', mode='math')
-        self.register(u'\N{GREEK SMALL LETTER DELTA}', b'\\delta', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER ALPHA}', u'\\alpha', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER BETA}', u'\\beta', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER GAMMA}', u'\\gamma', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER DELTA}', u'\\delta', mode='math')
         self.register(
             u'\N{GREEK SMALL LETTER EPSILON}',
-            b'\\epsilon',
+            u'\\epsilon',
             mode='math')
-        self.register(u'\N{GREEK SMALL LETTER ZETA}', b'\\zeta', mode='math')
-        self.register(u'\N{GREEK SMALL LETTER ETA}', b'\\eta', mode='math')
-        self.register(u'\N{GREEK SMALL LETTER THETA}', b'\\theta', mode='math')
-        self.register(u'\N{GREEK SMALL LETTER IOTA}', b'\\iota', mode='math')
-        self.register(u'\N{GREEK SMALL LETTER KAPPA}', b'\\kappa', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER ZETA}', u'\\zeta', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER ETA}', u'\\eta', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER THETA}', u'\\theta', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER IOTA}', u'\\iota', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER KAPPA}', u'\\kappa', mode='math')
         self.register(
             u'\N{GREEK SMALL LETTER LAMDA}',
-            b'\\lambda',
+            u'\\lambda',
             mode='math')  # LAMDA not LAMBDA
-        self.register(u'\N{GREEK SMALL LETTER MU}', b'\\mu', mode='math')
-        self.register(u'\N{GREEK SMALL LETTER NU}', b'\\nu', mode='math')
-        self.register(u'\N{GREEK SMALL LETTER XI}', b'\\xi', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER MU}', u'\\mu', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER NU}', u'\\nu', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER XI}', u'\\xi', mode='math')
         self.register(
             u'\N{GREEK SMALL LETTER OMICRON}',
-            b'\\omicron',
+            u'\\omicron',
             mode='math')
-        self.register(u'\N{GREEK SMALL LETTER PI}', b'\\pi', mode='math')
-        self.register(u'\N{GREEK SMALL LETTER RHO}', b'\\rho', mode='math')
-        self.register(u'\N{GREEK SMALL LETTER SIGMA}', b'\\sigma', mode='math')
-        self.register(u'\N{GREEK SMALL LETTER TAU}', b'\\tau', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER PI}', u'\\pi', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER RHO}', u'\\rho', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER SIGMA}', u'\\sigma', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER TAU}', u'\\tau', mode='math')
         self.register(
             u'\N{GREEK SMALL LETTER UPSILON}',
-            b'\\upsilon',
+            u'\\upsilon',
             mode='math')
-        self.register(u'\N{GREEK SMALL LETTER PHI}', b'\\phi', mode='math')
-        self.register(u'\N{GREEK PHI SYMBOL}', b'\\varphi', mode='math')
-        self.register(u'\N{GREEK SMALL LETTER CHI}', b'\\chi', mode='math')
-        self.register(u'\N{GREEK SMALL LETTER PSI}', b'\\psi', mode='math')
-        self.register(u'\N{GREEK SMALL LETTER OMEGA}', b'\\omega', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER PHI}', u'\\phi', mode='math')
+        self.register(u'\N{GREEK PHI SYMBOL}', u'\\varphi', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER CHI}', u'\\chi', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER PSI}', u'\\psi', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER OMEGA}', u'\\omega', mode='math')
         self.register(
             u'\N{GREEK CAPITAL LETTER ALPHA}',
-            b'\\Alpha',
+            u'\\Alpha',
             mode='math')
-        self.register(u'\N{GREEK CAPITAL LETTER BETA}', b'\\Beta', mode='math')
+        self.register(u'\N{GREEK CAPITAL LETTER BETA}', u'\\Beta', mode='math')
         self.register(
             u'\N{GREEK CAPITAL LETTER GAMMA}',
-            b'\\Gamma',
+            u'\\Gamma',
             mode='math')
         self.register(
             u'\N{GREEK CAPITAL LETTER DELTA}',
-            b'\\Delta',
+            u'\\Delta',
             mode='math')
         self.register(
             u'\N{GREEK CAPITAL LETTER EPSILON}',
-            b'\\Epsilon',
+            u'\\Epsilon',
             mode='math')
-        self.register(u'\N{GREEK CAPITAL LETTER ZETA}', b'\\Zeta', mode='math')
-        self.register(u'\N{GREEK CAPITAL LETTER ETA}', b'\\Eta', mode='math')
+        self.register(u'\N{GREEK CAPITAL LETTER ZETA}', u'\\Zeta', mode='math')
+        self.register(u'\N{GREEK CAPITAL LETTER ETA}', u'\\Eta', mode='math')
         self.register(
             u'\N{GREEK CAPITAL LETTER THETA}',
-            b'\\Theta',
+            u'\\Theta',
             mode='math')
-        self.register(u'\N{GREEK CAPITAL LETTER IOTA}', b'\\Iota', mode='math')
+        self.register(u'\N{GREEK CAPITAL LETTER IOTA}', u'\\Iota', mode='math')
         self.register(
             u'\N{GREEK CAPITAL LETTER KAPPA}',
-            b'\\Kappa',
+            u'\\Kappa',
             mode='math')
         self.register(
             u'\N{GREEK CAPITAL LETTER LAMDA}',
-            b'\\Lambda',
+            u'\\Lambda',
             mode='math')  # LAMDA not LAMBDA
-        self.register(u'\N{GREEK CAPITAL LETTER MU}', b'\\Mu', mode='math')
-        self.register(u'\N{GREEK CAPITAL LETTER NU}', b'\\Nu', mode='math')
-        self.register(u'\N{GREEK CAPITAL LETTER XI}', b'\\Xi', mode='math')
+        self.register(u'\N{GREEK CAPITAL LETTER MU}', u'\\Mu', mode='math')
+        self.register(u'\N{GREEK CAPITAL LETTER NU}', u'\\Nu', mode='math')
+        self.register(u'\N{GREEK CAPITAL LETTER XI}', u'\\Xi', mode='math')
         self.register(
             u'\N{GREEK CAPITAL LETTER OMICRON}',
-            b'\\Omicron',
+            u'\\Omicron',
             mode='math')
-        self.register(u'\N{GREEK CAPITAL LETTER PI}', b'\\Pi', mode='math')
-        self.register(u'\N{GREEK CAPITAL LETTER RHO}', b'\\Rho', mode='math')
+        self.register(u'\N{GREEK CAPITAL LETTER PI}', u'\\Pi', mode='math')
+        self.register(u'\N{GREEK CAPITAL LETTER RHO}', u'\\Rho', mode='math')
         self.register(
             u'\N{GREEK CAPITAL LETTER SIGMA}',
-            b'\\Sigma',
+            u'\\Sigma',
             mode='math')
-        self.register(u'\N{GREEK CAPITAL LETTER TAU}', b'\\Tau', mode='math')
+        self.register(u'\N{GREEK CAPITAL LETTER TAU}', u'\\Tau', mode='math')
         self.register(
             u'\N{GREEK CAPITAL LETTER UPSILON}',
-            b'\\Upsilon',
+            u'\\Upsilon',
             mode='math')
-        self.register(u'\N{GREEK CAPITAL LETTER PHI}', b'\\Phi', mode='math')
-        self.register(u'\N{GREEK CAPITAL LETTER CHI}', b'\\Chi', mode='math')
-        self.register(u'\N{GREEK CAPITAL LETTER PSI}', b'\\Psi', mode='math')
+        self.register(u'\N{GREEK CAPITAL LETTER PHI}', u'\\Phi', mode='math')
+        self.register(u'\N{GREEK CAPITAL LETTER CHI}', u'\\Chi', mode='math')
+        self.register(u'\N{GREEK CAPITAL LETTER PSI}', u'\\Psi', mode='math')
         self.register(
             u'\N{GREEK CAPITAL LETTER OMEGA}',
-            b'\\Omega',
+            u'\\Omega',
             mode='math')
-        self.register(u'\N{COPYRIGHT SIGN}', b'\\copyright')
-        self.register(u'\N{COPYRIGHT SIGN}', b'\\textcopyright')
-        self.register(u'\N{LATIN CAPITAL LETTER A WITH ACUTE}', b"\\'A")
-        self.register(u'\N{LATIN CAPITAL LETTER I WITH ACUTE}', b"\\'I")
-        self.register(u'\N{HORIZONTAL ELLIPSIS}', b'\\ldots')
-        self.register(u'\N{TRADE MARK SIGN}', b'^{TM}', mode='math')
+        self.register(u'\N{COPYRIGHT SIGN}', u'\\copyright')
+        self.register(u'\N{COPYRIGHT SIGN}', u'\\textcopyright')
+        self.register(u'\N{LATIN CAPITAL LETTER A WITH ACUTE}', u"\\'A")
+        self.register(u'\N{LATIN CAPITAL LETTER I WITH ACUTE}', u"\\'I")
+        self.register(u'\N{HORIZONTAL ELLIPSIS}', u'\\ldots')
+        self.register(u'\N{TRADE MARK SIGN}', u'^{TM}', mode='math')
         self.register(
             u'\N{TRADE MARK SIGN}',
-            b'\\texttrademark',
+            u'\\texttrademark',
             package='textcomp')
         self.register(
             u'\N{REGISTERED SIGN}',
-            b'\\textregistered',
+            u'\\textregistered',
             package='textcomp')
         # \=O and \=o will be translated into Ō and ō before we can
         # match the full latex string... so decoding disabled for now
-        self.register(u'Ǭ', br'\textogonekcentered{\=O}', decode=False)
-        self.register(u'ǭ', br'\textogonekcentered{\=o}', decode=False)
-        self.register(u'ℕ', br'\mathbb{N}', mode='math')
-        self.register(u'ℕ', br'\mathbb N', mode='math', decode=False)
-        self.register(u'ℤ', br'\mathbb{Z}', mode='math')
-        self.register(u'ℤ', br'\mathbb Z', mode='math', decode=False)
-        self.register(u'ℚ', br'\mathbb{Q}', mode='math')
-        self.register(u'ℚ', br'\mathbb Q', mode='math', decode=False)
-        self.register(u'ℝ', br'\mathbb{R}', mode='math')
-        self.register(u'ℝ', br'\mathbb R', mode='math', decode=False)
-        self.register(u'ℂ', br'\mathbb{C}', mode='math')
-        self.register(u'ℂ', br'\mathbb C', mode='math', decode=False)
+        self.register(u'Ǭ', text_type(r'\textogonekcentered{\=O}'),
+                      decode=False)
+        self.register(u'ǭ', text_type(r'\textogonekcentered{\=o}'),
+                      decode=False)
+        self.register(u'ℕ', text_type(r'\mathbb{N}'), mode='math')
+        self.register(u'ℕ', text_type(r'\mathbb N'), mode='math', decode=False)
+        self.register(u'ℤ', text_type(r'\mathbb{Z}'), mode='math')
+        self.register(u'ℤ', text_type(r'\mathbb Z'), mode='math', decode=False)
+        self.register(u'ℚ', text_type(r'\mathbb{Q}'), mode='math')
+        self.register(u'ℚ', text_type(r'\mathbb Q'), mode='math', decode=False)
+        self.register(u'ℝ', text_type(r'\mathbb{R}'), mode='math')
+        self.register(u'ℝ', text_type(r'\mathbb R'), mode='math', decode=False)
+        self.register(u'ℂ', text_type(r'\mathbb{C}'), mode='math')
+        self.register(u'ℂ', text_type(r'\mathbb C'), mode='math', decode=False)
 
     def register(self, unicode_text, latex_text, mode='text', package=None,
                  decode=True, encode=True):
         """Register a correspondence between *unicode_text* and *latex_text*.
 
         :param str unicode_text: A unicode character.
-        :param bytes latex_text: Its corresponding LaTeX translation.
+        :param str latex_text: Its corresponding LaTeX translation.
         :param str mode: LaTeX mode in which the translation applies
             (``'text'`` or ``'math'``).
         :param str package: LaTeX package requirements (currently ignored).
@@ -617,15 +619,14 @@ class LatexUnicodeTable:
         """
         if mode == 'math':
             # also register text version
-            self.register(unicode_text, b'$' + latex_text + b'$', mode='text',
+            self.register(unicode_text, u'$' + latex_text + u'$', mode='text',
                           package=package, decode=decode, encode=encode)
             self.register(unicode_text,
-                          br'\(' + latex_text + br'\)', mode='text',
-                          package=package, decode=decode, encode=encode)
+                          text_type(r'\(') + latex_text + text_type(r'\)'),
+                          mode='text', package=package,
+                          decode=decode, encode=encode)
             # XXX for the time being, we do not perform in-math substitutions
             return
-        if not self.lexer.binary_mode:
-            latex_text = latex_text.decode("ascii")
         if package is not None:
             # TODO implement packages
             pass
@@ -684,16 +685,16 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
         if self.state == 'S':
             # in space eating mode
             # control space needed?
-            if bytes_.startswith(self.spacechar):
+            if bytes_.startswith(u' '):
                 # replace by control space
-                return self.controlspacechar, bytes_[1:]
+                return u'\\ ', bytes_[1:]
             else:
                 # insert space (it is eaten, but needed for separation)
-                return self.spacechar, bytes_
+                return u' ', bytes_
         else:
-            return self.emptychar, bytes_
+            return u'', bytes_
 
-    def _get_latex_bytes_tokens_from_char(self, c):
+    def _get_latex_chars_tokens_from_char(self, c):
         # if ascii, try latex equivalents
         # (this covers \, #, &, and other special LaTeX characters)
         if ord(c) < 128:
@@ -707,10 +708,7 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
         except UnicodeEncodeError:
             pass
         else:
-            if self.binary_mode:
-                return bytes_, (lexer.Token(name='chars', text=bytes_),)
-            else:
-                return c, (lexer.Token(name='chars', text=c),)
+            return c, (lexer.Token(name='chars', text=c),)
         # next, try latex equivalents of common unicode characters
         try:
             return self.table.latex_map[c]
@@ -724,16 +722,13 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
                     "don't know how to translate {0} into latex"
                     .format(repr(c)))
             elif self.errors == 'ignore':
-                return self.emptychar, (self.emptytoken,)
+                return u'', (self.emptytoken,)
             elif self.errors == 'replace':
                 # use the \\char command
                 # this assumes
                 # \usepackage[T1]{fontenc}
                 # \usepackage[utf8]{inputenc}
-                if self.binary_mode:
-                    bytes_ = b'{\\char' + str(ord(c)).encode("ascii") + b'}'
-                else:
-                    bytes_ = u'{\\char' + str(ord(c)) + u'}'
+                bytes_ = u'{\\char' + str(ord(c)) + u'}'
                 return bytes_, (lexer.Token(name='chars', text=bytes_),)
             elif self.errors == 'keep' and not self.binary_mode:
                 return c,  (lexer.Token(name='chars', text=c),)
@@ -742,14 +737,14 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
                     "latex codec does not support {0} errors"
                     .format(self.errors))
 
-    def get_latex_bytes(self, unicode_, final=False):
+    def get_latex_chars(self, unicode_, final=False):
         if not isinstance(unicode_, string_types):
             raise TypeError(
                 "expected unicode for encode input, but got {0} instead"
                 .format(unicode_.__class__.__name__))
         # convert character by character
         for pos, c in enumerate(unicode_):
-            bytes_, tokens = self._get_latex_bytes_tokens_from_char(c)
+            bytes_, tokens = self._get_latex_chars_tokens_from_char(c)
             space, bytes_ = self.get_space_bytes(bytes_)
             # update state
             if tokens[-1].name == 'control_word':
@@ -784,8 +779,8 @@ class LatexIncrementalDecoder(lexer.LatexIncrementalDecoder):
     def setstate(self, state):
         raise NotImplementedError
 
-    def get_unicode_tokens(self, bytes_, final=False):
-        for token in self.get_tokens(bytes_, final=final):
+    def get_unicode_tokens(self, chars, final=False):
+        for token in self.get_tokens(chars, final=final):
             # at this point, token_buffer does not match anything
             self.token_buffer.append(token)
             # new token appended at the end, see if we have a match now

@@ -65,27 +65,7 @@ Token = collections.namedtuple("Token", "name text")
 # class serves excellently as a base class for incremental decoders,
 # but of course we don't decode yet until later
 
-
-class MetaLatexCoder(type):
-
-    def __init__(cls, name, bases, dct):
-        super(MetaLatexCoder, cls).__init__(name, bases, dct)
-        cls.emptytoken = Token(u"unknown", cls._fixit(b""))
-        cls.partoken = Token("control_word", cls._fixit(b"\\par"))
-        cls.spacetoken = Token("space", cls._fixit(b" "))
-        cls.replacetoken = Token(
-            "chars", b"?" if cls.binary_mode else u"\ufffd")
-        cls.curlylefttoken = Token("chars", cls._fixit(b"{"))
-        cls.curlyrighttoken = Token("chars", cls._fixit(b"}"))
-        cls.emptychar = cls._fixit(b"")
-        cls.spacechar = cls._fixit(b" ")
-        cls.controlspacechar = cls._fixit(b"\\ ")
-
-    def _fixit(cls, bytes_):
-        return bytes_ if cls.binary_mode else bytes_.decode("ascii")
-
-
-class MetaRegexpLexer(MetaLatexCoder):
+class MetaRegexpLexer(type):
 
     """Metaclass for :class:`RegexpLexer`. Compiles tokens into a
     regular expression.
@@ -93,8 +73,8 @@ class MetaRegexpLexer(MetaLatexCoder):
 
     def __init__(cls, name, bases, dct):
         super(MetaRegexpLexer, cls).__init__(name, bases, dct)
-        regexp_string = cls._fixit(b"|".join(
-            b"(?P<" + name.encode("ascii") + b">" + regexp + b")"
+        regexp_string = ("|".join(
+            "(?P<" + name + ">" + regexp + ")"
             for name, regexp in cls.tokens))
         cls.regexp = re.compile(regexp_string, re.DOTALL)
 
@@ -104,13 +84,10 @@ class RegexpLexer(codecs.IncrementalDecoder):
 
     """Abstract base class for regexp based lexers."""
 
+    emptytoken = Token(u"unknown", u"")
+
     tokens = ()
     """Tuple containing all token regular expressions."""
-
-    binary_mode = True
-    """Whether this lexer processes binary data (bytes) or text data
-    (unicode).
-    """
 
     def __init__(self, errors='strict'):
         """Initialize the codec."""
@@ -132,7 +109,7 @@ class RegexpLexer(codecs.IncrementalDecoder):
         """
         self.raw_buffer = Token('unknown', state[0])
 
-    def get_raw_tokens(self, bytes_, final=False):
+    def get_raw_tokens(self, chars, final=False):
         """Yield tokens without any further processing. Tokens are one of:
 
         - ``\\<word>``: a control word (i.e. a command)
@@ -141,9 +118,9 @@ class RegexpLexer(codecs.IncrementalDecoder):
         - a series of byte characters
         """
         if self.raw_buffer.text:
-            bytes_ = self.raw_buffer.text + bytes_
+            chars = self.raw_buffer.text + chars
         self.raw_buffer = self.emptytoken
-        for match in self.regexp.finditer(bytes_):
+        for match in self.regexp.finditer(chars):
             # yield the buffer token
             if self.raw_buffer.text:
                 yield self.raw_buffer
@@ -164,47 +141,50 @@ class LatexLexer(RegexpLexer):
 
     """A very simple lexer for tex/latex bytes."""
 
+    partoken = Token("control_word", u"\\par")
+    spacetoken = Token("space", u" ")
+    replacetoken = Token("chars", u"\ufffd")
+    curlylefttoken = Token("chars", u"{")
+    curlyrighttoken = Token("chars", u"}")
+
     # implementation note: every token **must** be decodable by inputenc
     tokens = (
         # comment: for ease, and for speed, we handle it as a token
-        (u'comment', br'(?<![\\])%[^\n]*'),
+        (u'comment', r'(?<![\\])%[^\n]*'),
         # control tokens
         # in latex, some control tokens skip following whitespace
         # ('control-word' and 'control-symbol')
         # others do not ('control-symbol-x')
         # XXX TBT says no control symbols skip whitespace (except '\ ')
         # XXX but tests reveal otherwise?
-        (u'control_word', br'[\\][a-zA-Z]+'),
-        (u'control_symbol', br'[\\][~' br"'" br'"` =^!.]'),
+        (u'control_word', r'[\\][a-zA-Z]+'),
+        (u'control_symbol', r'[\\][~' r"'" r'"` =^!.]'),
         # TODO should only match ascii
-        (u'control_symbol_x', br'[\\][^a-zA-Z]'),
+        (u'control_symbol_x', r'[\\][^a-zA-Z]'),
         # parameter tokens
-        # also support a lone hash so we can lex things like b'#a'
-        (u'parameter', br'\#[0-9]|\#'),
+        # also support a lone hash so we can lex things like '#a'
+        (u'parameter', r'\#[0-9]|\#'),
         # any remaining characters; for ease we also handle space and
         # newline as tokens
         # XXX TBT does not mention \t to be a space character as well
         # XXX but tests reveal otherwise?
-        (u'space', br' |\t'),
-        (u'newline', br'\n'),
-        (u'mathshift', br'[$][$]|[$]'),
+        (u'space', r' |\t'),
+        (u'newline', r'\n'),
+        (u'mathshift', r'[$][$]|[$]'),
         # note: some chars joined together to make it easier to detect
         # symbols that have a special function (i.e. --, ---, etc.)
         (u'chars',
-         br'---|--|-|[`][`]'
-         br"|['][']"
-         br'|[?][`]|[!][`]'
+         r'---|--|-|[`][`]'
+         r"|['][']"
+         r'|[?][`]|[!][`]'
          # separate chars because brackets are optional
          # e.g. fran\\c cais = fran\\c{c}ais in latex
          # so only way to detect \\c acting on c only is this way
-         br'|(?![ %#$\n\t\\])' b'[\x00-\x7f]'
-         # we have to join everything else together to support
-         # multibyte encodings: every token must be decodable!!
-         b'|[^\x00-\x7f]+'),
+         r'|(?![ %#$\n\t\\]).'),
         # trailing garbage which we cannot decode otherwise
         # (such as a lone '\' at the end of a buffer)
         # is never emitted, but used internally by the buffer
-        (u'unknown', br'.'),
+        (u'unknown', r'.'),
     )
     """List of token names, and the regular expressions they match."""
 
@@ -241,16 +221,16 @@ class LatexIncrementalLexer(LatexLexer):
         self.state = {0: 'M', 1: 'N', 2: 'S'}[state[1] & 3]
         self.inline_math = bool(state[1] & 4)
 
-    def get_tokens(self, bytes_, final=False):
+    def get_tokens(self, chars, final=False):
         """Yield tokens while maintaining a state. Also skip
         whitespace after control words and (some) control symbols.
         Replaces newlines by spaces and \\par commands depending on
         the context.
         """
-        # current position relative to the start of bytes_ in the sequence
+        # current position relative to the start of chars in the sequence
         # of bytes that have been decoded
         pos = -len(self.raw_buffer.text)
-        for token in self.get_raw_tokens(bytes_, final=final):
+        for token in self.get_raw_tokens(chars, final=final):
             pos = pos + len(token.text)
             assert pos >= 0  # first token includes at least self.raw_buffer
             if token.name == 'newline':
@@ -310,15 +290,11 @@ class LatexIncrementalLexer(LatexLexer):
                 yield token
             elif token.name == 'unknown':
                 if self.errors == 'strict':
-                    # hack around a bug in Python: UnicodeDecodeError
-                    # expects binary input
-                    if not self.binary_mode:
-                        bytes_ = bytes_.encode("utf8")
-                    # current position within bytes_
+                    # current position within chars
                     # this is the position right after the unknown token
                     raise UnicodeDecodeError(
                         "latex",  # codec
-                        bytes_,  # problematic input
+                        chars.encode('utf8'),  # problematic input
                         pos - len(token.text),  # start of problematic token
                         pos,  # end of it
                         "unknown token {0!r}".format(token.text))
@@ -347,8 +323,17 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
     inputenc = "ascii"
     """Input encoding. **Must** extend ascii."""
 
+    binary_mode = True
+    """Whether this lexer processes binary data (bytes) or text data
+    (unicode).
+    """
+
+    def __init__(self, errors='strict'):
+        super(LatexIncrementalDecoder, self).__init__(errors)
+        self.decoder = codecs.getincrementaldecoder(self.inputenc)(errors)
+
     def decode_token(self, token):
-        """Returns the decoded token text in :attr:`inputenc` encoding.
+        """Returns the decoded token text.
 
         .. note::
 
@@ -363,20 +348,15 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
            ``u'\\helloworld'``.
 
         """
-        # in python 3, the token text can be a memoryview
-        # which do not have a decode method; must cast to bytes explicitly
-        if self.binary_mode:
-            text = binary_type(token.text).decode(self.inputenc)
-        else:
-            text = token.text
+        text = token.text
         return text if token.name != 'control_word' else text + u' '
 
-    def get_unicode_tokens(self, bytes_, final=False):
-        """Decode every token in :attr:`inputenc` encoding. Override to
+    def get_unicode_tokens(self, chars, final=False):
+        """Decode every token. Override to
         process the tokens in some other way (for example, for token
         translation).
         """
-        for token in self.get_tokens(bytes_, final=final):
+        for token in self.get_tokens(chars, final=final):
             yield self.decode_token(token)
 
     def decode(self, bytes_, final=False):
@@ -385,15 +365,21 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
         This implementation calls :meth:`get_unicode_tokens` and joins
         the resulting unicode strings together.
         """
-        try:
-            return u''.join(self.get_unicode_tokens(bytes_, final=final))
-        except UnicodeDecodeError as e:
-            # API requires that the encode method raises a ValueError
-            # in this case
-            raise ValueError(e)
+        if self.binary_mode:
+            try:
+                # in python 3, the token text can be a memoryview
+                # which do not have a decode method; must cast to
+                # bytes explicitly
+                chars = self.decoder.decode(binary_type(bytes_), final=final)
+            except UnicodeDecodeError as e:
+                # API requires that the encode method raises a ValueError
+                # in this case
+                raise ValueError(e)
+        else:
+            chars = bytes_
+        return u''.join(self.get_unicode_tokens(chars, final=final))
 
 
-@add_metaclass(MetaLatexCoder)
 class LatexIncrementalEncoder(codecs.IncrementalEncoder):
 
     """Simple incremental encoder for LaTeX. Transforms unicode into
@@ -403,11 +389,13 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
     :meth:`get_latex_bytes`.
     """
 
+    emptytoken = Token(u"unknown", u"")
+
     inputenc = "ascii"
     """Input encoding. **Must** extend ascii."""
 
     binary_mode = True
-    """Whether this encoder processes binary data (bytes) or text data
+    """Whether this lexer processes binary data (bytes) or text data
     (unicode).
     """
 
@@ -454,31 +442,30 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
             yield self.buffer
             self.buffer = u""
 
-    def get_latex_bytes(self, unicode_, final=False):
-        """Encode every character in :attr:`inputenc` encoding. Override to
+    def get_latex_chars(self, unicode_, final=False):
+        """Encode every character. Override to
         process the unicode in some other way (for example, for character
         translation).
         """
-        if self.binary_mode:
-            for token in self.get_unicode_tokens(unicode_, final=final):
-                yield token.encode(self.inputenc, self.errors)
-        else:
-            for token in self.get_unicode_tokens(unicode_, final=final):
-                yield token
+        for token in self.get_unicode_tokens(unicode_, final=final):
+            yield token
 
     def encode(self, unicode_, final=False):
         """Encode the *unicode_* string into LaTeX :class:`bytes`.
 
-        This implementation calls :meth:`get_latex_bytes` and joins
+        This implementation calls :meth:`get_latex_chars` and joins
         the resulting :class:`bytes` together.
         """
-        try:
-            return self.emptychar.join(
-                self.get_latex_bytes(unicode_, final=final))
-        except UnicodeEncodeError as e:
-            # API requires that the encode method raises a ValueError
-            # in this case
-            raise ValueError(e)
+        chars = u''.join(self.get_latex_chars(unicode_, final=final))
+        if self.binary_mode:
+            try:
+                return chars.encode(self.inputenc, self.errors)
+            except UnicodeEncodeError as e:
+                # API requires that the encode method raises a ValueError
+                # in this case
+                raise ValueError(e)
+        else:
+            return chars
 
 
 class UnicodeLatexLexer(LatexLexer):
