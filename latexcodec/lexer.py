@@ -73,8 +73,8 @@ class MetaRegexpLexer(type):
 
     def __init__(cls, name, bases, dct):
         super(MetaRegexpLexer, cls).__init__(name, bases, dct)
-        regexp_string = ("|".join(
-            "(?P<" + name + ">" + regexp + ")"
+        regexp_string = (u"|".join(
+            u"(?P<" + name + u">" + regexp + u")"
             for name, regexp in cls.tokens))
         cls.regexp = re.compile(regexp_string, re.DOTALL)
 
@@ -141,11 +141,11 @@ class LatexLexer(RegexpLexer):
 
     """A very simple lexer for tex/latex bytes."""
 
-    partoken = Token("control_word", u"\\par")
-    spacetoken = Token("space", u" ")
-    replacetoken = Token("chars", u"\ufffd")
-    curlylefttoken = Token("chars", u"{")
-    curlyrighttoken = Token("chars", u"}")
+    partoken = Token(u"control_word", u"\\par")
+    spacetoken = Token(u"space", u" ")
+    replacetoken = Token(u"chars", u"\ufffd")
+    curlylefttoken = Token(u"chars", u"{")
+    curlyrighttoken = Token(u"chars", u"}")
 
     # implementation note: every token **must** be decodable by inputenc
     tokens = (
@@ -233,7 +233,7 @@ class LatexIncrementalLexer(LatexLexer):
         for token in self.get_raw_tokens(chars, final=final):
             pos = pos + len(token.text)
             assert pos >= 0  # first token includes at least self.raw_buffer
-            if token.name == 'newline':
+            if token.name == u'newline':
                 if self.state == 'N':
                     # if state was 'N', generate new paragraph
                     yield self.partoken
@@ -247,7 +247,7 @@ class LatexIncrementalLexer(LatexLexer):
                 else:
                     raise AssertionError(
                         "unknown tex state {0!r}".format(self.state))
-            elif token.name == 'space':
+            elif token.name == u'space':
                 if self.state == 'N':
                     # remain in 'N' state, no space token generated
                     pass
@@ -262,33 +262,33 @@ class LatexIncrementalLexer(LatexLexer):
                 else:
                     raise AssertionError(
                         "unknown state {0!r}".format(self.state))
-            elif token.name == 'mathshift':
+            elif token.name == u'mathshift':
                 self.inline_math = not self.inline_math
                 self.state = 'M'
                 yield token
-            elif token.name == 'parameter':
+            elif token.name == u'parameter':
                 self.state = 'M'
                 yield token
-            elif token.name == 'control_word':
+            elif token.name == u'control_word':
                 # go to space skip mode
                 self.state = 'S'
                 yield token
-            elif token.name == 'control_symbol':
+            elif token.name == u'control_symbol':
                 # go to space skip mode
                 self.state = 'S'
                 yield token
-            elif token.name == 'control_symbol_x':
+            elif token.name == u'control_symbol_x':
                 # don't skip following space, so go to M mode
                 self.state = 'M'
                 yield token
-            elif token.name == 'comment':
+            elif token.name == u'comment':
                 # no token is generated
                 # note: comment does not include the newline
                 self.state = 'S'
             elif token.name == 'chars':
                 self.state = 'M'
                 yield token
-            elif token.name == 'unknown':
+            elif token.name == u'unknown':
                 if self.errors == 'strict':
                     # current position within chars
                     # this is the position right after the unknown token
@@ -341,7 +341,7 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
            sure separation from the next token, so that decoded token
            sequences can be joined together.
 
-           For example, the tokens ``b'\\hello'`` and ``b'world'``
+           For example, the tokens ``u'\\hello'`` and ``u'world'``
            will correctly result in ``u'\\hello world'`` (remember
            that LaTeX eats space following control words). If no space
            were added, this would wrongfully result in
@@ -349,7 +349,7 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
 
         """
         text = token.text
-        return text if token.name != 'control_word' else text + u' '
+        return text if token.name != u'control_word' else text + u' '
 
     def get_unicode_tokens(self, chars, final=False):
         """Decode every token. Override to
@@ -466,10 +466,6 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
                 raise ValueError(e)
         else:
             return chars
-
-
-class UnicodeLatexLexer(LatexLexer):
-    binary_mode = False
 
 
 class UnicodeLatexIncrementalDecoder(LatexIncrementalDecoder):

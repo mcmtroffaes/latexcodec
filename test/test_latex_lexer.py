@@ -7,7 +7,7 @@ from unittest import TestCase
 import six
 
 from latexcodec.lexer import (
-    LatexLexer, UnicodeLatexLexer,
+    LatexLexer,
     LatexIncrementalLexer,
     LatexIncrementalDecoder, UnicodeLatexIncrementalDecoder,
     LatexIncrementalEncoder, UnicodeLatexIncrementalEncoder,
@@ -194,10 +194,6 @@ class LatexLexerTest(BaseLatexLexerTest):
 
     def test_double_quotes(self):
         self.lex_it(u"``a+b''", u"``|a|+|b|''".split(u'|'), final=True)
-
-
-class UnicodeLatexLexerTest(LatexLexerTest):
-    Lexer = UnicodeLatexLexer
 
 
 class BaseLatexIncrementalDecoderTest(TestCase):
