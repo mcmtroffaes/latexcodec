@@ -711,7 +711,7 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
         except UnicodeEncodeError:
             pass
         else:
-            return c, (lexer.Token(name='chars', text=c),)
+            return c, (lexer.Token(name=u'chars', text=c),)
         # next, try latex equivalents of common unicode characters
         try:
             return self.table.latex_map[c]
@@ -732,9 +732,9 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
                 # \usepackage[T1]{fontenc}
                 # \usepackage[utf8]{inputenc}
                 bytes_ = u'{\\char' + str(ord(c)) + u'}'
-                return bytes_, (lexer.Token(name='chars', text=bytes_),)
+                return bytes_, (lexer.Token(name=u'chars', text=bytes_),)
             elif self.errors == 'keep' and not self.binary_mode:
-                return c,  (lexer.Token(name='chars', text=c),)
+                return c,  (lexer.Token(name=u'chars', text=c),)
             else:
                 raise ValueError(
                     "latex codec does not support {0} errors"
@@ -750,7 +750,7 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
             bytes_, tokens = self._get_latex_chars_tokens_from_char(c)
             space, bytes_ = self.get_space_bytes(bytes_)
             # update state
-            if tokens[-1].name == 'control_word':
+            if tokens[-1].name == u'control_word':
                 # we're eating spaces
                 self.state = 'S'
             else:
