@@ -445,10 +445,14 @@ class LatexUnicodeTable:
         self.register(u'\N{LATIN SMALL LETTER S WITH DOT BELOW}', u'\\d s')
         self.register(u'\N{LATIN CAPITAL LETTER T WITH DOT BELOW}', u'\\d T')
         self.register(u'\N{LATIN SMALL LETTER T WITH DOT BELOW}', u'\\d t')
-        self.register(u'\N{LATIN CAPITAL LETTER S WITH COMMA BELOW}', u'\\textcommabelow S')
-        self.register(u'\N{LATIN SMALL LETTER S WITH COMMA BELOW}', u'\\textcommabelow s')
-        self.register(u'\N{LATIN CAPITAL LETTER T WITH COMMA BELOW}', u'\\textcommabelow T')
-        self.register(u'\N{LATIN SMALL LETTER T WITH COMMA BELOW}', u'\\textcommabelow t')
+        self.register(u'\N{LATIN CAPITAL LETTER S WITH COMMA BELOW}',
+                      u'\\textcommabelow S')
+        self.register(u'\N{LATIN SMALL LETTER S WITH COMMA BELOW}',
+                      u'\\textcommabelow s')
+        self.register(u'\N{LATIN CAPITAL LETTER T WITH COMMA BELOW}',
+                      u'\\textcommabelow T')
+        self.register(u'\N{LATIN SMALL LETTER T WITH COMMA BELOW}',
+                      u'\\textcommabelow t')
         self.register(u'\N{PARTIAL DIFFERENTIAL}', u'\\partial', mode='math')
         self.register(u'\N{N-ARY PRODUCT}', u'\\prod', mode='math')
         self.register(u'\N{N-ARY SUMMATION}', u'\\sum', mode='math')
