@@ -1,5 +1,9 @@
-1.0.8 (in development)
+2.0.0 (in development)
 ----------------------
+
+* Lexer now processes unicode directly, to fix various issues with
+  multibyte encodings. This also simplifies the implementation. Many
+  thanks to davidweichiang for reporting and implementing.
 
 1.0.7 (3 May 2019)
 ------------------
