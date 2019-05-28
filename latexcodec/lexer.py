@@ -85,6 +85,7 @@ class RegexpLexer(codecs.IncrementalDecoder):
     """Abstract base class for regexp based lexers."""
 
     emptytoken = Token(u"unknown", u"")
+    """The empty token."""
 
     tokens = ()
     """Tuple containing all token regular expressions."""
@@ -139,13 +140,7 @@ class RegexpLexer(codecs.IncrementalDecoder):
 
 class LatexLexer(RegexpLexer):
 
-    """A very simple lexer for tex/latex bytes."""
-
-    partoken = Token(u"control_word", u"\\par")
-    spacetoken = Token(u"space", u" ")
-    replacetoken = Token(u"chars", u"\ufffd")
-    curlylefttoken = Token(u"chars", u"{")
-    curlyrighttoken = Token(u"chars", u"}")
+    """A very simple lexer for tex/latex."""
 
     # implementation note: every token **must** be decodable by inputenc
     tokens = (
@@ -199,6 +194,12 @@ class LatexIncrementalLexer(LatexLexer):
     * no newline characters: paragraphs are separated by '\\par'
     * spaces following control tokens are compressed
     """
+
+    partoken = Token(u"control_word", u"\\par")
+    spacetoken = Token(u"space", u" ")
+    replacetoken = Token(u"chars", u"\ufffd")
+    curlylefttoken = Token(u"chars", u"{")
+    curlyrighttoken = Token(u"chars", u"}")
 
     def reset(self):
         super(LatexIncrementalLexer, self).reset()
@@ -388,8 +389,6 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
     To customize decoding, subclass and override
     :meth:`get_latex_bytes`.
     """
-
-    emptytoken = Token(u"unknown", u"")
 
     inputenc = "ascii"
     """Input encoding. **Must** extend ascii."""

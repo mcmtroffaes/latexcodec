@@ -643,8 +643,8 @@ class LatexUnicodeTable:
             # note: we do not remove brackets (they sometimes matter,
             # e.g. bibtex uses them to prevent lower case transformation)
             if (len(tokens) == 2 and
-                tokens[0].name.startswith('control') and
-                    tokens[1].name == 'chars'):
+                tokens[0].name.startswith(u'control') and
+                    tokens[1].name == u'chars'):
                 alt_tokens = (tokens[0], self.lexer.curlylefttoken, tokens[1],
                               self.lexer.curlyrighttoken)
                 if alt_tokens not in self.unicode_map:
@@ -668,6 +668,9 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
     """Translating incremental encoder for latex. Maintains a state to
     determine whether control spaces etc. need to be inserted.
     """
+
+    emptytoken = lexer.Token(u"unknown", u"")
+    """The empty token."""
 
     table = _LATEX_UNICODE_TABLE
     """Translation table."""
