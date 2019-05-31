@@ -139,6 +139,7 @@ class LatexUnicodeTable:
 
         self.register(u'\N{POUND SIGN}', u'\\pounds')
         self.register(u'\N{POUND SIGN}', u'\\textsterling', package='textcomp')
+        self.register(u'\N{YEN SIGN}', u'\\yen')
 
         self.register(u'\N{SECTION SIGN}', u'\\S')
         self.register(u'\N{DIAERESIS}', u'\\"{}')
