@@ -499,6 +499,7 @@ class LatexUnicodeTable:
         self.register(u'\N{GREEK SMALL LETTER ZETA}', u'\\zeta', mode='math')
         self.register(u'\N{GREEK SMALL LETTER ETA}', u'\\eta', mode='math')
         self.register(u'\N{GREEK SMALL LETTER THETA}', u'\\theta', mode='math')
+        self.register(u'\N{GREEK SMALL LETTER THETA}', u'\\texttheta', encode=False)
         self.register(u'\N{GREEK SMALL LETTER IOTA}', u'\\iota', mode='math')
         self.register(u'\N{GREEK SMALL LETTER KAPPA}', u'\\kappa', mode='math')
         self.register(

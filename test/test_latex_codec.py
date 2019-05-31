@@ -224,6 +224,10 @@ class TestDecoder(TestCase):
     def test_double_quotes_gb2312(self):
         self.decode(u"“你好”", u"``你好''".encode('gb2312'), 'gb2312')
 
+    def test_theta(self):
+        self.decode(u"θ", br"$\theta$")
+        self.decode(u"θ", br"\texttheta")
+
 
 class TestStreamDecoder(TestDecoder):
 
@@ -416,6 +420,9 @@ class TestEncoder(TestCase):
 
     def test_thin_space(self):
         self.encode(u"a\u2009b", b"a b")
+
+    def test_theta(self):
+        self.encode(u"θ", br"$\theta$")
 
 
 class TestStreamEncoder(TestEncoder):
