@@ -140,6 +140,7 @@ class LatexUnicodeTable:
         self.register(u'\N{POUND SIGN}', u'\\pounds')
         self.register(u'\N{POUND SIGN}', u'\\textsterling', package='textcomp')
         self.register(u'\N{YEN SIGN}', u'\\yen')
+        self.register(u'\N{YEN SIGN}', u'\\textyen', package='textcomp')
 
         self.register(u'\N{SECTION SIGN}', u'\\S')
         self.register(u'\N{DIAERESIS}', u'\\"{}')
@@ -501,7 +502,7 @@ class LatexUnicodeTable:
         self.register(u'\N{GREEK SMALL LETTER ETA}', u'\\eta', mode='math')
         self.register(u'\N{GREEK SMALL LETTER THETA}', u'\\theta', mode='math')
         self.register(u'\N{GREEK SMALL LETTER THETA}', u'\\texttheta',
-                      encode=False)
+                      package='textgreek', encode=False)
         self.register(u'\N{GREEK SMALL LETTER IOTA}', u'\\iota', mode='math')
         self.register(u'\N{GREEK SMALL LETTER KAPPA}', u'\\kappa', mode='math')
         self.register(
