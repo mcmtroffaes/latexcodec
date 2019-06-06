@@ -5,6 +5,10 @@
   multibyte encodings. This also simplifies the implementation. Many
   thanks to davidweichiang for reporting and implementing.
 
+* New detailed description of the package for the readme, to clarify
+  the behaviour and design choices. Many thanks to tschantzmc for
+  contributing this description (see issue #70).
+
 1.0.7 (3 May 2019)
 ------------------
 
