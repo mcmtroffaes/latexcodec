@@ -92,7 +92,6 @@ unchanged. The same happens for LaTeX commands that select characters
 but are not yet recognized by the codec.  Either case can result in a
 hybrid unicode string in which some characters are understood as
 literally the character and others as parts of unexpanded commands.
-
 Consequently, at times, backslashes will be left intact for denoting
 the start of a potentially unrecognized control sequence.
 
