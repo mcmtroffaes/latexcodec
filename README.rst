@@ -19,3 +19,83 @@ A lexer and codec to work with LaTeX code in Python.
     :target: https://coveralls.io/r/mcmtroffaes/latexcodec?branch=develop
     :alt: coveralls.io
 
+The codec provides a convenient way of going between text written in
+LaTeX and unicode. Since it is not a LaTeX compiler, it is more
+appropriate for short chunks of text, such as a paragraph or the
+values of a BibTeX entry, and it is not appropriate for a full LaTeX
+document. In particular, its behavior on the LaTeX commands that do
+not simply select characters is intended to allow the unicode
+representation to be understandable by a human reader, but is not
+canonical and may require hand tuning to produce the desired effect.
+
+The encoder does a best effort to replace unicode characters outside
+of the range used as LaTeX input (ascii by default) with a LaTeX
+command that selects the character. More technically, the unicode code
+point is replaced by a LaTeX command that selects a glyph that
+reasonably represents the code point. Unicode characters with special
+uses in LaTeX are replaced by their LaTeX equivalents. For example,
+
+====================== ===================
+original text          encoded LaTeX
+====================== ===================
+``¥``                  ``\yen``
+``ü``                  ``\"u``
+``\N{NO-BREAK SPACE}`` ``~``
+``~``                  ``\textasciitilde``
+``%``                  ``\%``
+``#``                  ``\#``
+``\textbf{x}``         ``\textbf{x}``
+====================== ===================
+
+The decoder does a best effort to replace LaTeX commands that select
+characters with the unicode for the character they are selecting. For
+example,
+
+===================== ======================
+original LaTeX        decoded unicode
+===================== ======================
+``\yen``              ``¥``
+``\"u``               ``ü``
+``~``                 ``\N{NO-BREAK SPACE}``
+``\textasciitilde``   ``~``
+``\%``                ``%``
+``\#``                ``#``
+``\textbf{x}``        ``\textbf {x}``
+``#``                 ``#``
+===================== ======================
+
+In addition, comments are dropped (including the final newline that
+marks the end of a comment), paragraphs are canonicalized into double
+newlines, and other newlines are left as is. Spacing after LaTeX
+commands is also canonicalized.
+
+For example,
+
+::
+
+  hi % bye
+  there\par world
+  \textbf     {awesome}
+
+is decoded as
+
+::
+
+  hi there
+
+  world
+  \textbf {awesome}
+
+When decoding, LaTeX commands not directly selecting characters (for
+example, macros and formatting commands) are passed through
+unchanged. The same happens for LaTeX commands that select characters
+but are not yet recognized by the codec.  Either case can result in a
+hybrid unicode string in which some characters are understood as
+literally the character and others as parts of unexpanded commands.
+
+Consequently, at times, backslashes will be left intact for denoting
+the start of a potentially unrecognized control sequence.
+
+Given the numerous and changing packages providing such LaTeX
+commands, the codec will never be complete, and new translations of
+unrecognized unicode or unrecognized LaTeX symbols are always welcome.
