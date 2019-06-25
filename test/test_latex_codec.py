@@ -229,7 +229,7 @@ class TestDecoder(TestCase):
         self.decode(u"θ", br"\texttheta")
 
     def test_decode_comment(self):
-        self.decode(ur"\\", br"\\%")
+        self.decode(u"\\\\", br"\\%")
         self.decode(ur"% abc \\\\% ghi", b"\\% abc\n\\\\% def\n\\\\\\% ghi")
 
 
