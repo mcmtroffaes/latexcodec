@@ -228,6 +228,11 @@ class TestDecoder(TestCase):
         self.decode(u"θ", br"$\theta$")
         self.decode(u"θ", br"\texttheta")
 
+    def test_decode_comment(self):
+        self.decode(u"\\\\", br"\\%")
+        self.decode(u"% abc \\\\\\\\% ghi",
+                    b"\\% abc\n\\\\% def\n\\\\\\% ghi")
+
 
 class TestStreamDecoder(TestDecoder):
 
