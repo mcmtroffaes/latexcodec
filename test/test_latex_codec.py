@@ -230,7 +230,8 @@ class TestDecoder(TestCase):
 
     def test_decode_comment(self):
         self.decode(u"\\\\", br"\\%")
-        self.decode(ur"% abc \\\\% ghi", b"\\% abc\n\\\\% def\n\\\\\\% ghi")
+        self.decode(u"% abc \\\\\\\\% ghi",
+                    b"\\% abc\n\\\\% def\n\\\\\\% ghi")
 
 
 class TestStreamDecoder(TestDecoder):
