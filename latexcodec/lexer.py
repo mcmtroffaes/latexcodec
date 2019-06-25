@@ -144,8 +144,10 @@ class LatexLexer(RegexpLexer):
 
     # implementation note: every token **must** be decodable by inputenc
     tokens = (
+        # match newlines and percent first, to ensure comments match correctly
+        (u'control_symbol_x2', r'[\\][\\]|[\\]%'),
         # comment: for ease, and for speed, we handle it as a token
-        (u'comment', r'(?<![\\])%[^\n]*'),
+        (u'comment', r'%[^\n]*'),
         # control tokens
         # in latex, some control tokens skip following whitespace
         # ('control-word' and 'control-symbol')
@@ -278,7 +280,8 @@ class LatexIncrementalLexer(LatexLexer):
                 # go to space skip mode
                 self.state = 'S'
                 yield token
-            elif token.name == u'control_symbol_x':
+            elif (token.name == u'control_symbol_x'
+                  or token.name == u'control_symbol_x2'):
                 # don't skip following space, so go to M mode
                 self.state = 'M'
                 yield token
