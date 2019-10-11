@@ -9,6 +9,8 @@
   the behaviour and design choices. Many thanks to tschantzmc for
   contributing this description (see issue #70).
 
+* Minor fix in decoding of LaTeX comments (see issue #72).
+
 1.0.7 (3 May 2019)
 ------------------
 
