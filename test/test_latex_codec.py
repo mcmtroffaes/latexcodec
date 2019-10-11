@@ -233,6 +233,10 @@ class TestDecoder(TestCase):
         self.decode(u"% abc \\\\\\\\% ghi",
                     b"\\% abc\n\\\\% def\n\\\\\\% ghi")
 
+    def test_decode_lower_quotes(self):
+        self.decode(u"„", br",,")
+        self.decode(u"„", br"\glqq")
+
 
 class TestStreamDecoder(TestDecoder):
 
@@ -428,6 +432,9 @@ class TestEncoder(TestCase):
 
     def test_theta(self):
         self.encode(u"θ", br"$\theta$")
+
+    def test_encode_lower_quotes(self):
+        self.encode(u"„", br",,")
 
 
 class TestStreamEncoder(TestEncoder):
