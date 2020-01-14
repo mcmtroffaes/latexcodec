@@ -412,7 +412,7 @@ class LatexIncrementalDecoderInvalidErrorTest(BaseLatexIncrementalDecoderTest):
             )
 
 
-def invalid_token_test():
+def test_invalid_token():
     lexer = LatexIncrementalDecoder()
     # piggyback an implementation which results in invalid tokens
     lexer.get_raw_tokens = lambda bytes_, final: [Token('**invalid**', bytes_)]
@@ -420,7 +420,7 @@ def invalid_token_test():
         lexer.decode(b'hello')
 
 
-def invalid_state_test_1():
+def test_invalid_state_1():
     lexer = LatexIncrementalDecoder()
     # piggyback invalid state
     lexer.state = '**invalid**'
@@ -428,7 +428,7 @@ def invalid_state_test_1():
         lexer.decode(b'\n\n\n')
 
 
-def invalid_state_test_2():
+def test_invalid_state_2():
     lexer = LatexIncrementalDecoder()
     # piggyback invalid state
     lexer.state = '**invalid**'
