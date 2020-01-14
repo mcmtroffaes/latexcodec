@@ -2,6 +2,10 @@ language: python
 sudo: false
 matrix:
   include:
+    - python: "3.9-dev"
+      dist: xenial
+    - python: "3.8"
+      dist: xenial
     - python: "3.7"
       dist: xenial
     - python: "3.6"
@@ -20,6 +24,8 @@ branches:
   only:
     - develop
 install:
+  - "pip install --upgrade pytest"
+  - "pip install pytest-cov"
   - "pip install ."
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install coveralls check-manifest flake8 Sphinx; fi"
 script:
@@ -28,11 +34,7 @@ script:
   - "pushd doc"
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then make html; fi"
   - "popd"
-  - "pushd test"
-  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then coverage run --source=latexcodec `type -p nosetests`; fi"
-  - "if [[ $TRAVIS_PYTHON_VERSION != '2.7' ]]; then nosetests; fi"
-  - "popd"
+  - cd test
+  - "pytest --cov-report=xml --cov=latexcodec ."
 after_success:
-  - "pushd test"
-  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then coveralls; fi"
-  - "popd"
+  - bash <(curl -s https://codecov.io/bash)

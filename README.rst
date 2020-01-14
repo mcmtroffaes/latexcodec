@@ -1,7 +1,7 @@
 latexcodec
 ==========
 
-|travis| |coveralls|
+|travis| |codecov|
 
 A lexer and codec to work with LaTeX code in Python.
 
@@ -15,9 +15,9 @@ A lexer and codec to work with LaTeX code in Python.
     :target: https://travis-ci.org/mcmtroffaes/latexcodec
     :alt: travis-ci
 
-.. |coveralls| image:: https://coveralls.io/repos/mcmtroffaes/latexcodec/badge.png?branch=develop
-    :target: https://coveralls.io/r/mcmtroffaes/latexcodec?branch=develop
-    :alt: coveralls.io
+.. |codecov| image:: https://codecov.io/gh/mcmtroffaes/latexcodec/branch/develop/graph/badge.svg
+    :target: https://codecov.io/gh/mcmtroffaes/latexcodec
+    :alt: codecov
 
 The codec provides a convenient way of going between text written in
 LaTeX and unicode. Since it is not a LaTeX compiler, it is more
