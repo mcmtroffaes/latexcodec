@@ -11,6 +11,8 @@
 
 * Minor fix in decoding of LaTeX comments (see issue #72).
 
+* Support Python 3.9 (see issue #75).
+
 1.0.7 (3 May 2019)
 ------------------
 

@@ -868,7 +868,12 @@ def find_latex(encoding):
     or to ``latex+<encoding>``
     where ``<encoding>`` describes another encoding.
     """
-    encoding, _, inputenc_ = encoding.partition(u"+")
+    if u'_' in encoding:
+        # Python 3.9 now normalizes "latex+latin1" to "latex_latin1"
+        # https://bugs.python.org/issue37751
+        encoding, _, inputenc_ = encoding.partition(u"_")
+    else:
+        encoding, _, inputenc_ = encoding.partition(u"+")
     if not inputenc_:
         inputenc_ = "ascii"
     if encoding == "latex":
