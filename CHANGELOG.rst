@@ -1,4 +1,4 @@
-2.0.0 (14 January 2019)
+2.0.0 (14 January 2020)
 -----------------------
 
 * Lexer now processes unicode directly, to fix various issues with
