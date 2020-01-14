@@ -2,7 +2,7 @@
 
 """Tests for the tex lexer."""
 
-import nose.tools
+import pytest
 from unittest import TestCase
 import six
 
@@ -30,26 +30,26 @@ class MockIncrementalDecoder(LatexIncrementalDecoder):
 
 def test_token_create_with_args():
     t = Token('hello', u'world')
-    nose.tools.assert_equal(t.name, 'hello')
-    nose.tools.assert_equal(t.text, u'world')
+    assert t.name == 'hello'
+    assert t.text == u'world'
 
 
-@nose.tools.raises(AttributeError)
 def test_token_assign_name():
-    t = Token('hello', u'world')
-    t.name = 'test'
+    with pytest.raises(AttributeError):
+        t = Token('hello', u'world')
+        t.name = 'test'
 
 
-@nose.tools.raises(AttributeError)
 def test_token_assign_text():
-    t = Token('hello', u'world')
-    t.text = 'test'
+    with pytest.raises(AttributeError):
+        t = Token('hello', u'world')
+        t.text = 'test'
 
 
-@nose.tools.raises(AttributeError)
 def test_token_assign_other():
-    t = Token('hello', u'world')
-    t.blabla = 'test'
+    with pytest.raises(AttributeError):
+        t = Token('hello', u'world')
+        t.blabla = 'test'
 
 
 class BaseLatexLexerTest(TestCase):
@@ -159,9 +159,9 @@ class LatexLexerTest(BaseLatexLexerTest):
             final=True,
         )
 
-    @nose.tools.raises(NotImplementedError)
     def test_decode(self):
-        self.lexer.decode(b'')
+        with pytest.raises(NotImplementedError):
+            self.lexer.decode(b'')
 
     def test_final_backslash(self):
         self.lex_it(
@@ -346,13 +346,13 @@ class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
         assert not self.lexer.inline_math
 
     # counterintuitive?
-    @nose.tools.raises(UnicodeDecodeError)
     def test_final_backslash(self):
-        self.lex_it(
-            u'notsogood\\',
-            [u'notsogood'],
-            final=True
-        )
+        with pytest.raises(UnicodeDecodeError):
+            self.lex_it(
+                u'notsogood\\',
+                [u'notsogood'],
+                final=True
+            )
 
     def test_final_comment(self):
         self.lex_it(
@@ -403,34 +403,37 @@ class LatexIncrementalDecoderInvalidErrorTest(BaseLatexIncrementalDecoderTest):
     errors = '**baderror**'
     IncrementalDecoder = MockIncrementalDecoder
 
-    @nose.tools.raises(NotImplementedError)
     def test_errors_invalid(self):
-        self.lex_it(
-            u'helmocklo',
-            u'?|?|?|mock|?|?'.split(u'|'),
-            final=True
-        )
+        with pytest.raises(NotImplementedError):
+            self.lex_it(
+                u'helmocklo',
+                u'?|?|?|mock|?|?'.split(u'|'),
+                final=True
+            )
 
 
 def invalid_token_test():
     lexer = LatexIncrementalDecoder()
     # piggyback an implementation which results in invalid tokens
     lexer.get_raw_tokens = lambda bytes_, final: [Token('**invalid**', bytes_)]
-    nose.tools.assert_raises(AssertionError, lambda: lexer.decode(b'hello'))
+    with pytest.raises(AssertionError):
+        lexer.decode(b'hello')
 
 
 def invalid_state_test_1():
     lexer = LatexIncrementalDecoder()
     # piggyback invalid state
     lexer.state = '**invalid**'
-    nose.tools.assert_raises(AssertionError, lambda: lexer.decode(b'\n\n\n'))
+    with pytest.raises(AssertionError):
+        lexer.decode(b'\n\n\n')
 
 
 def invalid_state_test_2():
     lexer = LatexIncrementalDecoder()
     # piggyback invalid state
     lexer.state = '**invalid**'
-    nose.tools.assert_raises(AssertionError, lambda: lexer.decode(b'   '))
+    with pytest.raises(AssertionError):
+        lexer.decode(b'   ')
 
 
 class LatexIncrementalLexerTest(TestCase):
@@ -477,14 +480,14 @@ class LatexIncrementalEncoderTest(TestCase):
     def tearDown(self):
         del self.encoder
 
-    @nose.tools.raises(TypeError)
     def test_invalid_type(self):
-        self.encoder.encode(object(), final=True)
+        with pytest.raises(TypeError):
+            self.encoder.encode(object(), final=True)
 
-    @nose.tools.raises(ValueError)
     def test_invalid_code(self):
-        # default encoding is ascii, \u00ff is not ascii translatable
-        self.encoder.encode(u"\u00ff", final=True)
+        with pytest.raises(ValueError):
+            # default encoding is ascii, \u00ff is not ascii translatable
+            self.encoder.encode(u"\u00ff", final=True)
 
     def test_hello(self):
         self.encode(

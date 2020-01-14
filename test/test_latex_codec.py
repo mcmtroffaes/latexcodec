@@ -4,7 +4,7 @@
 from __future__ import print_function
 
 import codecs
-import nose.tools
+import pytest
 from six import text_type, binary_type, BytesIO, PY2
 from unittest import TestCase
 
@@ -21,15 +21,15 @@ def test_find_latex():
 
 def test_latex_incremental_decoder_getstate():
     encoder = codecs.getincrementaldecoder('latex')()
-    nose.tools.assert_raises(NotImplementedError, lambda: encoder.getstate())
+    with pytest.raises(NotImplementedError):
+        encoder.getstate()
 
 
 def test_latex_incremental_decoder_setstate():
     encoder = codecs.getincrementaldecoder('latex')()
     state = (u'', 0)
-    nose.tools.assert_raises(
-        NotImplementedError,
-        lambda: encoder.setstate(state))
+    with pytest.raises(NotImplementedError):
+        encoder.setstate(state)
 
 
 def split_input(input_):
@@ -57,14 +57,14 @@ class TestDecoder(TestCase):
         decoded, n = codecs.getdecoder(encoding)(text_latex)
         self.assertEqual((decoded, n), (text_utf8, len(text_latex)))
 
-    @nose.tools.raises(TypeError)
     def test_invalid_type(self):
-        codecs.getdecoder("latex")(object())
+        with pytest.raises(TypeError):
+            codecs.getdecoder("latex")(object())
 
-    @nose.tools.raises(ValueError)
     def test_invalid_code(self):
-        # b'\xe9' is invalid utf-8 code
-        self.decode(u'', b'\xe9  ', 'utf-8')
+        with pytest.raises(ValueError):
+            # b'\xe9' is invalid utf-8 code
+            self.decode(u'', b'\xe9  ', 'utf-8')
 
     def test_null(self):
         self.decode(u'', b'')
@@ -280,17 +280,17 @@ class TestEncoder(TestCase):
         encoded, n = codecs.getencoder(encoding)(text_utf8, errors=errors)
         self.assertEqual((encoded, n), (text_latex, len(text_utf8)))
 
-    @nose.tools.raises(TypeError)
     def test_invalid_type(self):
-        codecs.getencoder("latex")(object())
+        with pytest.raises(TypeError):
+            codecs.getencoder("latex")(object())
 
     # note concerning test_invalid_code_* methods:
     # u'\u2328' (0x2328 = 9000) is unicode for keyboard symbol
     # we currently provide no translation for this into LaTeX code
 
-    @nose.tools.raises(ValueError)
     def test_invalid_code_strict(self):
-        self.encode(u'\u2328', b'', 'ascii', 'strict')
+        with pytest.raises(ValueError):
+            self.encode(u'\u2328', b'', 'ascii', 'strict')
 
     def test_invalid_code_ignore(self):
         self.encode(u'\u2328', b'', 'ascii', 'ignore')
@@ -298,9 +298,9 @@ class TestEncoder(TestCase):
     def test_invalid_code_replace(self):
         self.encode(u'\u2328', b'{\\char9000}', 'ascii', 'replace')
 
-    @nose.tools.raises(ValueError)
     def test_invalid_code_baderror(self):
-        self.encode(u'\u2328', b'', 'ascii', '**baderror**')
+        with pytest.raises(ValueError):
+            self.encode(u'\u2328', b'', 'ascii', '**baderror**')
 
     def test_null(self):
         self.encode(u'', b'')
@@ -495,9 +495,9 @@ class TestUnicodeEncoder(TestEncoder):
     # the following tests rely on the fact that \u2328 is not in our
     # translation table
 
-    @nose.tools.raises(ValueError)
     def test_ulatex_ascii_invalid(self):
-        self.uencode(u'# \u2328', u'', 'ascii')
+        with pytest.raises(ValueError):
+            self.uencode(u'# \u2328', u'', 'ascii')
 
     def test_ulatex_utf8_invalid(self):
         self.uencode(u'# ψ \u2328', u'\\# ψ \u2328', 'utf8')
