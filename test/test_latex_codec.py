@@ -252,7 +252,7 @@ class TestStreamDecoder(TestDecoder):
     # this is valid on Python 2, so we skip this test there
     def test_invalid_type(self):
         if PY2:
-            raise nose.plugins.skip.SkipTest
+            pytest.skip("test not relevant for Python 2")
         else:
             TestDecoder.test_invalid_type(self)
 
