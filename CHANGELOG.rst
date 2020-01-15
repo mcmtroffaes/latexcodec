@@ -1,6 +1,8 @@
 2.0.1 (in development)
 ----------------------
 
+* Drop Python 3.3 support.
+
 2.0.0 (14 January 2020)
 -----------------------
 
