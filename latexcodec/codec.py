@@ -131,7 +131,7 @@ class LatexUnicodeTable:
 
         self.register(u'\N{BULLET}', u'\\bullet', mode='math')
         self.register(u'\N{BULLET}', u'\\textbullet', package='textcomp')
-        self.register(u'\N{ASTERISK OPERATOR}', u'\\textasteriskcentered')
+        self.register(u'\N{ASTERISK OPERATOR}', u'\\ast', mode='math')
 
         self.register(u'\N{NUMBER SIGN}', u'\\#')
         self.register(u'\N{LOW LINE}', u'\\_')
