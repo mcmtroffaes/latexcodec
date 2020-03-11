@@ -4,6 +4,7 @@ include INSTALL.rst
 include CHANGELOG.rst
 include LICENSE.rst
 include AUTHORS.rst
+include .editorconfig
 include requirements.txt
 recursive-include doc *
 recursive-include test *
