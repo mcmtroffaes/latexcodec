@@ -3,6 +3,9 @@
 # latexcodec documentation build configuration file, created by
 # sphinx-quickstart on Wed Aug  3 15:45:22 2011.
 
+from setuptools_scm import get_version
+from pathlib import Path
+
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
@@ -15,9 +18,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 project = u'latexcodec'
 copyright = u'2011-2014, Matthias C. M. Troffaes'
-with open("../VERSION") as version_file:
-    release = version_file.read().strip()
-version = '.'.join(release.split('.')[:2])
+version = get_version(Path(__file__).absolute().parent.parent)
 exclude_patterns = ['_build']
 pygments_style = 'sphinx'
 html_theme = 'default'
