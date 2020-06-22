@@ -121,6 +121,11 @@ class LatexUnicodeTable:
                       u'\\guillemotleft')
         self.register(u'\N{RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK}',
                       u'\\guillemotright')
+        self.register(u'\N{MODIFIER LETTER PRIME}', u"'", decode=False)
+        self.register(u'\N{MODIFIER LETTER DOUBLE PRIME}', u"''", decode=False)
+        self.register(u'\N{MODIFIER LETTER TURNED COMMA}', u'`', decode=False)
+        self.register(u'\N{MODIFIER LETTER APOSTROPHE}', u"'", decode=False)
+        self.register(u'\N{MODIFIER LETTER REVERSED COMMA}', u'`', decode=False)
         self.register(u'\N{DAGGER}', u'\\dag')
         self.register(u'\N{DOUBLE DAGGER}', u'\\ddag')
 
