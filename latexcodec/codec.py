@@ -117,6 +117,10 @@ class LatexUnicodeTable:
         self.register(u'\N{DOUBLE LOW-9 QUOTATION MARK}', u",,")
         self.register(u'\N{DOUBLE LOW-9 QUOTATION MARK}', u'\\glqq',
                       encode=False)
+        self.register(u'\N{LEFT-POINTING DOUBLE ANGLE QUOTATION MARK}',
+                      u'\\guillemotleft')
+        self.register(u'\N{RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK}',
+                      u'\\guillemotright')
         self.register(u'\N{DAGGER}', u'\\dag')
         self.register(u'\N{DOUBLE DAGGER}', u'\\ddag')
 

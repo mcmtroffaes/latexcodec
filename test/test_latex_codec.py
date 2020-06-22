@@ -237,6 +237,9 @@ class TestDecoder(TestCase):
         self.decode(u"„", br",,")
         self.decode(u"„", br"\glqq")
 
+    def test_decode_guillemet(self):
+        self.decode(u"«quote»", br"\guillemotleft quote\guillemotright")
+
 
 class TestStreamDecoder(TestDecoder):
 
