@@ -439,6 +439,9 @@ class TestEncoder(TestCase):
     def test_encode_lower_quotes(self):
         self.encode(u"„", br",,")
 
+    def test_encode_guillemet(self):
+        self.encode(u"«quote»", br"\guillemotleft quote\guillemotright")
+
 
 class TestStreamEncoder(TestEncoder):
 
