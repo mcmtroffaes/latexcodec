@@ -1,7 +1,9 @@
-2.0.1 (in development)
-----------------------
+2.0.1 (23 July 2021)
+--------------------
 
 * Drop Python 3.3 support.
+
+* Added a few more translations.
 
 2.0.0 (14 January 2020)
 -----------------------
