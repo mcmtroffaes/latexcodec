@@ -110,6 +110,7 @@ class LatexUnicodeTable:
         self.register(u'\N{EN DASH}', u'\\textendash')
         self.register(u'\N{EM DASH}', u'---')
         self.register(u'\N{EM DASH}', u'\\textemdash')
+        self.register(u'\N{REPLACEMENT CHARACTER}', u"????", decode=False)
         self.register(u'\N{LEFT SINGLE QUOTATION MARK}', u'`', decode=False)
         self.register(u'\N{RIGHT SINGLE QUOTATION MARK}', u"'", decode=False)
         self.register(u'\N{LEFT DOUBLE QUOTATION MARK}', u'``')
