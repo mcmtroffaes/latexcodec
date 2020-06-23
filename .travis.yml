@@ -27,7 +27,7 @@ install:
   - "pip install --upgrade pytest"
   - "pip install pytest-cov"
   - "pip install ."
-  - "if [[ $TRAVIS_PYTHON_VERSION == '3.8' ]]; then pip install --upgrade check-manifest flake8 Sphinx setuptools_scm; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '3.8' ]]; then pip install check-manifest flake8 Sphinx; fi"
 script:
   - "if [[ $TRAVIS_PYTHON_VERSION == '3.8' ]]; then check-manifest; fi"
   - "if [[ $TRAVIS_PYTHON_VERSION == '3.8' ]]; then flake8; fi"
