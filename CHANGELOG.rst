@@ -1,4 +1,4 @@
-2.0.2 (in development)
+3.0.0 (in development)
 ----------------------
 
 * Drop Python 2.7, 3.4, and 3.5 support.
