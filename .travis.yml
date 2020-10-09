@@ -1,15 +1,14 @@
 language: python
-sudo: false
 matrix:
   include:
     - python: "3.9-dev"
-      dist: xenial
+      dist: focal
     - python: "3.8"
-      dist: xenial
+      dist: focal
     - python: "3.7"
-      dist: xenial
+      dist: focal
     - python: "3.6"
-      dist: xenial
+      dist: focal
     - python: "3.5"
       dist: xenial
     - python: "3.4"
@@ -17,9 +16,9 @@ matrix:
     - python: "2.7"
       dist: xenial
     - python: "pypy"
-      dist: trusty
+      dist: xenial
     - python: "pypy3"
-      dist: trusty
+      dist: focal
 branches:
   only:
     - develop
