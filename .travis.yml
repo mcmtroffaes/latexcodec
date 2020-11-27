@@ -1,5 +1,8 @@
 language: python
 dist: focal
+arch:
+    - amd64
+    - ppc64le
 matrix:
   include:
     - python: "3.9-dev"
@@ -7,6 +10,12 @@ matrix:
     - python: "3.7"
     - python: "3.6"
     - python: "pypy3"
+    - python: "3.9-dev"
+      arch: ppc64le
+    - python: "3.8"
+      arch: ppc64le
+    - python: "3.6"
+      arch: ppc64le
 branches:
   only:
     - develop
