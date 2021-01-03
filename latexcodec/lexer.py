@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     LaTeX Lexer
     ~~~~~~~~~~~
@@ -54,7 +53,6 @@
 import codecs
 import collections
 import re
-from six import add_metaclass, binary_type, string_types
 import unicodedata
 
 
@@ -79,8 +77,7 @@ class MetaRegexpLexer(type):
         cls.regexp = re.compile(regexp_string, re.DOTALL)
 
 
-@add_metaclass(MetaRegexpLexer)
-class RegexpLexer(codecs.IncrementalDecoder):
+class RegexpLexer(codecs.IncrementalDecoder, metaclass=MetaRegexpLexer):
 
     """Abstract base class for regexp based lexers."""
 
@@ -371,10 +368,10 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
         """
         if self.binary_mode:
             try:
-                # in python 3, the token text can be a memoryview
+                # the token text can be a memoryview
                 # which do not have a decode method; must cast to
                 # bytes explicitly
-                chars = self.decoder.decode(binary_type(bytes_), final=final)
+                chars = self.decoder.decode(bytes(bytes_), final=final)
             except UnicodeDecodeError as e:
                 # API requires that the encode method raises a ValueError
                 # in this case
@@ -421,11 +418,11 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
         """
         self.buffer = state
 
-    def get_unicode_tokens(self, unicode_, final=False):
+    def get_unicode_tokens(self, unicode_: str, final=False):
         """Split unicode into tokens so that every token starts with a
         non-combining character.
         """
-        if not isinstance(unicode_, string_types):
+        if not isinstance(unicode_, str):
             raise TypeError(
                 "expected unicode for encode input, but got {0} instead"
                 .format(unicode_.__class__.__name__))

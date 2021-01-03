@@ -4,7 +4,6 @@
 
 import pytest
 from unittest import TestCase
-import six
 
 from latexcodec.lexer import (
     LatexLexer,
@@ -16,39 +15,39 @@ from latexcodec.lexer import (
 
 class MockLexer(LatexLexer):
     tokens = (
-        ('chars', u'mock'),
-        ('unknown', u'.'),
+        ('chars', 'mock'),
+        ('unknown', '.'),
         )
 
 
 class MockIncrementalDecoder(LatexIncrementalDecoder):
     tokens = (
-        ('chars', u'mock'),
-        ('unknown', u'.'),
+        ('chars', 'mock'),
+        ('unknown', '.'),
         )
 
 
 def test_token_create_with_args():
-    t = Token('hello', u'world')
+    t = Token('hello', 'world')
     assert t.name == 'hello'
-    assert t.text == u'world'
+    assert t.text == 'world'
 
 
 def test_token_assign_name():
     with pytest.raises(AttributeError):
-        t = Token('hello', u'world')
+        t = Token('hello', 'world')
         t.name = 'test'
 
 
 def test_token_assign_text():
     with pytest.raises(AttributeError):
-        t = Token('hello', u'world')
+        t = Token('hello', 'world')
         t.text = 'test'
 
 
 def test_token_assign_other():
     with pytest.raises(AttributeError):
-        t = Token('hello', u'world')
+        t = Token('hello', 'world')
         t.blabla = 'test'
 
 
@@ -79,18 +78,18 @@ class LatexLexerTest(BaseLatexLexerTest):
 
     def test_hello(self):
         self.lex_it(
-            u'hello!  [#1] This \\is\\   \\^ a \ntest.\n'
-            u'    \nHey.\n\n\\# x \\#x',
-            six.u(r'h|e|l|l|o|!| | |[|#1|]| |T|h|i|s| |\is|\ | | |\^| |a| '
-                  '|\n|t|e|s|t|.|\n| | | | |\n|H|e|y|.|\n|\n'
-                  r'|\#| |x| |\#|x').split(u'|'),
+            'hello!  [#1] This \\is\\   \\^ a \ntest.\n'
+            '    \nHey.\n\n\\# x \\#x',
+            r'h|e|l|l|o|!| | |[|#1|]| |T|h|i|s| |\is|\ | | |\^| |a| '
+            '|\n|t|e|s|t|.|\n| | | | |\n|H|e|y|.|\n|\n'
+            r'|\#| |x| |\#|x'.split('|'),
             final=True
         )
 
     def test_comment(self):
         self.lex_it(
-            u'test% some comment\ntest',
-            u't|e|s|t|% some comment|\n|t|e|s|t'.split(u'|'),
+            'test% some comment\ntest',
+            't|e|s|t|% some comment|\n|t|e|s|t'.split(u'|'),
             final=True
         )
 
@@ -230,9 +229,9 @@ class LatexIncrementalDecoderTest(BaseLatexIncrementalDecoderTest):
         self.lex_it(
             u'hello!  [#1] This \\is\\   \\^ a \ntest.\n'
             u'    \nHey.\n\n\\# x \\#x',
-            six.u(r'h|e|l|l|o|!| |[|#1|]| |T|h|i|s| |\is|\ |\^|a| '
-                  r'|t|e|s|t|.| |\par|H|e|y|.| '
-                  r'|\par|\#| |x| |\#|x').split(u'|'),
+            r'h|e|l|l|o|!| |[|#1|]| |T|h|i|s| |\is|\ |\^|a| '
+            r'|t|e|s|t|.| |\par|H|e|y|.| '
+            r'|\par|\#| |x| |\#|x'.split(u'|'),
             final=True
         )
 

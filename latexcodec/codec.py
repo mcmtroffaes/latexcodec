@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     LaTeX Codec
     ~~~~~~~~~~~
@@ -58,11 +57,7 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
-
 import codecs
-from six import string_types, text_type
-from six.moves import range
 
 from latexcodec import lexer
 
@@ -616,20 +611,20 @@ class LatexUnicodeTable:
             package='textcomp')
         # \=O and \=o will be translated into Ō and ō before we can
         # match the full latex string... so decoding disabled for now
-        self.register(u'Ǭ', text_type(r'\textogonekcentered{\=O}'),
+        self.register(u'Ǭ', r'\textogonekcentered{\=O}',
                       decode=False)
-        self.register(u'ǭ', text_type(r'\textogonekcentered{\=o}'),
+        self.register(u'ǭ', r'\textogonekcentered{\=o}',
                       decode=False)
-        self.register(u'ℕ', text_type(r'\mathbb{N}'), mode='math')
-        self.register(u'ℕ', text_type(r'\mathbb N'), mode='math', decode=False)
-        self.register(u'ℤ', text_type(r'\mathbb{Z}'), mode='math')
-        self.register(u'ℤ', text_type(r'\mathbb Z'), mode='math', decode=False)
-        self.register(u'ℚ', text_type(r'\mathbb{Q}'), mode='math')
-        self.register(u'ℚ', text_type(r'\mathbb Q'), mode='math', decode=False)
-        self.register(u'ℝ', text_type(r'\mathbb{R}'), mode='math')
-        self.register(u'ℝ', text_type(r'\mathbb R'), mode='math', decode=False)
-        self.register(u'ℂ', text_type(r'\mathbb{C}'), mode='math')
-        self.register(u'ℂ', text_type(r'\mathbb C'), mode='math', decode=False)
+        self.register(u'ℕ', r'\mathbb{N}', mode='math')
+        self.register(u'ℕ', r'\mathbb N', mode='math', decode=False)
+        self.register(u'ℤ', r'\mathbb{Z}', mode='math')
+        self.register(u'ℤ', r'\mathbb Z', mode='math', decode=False)
+        self.register(u'ℚ', r'\mathbb{Q}', mode='math')
+        self.register(u'ℚ', r'\mathbb Q', mode='math', decode=False)
+        self.register(u'ℝ', r'\mathbb{R}', mode='math')
+        self.register(u'ℝ', r'\mathbb R', mode='math', decode=False)
+        self.register(u'ℂ', r'\mathbb{C}', mode='math')
+        self.register(u'ℂ', r'\mathbb C', mode='math', decode=False)
 
     def register(self, unicode_text, latex_text, mode='text', package=None,
                  decode=True, encode=True):
@@ -650,7 +645,7 @@ class LatexUnicodeTable:
             self.register(unicode_text, u'$' + latex_text + u'$', mode='text',
                           package=package, decode=decode, encode=encode)
             self.register(unicode_text,
-                          text_type(r'\(') + latex_text + text_type(r'\)'),
+                          r'\(' + latex_text + r'\)',
                           mode='text', package=package,
                           decode=decode, encode=encode)
             # XXX for the time being, we do not perform in-math substitutions
@@ -768,8 +763,8 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
                     "latex codec does not support {0} errors"
                     .format(self.errors))
 
-    def get_latex_chars(self, unicode_, final=False):
-        if not isinstance(unicode_, string_types):
+    def get_latex_chars(self, unicode_: str, final=False):
+        if not isinstance(unicode_, str):
             raise TypeError(
                 "expected unicode for encode input, but got {0} instead"
                 .format(unicode_.__class__.__name__))

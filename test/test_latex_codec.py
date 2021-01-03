@@ -4,8 +4,9 @@
 from __future__ import print_function
 
 import codecs
+from io import BytesIO
+
 import pytest
-from six import text_type, binary_type, BytesIO, PY2
 from unittest import TestCase
 
 import latexcodec
@@ -34,7 +35,7 @@ def test_latex_incremental_decoder_setstate():
 
 def split_input(input_):
     """Helper function for testing the incremental encoder and decoder."""
-    if not isinstance(input_, (text_type, binary_type)):
+    if not isinstance(input_, (str, bytes)):
         raise TypeError("expected unicode or bytes input")
     if input_:
         for i in range(len(input_)):
@@ -59,7 +60,7 @@ class TestDecoder(TestCase):
 
     def test_invalid_type(self):
         with pytest.raises(TypeError):
-            codecs.getdecoder("latex")(object())
+            codecs.getdecoder("latex")(object())  # type: ignore
 
     def test_invalid_code(self):
         with pytest.raises(ValueError):
@@ -252,12 +253,8 @@ class TestStreamDecoder(TestDecoder):
         self.assertEqual(text_utf8, reader.read())
 
     # in this test, BytesIO(object()) is eventually called
-    # this is valid on Python 2, so we skip this test there
     def test_invalid_type(self):
-        if PY2:
-            pytest.skip("test not relevant for Python 2")
-        else:
-            TestDecoder.test_invalid_type(self)
+        TestDecoder.test_invalid_type(self)
 
 
 class TestIncrementalDecoder(TestDecoder):
