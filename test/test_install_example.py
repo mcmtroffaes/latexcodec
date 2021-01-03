@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def test_install_example_1():
     import latexcodec  # noqa
     text_latex = b"\\'el\\`eve"

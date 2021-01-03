@@ -51,12 +51,14 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 
 import codecs
-import collections
 import re
 import unicodedata
-from typing import Iterator, Union, Tuple, Sequence, Any
+from typing import Iterator, Union, Tuple, Sequence, Any, NamedTuple
 
-Token = collections.namedtuple("Token", "name text")
+
+class Token(NamedTuple):
+    name: str
+    text: str
 
 
 # implementation note: we derive from IncrementalDecoder because this
@@ -125,6 +127,7 @@ class RegexpLexer(codecs.IncrementalDecoder, metaclass=MetaRegexpLexer):
             if self.raw_buffer.text:
                 yield self.raw_buffer
             # fill buffer with next token
+            assert match.lastgroup is not None
             self.raw_buffer = Token(match.lastgroup, match.group(0))
         if final:
             for token in self.flush_raw_tokens():

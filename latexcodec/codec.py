@@ -58,7 +58,7 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 
 import codecs
-from typing import Optional, List, Union, Any, Iterator, Tuple, Type
+from typing import Optional, List, Union, Any, Iterator, Tuple, Type, Dict
 
 from latexcodec import lexer
 from codecs import CodecInfo
@@ -85,10 +85,10 @@ class LatexUnicodeTable:
     """Tabulates a translation between LaTeX and unicode."""
 
     def __init__(self, lexer_):
-        self.lexer = lexer_
-        self.unicode_map = {}
-        self.max_length = 0
-        self.latex_map = {}
+        self.lexer: lexer.LatexIncrementalLexer = lexer_
+        self.unicode_map: Dict[Tuple[lexer.Token, ...], str] = {}
+        self.max_length: int = 0
+        self.latex_map: Dict[str, Tuple[str, Tuple[lexer.Token, ...]]] = {}
         self.register_all()
 
     def register_all(self):
@@ -718,7 +718,7 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
         super(LatexIncrementalEncoder, self).reset()
         self.state = 'M'
 
-    def get_space_bytes(self, bytes_: str):
+    def get_space_bytes(self, bytes_: str) -> Tuple[str, str]:
         """Inserts space bytes in space eating mode."""
         if self.state == 'S':
             # in space eating mode
@@ -732,7 +732,8 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
         else:
             return '', bytes_
 
-    def _get_latex_chars_tokens_from_char(self, c: str):
+    def _get_latex_chars_tokens_from_char(
+            self, c: str) -> Tuple[str, Tuple[lexer.Token, ...]]:
         # if ascii, try latex equivalents
         # (this covers \, #, &, and other special LaTeX characters)
         if ord(c) < 128:
@@ -775,7 +776,8 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
                     "latex codec does not support {0} errors"
                     .format(self.errors))
 
-    def get_latex_chars(self, unicode_: str, final: bool = False):
+    def get_latex_chars(
+            self, unicode_: str, final: bool = False) -> Iterator[str]:
         if not isinstance(unicode_, str):
             raise TypeError(
                 "expected unicode for encode input, but got {0} instead"
