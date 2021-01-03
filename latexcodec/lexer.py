@@ -54,7 +54,7 @@ import codecs
 import collections
 import re
 import unicodedata
-from typing import Tuple, Sequence
+from typing import Iterator, Union, Tuple, Sequence, Any
 
 Token = collections.namedtuple("Token", "name text")
 
@@ -70,10 +70,10 @@ class MetaRegexpLexer(type):
     """
 
     def __init__(cls, name, bases, dct):
-        super(MetaRegexpLexer, cls).__init__(name, bases, dct)
-        regexp_string = (u"|".join(
-            u"(?P<" + name + u">" + regexp + u")"
-            for name, regexp in cls.tokens))
+        super().__init__(name, bases, dct)
+        regexp_string = "|".join(
+            "(?P<" + name + ">" + regexp + ")"
+            for name, regexp in getattr(cls, "tokens", []))
         cls.regexp = re.compile(regexp_string, re.DOTALL)
 
 
@@ -81,33 +81,35 @@ class RegexpLexer(codecs.IncrementalDecoder, metaclass=MetaRegexpLexer):
 
     """Abstract base class for regexp based lexers."""
 
-    emptytoken = Token(u"unknown", u"")     #: The empty token.
+    emptytoken = Token("unknown", "")       #: The empty token.
     tokens: Sequence[Tuple[str, str]] = ()  #: Sequence of token regexps.
     errors: str                             #: How to respond to errors.
     raw_buffer: Token                       #: The raw buffer of this lexer.
+    regexp: re.Pattern[str]
 
-    def __init__(self, errors='strict'):
+    def __init__(self, errors: str = 'strict') -> None:
         """Initialize the codec."""
         super().__init__(errors=errors)
         self.errors = errors
         self.reset()
 
-    def reset(self):
+    def reset(self) -> None:
         """Reset state."""
         # buffer for storing last (possibly incomplete) token
         self.raw_buffer = self.emptytoken
 
-    def getstate(self):
+    def getstate(self) -> Any:
         """Get state."""
-        return (self.raw_buffer.text, 0)
+        return self.raw_buffer.text, 0
 
-    def setstate(self, state):
+    def setstate(self, state: Any) -> None:
         """Set state. The *state* must correspond to the return value
         of a previous :meth:`getstate` call.
         """
         self.raw_buffer = Token('unknown', state[0])
 
-    def get_raw_tokens(self, chars, final=False):
+    def get_raw_tokens(self, chars: str, final: bool = False
+                       ) -> Iterator[Token]:
         """Yield tokens without any further processing. Tokens are one of:
 
         - ``\\<word>``: a control word (i.e. a command)
@@ -128,7 +130,7 @@ class RegexpLexer(codecs.IncrementalDecoder, metaclass=MetaRegexpLexer):
             for token in self.flush_raw_tokens():
                 yield token
 
-    def flush_raw_tokens(self):
+    def flush_raw_tokens(self) -> Iterator[Token]:
         """Flush the raw token buffer."""
         if self.raw_buffer.text:
             yield self.raw_buffer
@@ -199,8 +201,10 @@ class LatexIncrementalLexer(LatexLexer):
     replacetoken = Token(u"chars", u"\ufffd")
     curlylefttoken = Token(u"chars", u"{")
     curlyrighttoken = Token(u"chars", u"}")
+    state: str
+    inline_math: bool
 
-    def reset(self):
+    def reset(self) -> None:
         super().reset()
         # three possible states:
         # newline (N), skipping spaces (S), and middle of line (M)
@@ -208,7 +212,7 @@ class LatexIncrementalLexer(LatexLexer):
         # inline math mode?
         self.inline_math = False
 
-    def getstate(self):
+    def getstate(self) -> Any:
         # state 'M' is most common, so let that be zero
         return (
             self.raw_buffer,
@@ -216,12 +220,12 @@ class LatexIncrementalLexer(LatexLexer):
             (4 if self.inline_math else 0)
         )
 
-    def setstate(self, state):
+    def setstate(self, state: Any):
         self.raw_buffer = state[0]
         self.state = {0: 'M', 1: 'N', 2: 'S'}[state[1] & 3]
         self.inline_math = bool(state[1] & 4)
 
-    def get_tokens(self, chars, final=False):
+    def get_tokens(self, chars: str, final: bool = False) -> Iterator[Token]:
         """Yield tokens while maintaining a state. Also skip
         whitespace after control words and (some) control symbols.
         Replaces newlines by spaces and \\par commands depending on
@@ -329,11 +333,11 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
     (unicode).
     """
 
-    def __init__(self, errors='strict'):
+    def __init__(self, errors: str = 'strict') -> None:
         super(LatexIncrementalDecoder, self).__init__(errors)
         self.decoder = codecs.getincrementaldecoder(self.inputenc)(errors)
 
-    def decode_token(self, token):
+    def decode_token(self, token: Token) -> str:
         """Returns the decoded token text.
 
         .. note::
@@ -352,7 +356,8 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
         text = token.text
         return text if token.name != u'control_word' else text + u' '
 
-    def get_unicode_tokens(self, chars, final=False):
+    def get_unicode_tokens(self, chars: str, final: bool = False
+                           ) -> Iterator[str]:
         """Decode every token. Override to
         process the tokens in some other way (for example, for token
         translation).
@@ -360,13 +365,15 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
         for token in self.get_tokens(chars, final=final):
             yield self.decode_token(token)
 
-    def decode(self, bytes_, final=False):
+    def decode(self, bytes_: Union[bytes, str], final: bool = False) -> str:
         """Decode LaTeX *bytes_* into a unicode string.
 
         This implementation calls :meth:`get_unicode_tokens` and joins
         the resulting unicode strings together.
         """
         if self.binary_mode:
+            if not isinstance(bytes_, (bytes, memoryview)):
+                raise TypeError(f"expected bytes but got {bytes_!r}")
             try:
                 # the token text can be a memoryview
                 # which do not have a decode method; must cast to
@@ -377,8 +384,10 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
                 # in this case
                 raise ValueError(e)
         else:
+            if not isinstance(bytes_, str):
+                raise TypeError(f"expected str but got {bytes_!r}")
             chars = bytes_
-        return u''.join(self.get_unicode_tokens(chars, final=final))
+        return ''.join(self.get_unicode_tokens(chars, final=final))
 
 
 class LatexIncrementalEncoder(codecs.IncrementalEncoder):
@@ -398,27 +407,31 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
     (unicode).
     """
 
-    def __init__(self, errors='strict'):
+    buffer: str
+
+    def __init__(self, errors: str = 'strict') -> None:
         """Initialize the codec."""
+        super().__init__(errors=errors)
         self.errors = errors
         self.reset()
 
-    def reset(self):
+    def reset(self) -> None:
         """Reset state."""
         # buffer for storing last (possibly incomplete) token
         self.buffer = u""
 
-    def getstate(self):
+    def getstate(self) -> Any:
         """Get state."""
         return self.buffer
 
-    def setstate(self, state):
+    def setstate(self, state: Any) -> None:
         """Set state. The *state* must correspond to the return value
         of a previous :meth:`getstate` call.
         """
         self.buffer = state
 
-    def get_unicode_tokens(self, unicode_: str, final=False):
+    def get_unicode_tokens(self, unicode_: str, final: bool = False
+                           ) -> Iterator[str]:
         """Split unicode into tokens so that every token starts with a
         non-combining character.
         """
@@ -435,13 +448,14 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
             for token in self.flush_unicode_tokens():
                 yield token
 
-    def flush_unicode_tokens(self):
+    def flush_unicode_tokens(self) -> Iterator[str]:
         """Flush the buffer."""
         if self.buffer:
             yield self.buffer
             self.buffer = u""
 
-    def get_latex_chars(self, unicode_, final=False):
+    def get_latex_chars(self, unicode_: str, final: bool = False
+                        ) -> Iterator[str]:
         """Encode every character. Override to
         process the unicode in some other way (for example, for character
         translation).
@@ -449,13 +463,13 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
         for token in self.get_unicode_tokens(unicode_, final=final):
             yield token
 
-    def encode(self, unicode_, final=False):
+    def encode(self, unicode_: str, final: bool = False) -> Union[bytes, str]:
         """Encode the *unicode_* string into LaTeX :class:`bytes`.
 
         This implementation calls :meth:`get_latex_chars` and joins
         the resulting :class:`bytes` together.
         """
-        chars = u''.join(self.get_latex_chars(unicode_, final=final))
+        chars = ''.join(self.get_latex_chars(unicode_, final=final))
         if self.binary_mode:
             try:
                 return chars.encode(self.inputenc, self.errors)

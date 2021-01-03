@@ -3,3 +3,4 @@
 /.idea
 /venv
 /.pytest_cache
+*.sqlite3
