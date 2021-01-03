@@ -81,14 +81,14 @@ def getregentry() -> Optional[CodecInfo]:
 
 
 class LatexUnicodeTable:
-
     """Tabulates a translation between LaTeX and unicode."""
 
     def __init__(self, lexer_):
         self.lexer: lexer.LatexIncrementalLexer = lexer_
         self.unicode_map: Dict[Tuple[lexer.Token, ...], str] = {}
         self.max_length: int = 0
-        self.latex_map: Dict[str, Tuple[str, Tuple[lexer.Token, ...]]] = {}
+        self.latex_map: Dict[
+            str, Tuple[str, Tuple[lexer.Token, ...]]] = {}
         self.register_all()
 
     def register_all(self):
@@ -640,8 +640,8 @@ class LatexUnicodeTable:
         self.register(u'\N{DOUBLE-STRUCK CAPITAL C}', r'\mathbb C',
                       mode='math', decode=False)
 
-    def register(self, unicode_text, latex_text, mode='text', package=None,
-                 decode=True, encode=True):
+    def register(self, unicode_text: str, latex_text: str, mode='text',
+                 package=None, decode=True, encode=True):
         """Register a correspondence between *unicode_text* and *latex_text*.
 
         :param str unicode_text: A unicode character.
@@ -693,8 +693,6 @@ class LatexUnicodeTable:
 
 
 _LATEX_UNICODE_TABLE = LatexUnicodeTable(lexer.LatexIncrementalDecoder())
-_ULATEX_UNICODE_TABLE = LatexUnicodeTable(
-    lexer.UnicodeLatexIncrementalDecoder())
 
 # incremental encoder does not need a buffer
 # but decoder does
@@ -861,28 +859,22 @@ class LatexCodec(codecs.Codec):
                ) -> Tuple[Union[bytes, str], int]:
         """Convert unicode string to LaTeX bytes."""
         encoder = self.IncrementalEncoder(errors=errors)
-        return (
-            encoder.encode(unicode_, final=True),
-            len(unicode_),
-        )
+        return encoder.encode(unicode_, final=True), len(unicode_)
 
     def decode(self, bytes_: Union[bytes, str], errors='strict'
                ) -> Tuple[str, int]:
         """Convert LaTeX bytes to unicode string."""
         decoder = self.IncrementalDecoder(errors=errors)
-        return (
-            decoder.decode(bytes_, final=True),
-            len(bytes_),
-        )
+        return decoder.decode(bytes_, final=True), len(bytes_)
 
 
 class UnicodeLatexIncrementalDecoder(LatexIncrementalDecoder):
-    table = _ULATEX_UNICODE_TABLE
+    table = _LATEX_UNICODE_TABLE
     binary_mode = False
 
 
 class UnicodeLatexIncrementalEncoder(LatexIncrementalEncoder):
-    table = _ULATEX_UNICODE_TABLE
+    table = _LATEX_UNICODE_TABLE
     binary_mode = False
 
 
