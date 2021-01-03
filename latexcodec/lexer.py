@@ -54,7 +54,7 @@ import codecs
 import collections
 import re
 import unicodedata
-
+from typing import Tuple, Sequence
 
 Token = collections.namedtuple("Token", "name text")
 
@@ -84,13 +84,14 @@ class RegexpLexer(codecs.IncrementalDecoder, metaclass=MetaRegexpLexer):
     emptytoken = Token(u"unknown", u"")
     """The empty token."""
 
-    tokens = ()
-    """Tuple containing all token regular expressions."""
+    tokens: Sequence[Tuple[str, str]]
+    """Sequence containing all token regular expressions."""
 
     def __init__(self, errors='strict'):
         """Initialize the codec."""
+        super().__init__(errors=errors)
+        self.raw_buffer = self.emptytoken
         self.errors = errors
-        self.reset()
 
     def reset(self):
         """Reset state."""
