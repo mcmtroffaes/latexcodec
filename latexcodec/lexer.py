@@ -331,11 +331,6 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
     inputenc = "ascii"
     """Input encoding. **Must** extend ascii."""
 
-    binary_mode = True
-    """Whether this lexer processes binary data (bytes) or text data
-    (unicode).
-    """
-
     def __init__(self, errors: str = 'strict') -> None:
         super(LatexIncrementalDecoder, self).__init__(errors)
         self.decoder = codecs.getincrementaldecoder(self.inputenc)(errors)
@@ -368,29 +363,25 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
         for token in self.get_tokens(chars, final=final):
             yield self.decode_token(token)
 
-    def decode(self, bytes_: Union[bytes, str], final: bool = False) -> str:
+    def udecode(self, bytes_: str, final: bool = False) -> str:
         """Decode LaTeX *bytes_* into a unicode string.
 
         This implementation calls :meth:`get_unicode_tokens` and joins
         the resulting unicode strings together.
         """
-        if self.binary_mode:
-            if not isinstance(bytes_, (bytes, memoryview)):
-                raise TypeError(f"expected bytes but got {bytes_!r}")
-            try:
-                # the token text can be a memoryview
-                # which do not have a decode method; must cast to
-                # bytes explicitly
-                chars = self.decoder.decode(bytes(bytes_), final=final)
-            except UnicodeDecodeError as e:
-                # API requires that the encode method raises a ValueError
-                # in this case
-                raise ValueError(e)
-        else:
-            if not isinstance(bytes_, str):
-                raise TypeError(f"expected str but got {bytes_!r}")
-            chars = bytes_
-        return ''.join(self.get_unicode_tokens(chars, final=final))
+        return ''.join(self.get_unicode_tokens(bytes_, final=final))
+
+    def decode(self, bytes_: bytes, final: bool = False) -> str:
+        """Decode LaTeX *bytes_* into a unicode string. Implementation uses
+        :meth:`udecode`.
+        """
+        try:
+            chars = self.decoder.decode(bytes_, final=final)
+        except UnicodeDecodeError as e:
+            # API requires that the encode method raises a ValueError
+            # in this case
+            raise ValueError(e)
+        return self.udecode(chars, final)
 
 
 class LatexIncrementalEncoder(codecs.IncrementalEncoder):
@@ -404,11 +395,6 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
 
     inputenc = "ascii"
     """Input encoding. **Must** extend ascii."""
-
-    binary_mode = True
-    """Whether this lexer processes binary data (bytes) or text data
-    (unicode).
-    """
 
     buffer: str
 
@@ -466,27 +452,24 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
         for token in self.get_unicode_tokens(unicode_, final=final):
             yield token
 
-    def encode(self, unicode_: str, final: bool = False) -> Union[bytes, str]:
+    def uencode(self, unicode_: str, final: bool = False) -> str:
         """Encode the *unicode_* string into LaTeX :class:`bytes`.
 
         This implementation calls :meth:`get_latex_chars` and joins
         the resulting :class:`bytes` together.
         """
-        chars = ''.join(self.get_latex_chars(unicode_, final=final))
-        if self.binary_mode:
-            try:
-                return chars.encode(self.inputenc, self.errors)
-            except UnicodeEncodeError as e:
-                # API requires that the encode method raises a ValueError
-                # in this case
-                raise ValueError(e)
-        else:
-            return chars
+        return ''.join(self.get_latex_chars(unicode_, final=final))
 
+    def encode(self, unicode_: str, final: bool = False) -> bytes:
+        """Encode the *unicode_* string into LaTeX :class:`bytes`.
 
-class UnicodeLatexIncrementalDecoder(LatexIncrementalDecoder):
-    binary_mode = False
-
-
-class UnicodeLatexIncrementalEncoder(LatexIncrementalEncoder):
-    binary_mode = False
+        This implementation calls :meth:`get_latex_chars` and joins
+        the resulting :class:`bytes` together.
+        """
+        chars = self.uencode(unicode_, final)
+        try:
+            return chars.encode(self.inputenc, self.errors)
+        except UnicodeEncodeError as e:
+            # API requires that the encode method raises a ValueError
+            # in this case
+            raise ValueError(e)
