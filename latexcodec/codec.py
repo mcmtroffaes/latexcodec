@@ -58,6 +58,7 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 
 import codecs
+from typing import List
 
 from latexcodec import lexer
 
@@ -82,8 +83,8 @@ class LatexUnicodeTable:
 
     """Tabulates a translation between LaTeX and unicode."""
 
-    def __init__(self, lexer):
-        self.lexer = lexer
+    def __init__(self, lexer_):
+        self.lexer = lexer_
         self.unicode_map = {}
         self.max_length = 0
         self.latex_map = {}
@@ -692,14 +693,12 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
     determine whether control spaces etc. need to be inserted.
     """
 
-    emptytoken = lexer.Token(u"unknown", u"")
-    """The empty token."""
-
-    table = _LATEX_UNICODE_TABLE
-    """Translation table."""
+    emptytoken = lexer.Token("unknown", "")  #: The empty token.
+    table = _LATEX_UNICODE_TABLE             #: Translation table.
+    state: str
 
     def __init__(self, errors='strict'):
-        super(LatexIncrementalEncoder, self).__init__(errors=errors)
+        super().__init__(errors=errors)
         self.reset()
 
     def reset(self):
@@ -730,7 +729,7 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
                 pass
         # next, try input encoding
         try:
-            bytes_ = c.encode(self.inputenc, 'strict')
+            c.encode(self.inputenc, 'strict')
         except UnicodeEncodeError:
             pass
         else:
@@ -787,8 +786,8 @@ class LatexIncrementalDecoder(lexer.LatexIncrementalDecoder):
 
     """Translating incremental decoder for LaTeX."""
 
-    table = _LATEX_UNICODE_TABLE
-    """Translation table."""
+    table = _LATEX_UNICODE_TABLE     #: Translation table.
+    token_buffer: List[lexer.Token]  #: The token buffer of this decoder.
 
     def __init__(self, errors='strict'):
         lexer.LatexIncrementalDecoder.__init__(self, errors=errors)
@@ -823,8 +822,8 @@ class LatexIncrementalDecoder(lexer.LatexIncrementalDecoder):
                 else:
                     # match!! flush buffer, and translate last bit
                     # exclude last i tokens
-                    for token in self.token_buffer[:-i]:
-                        yield self.decode_token(token)
+                    for token2 in self.token_buffer[:-i]:
+                        yield self.decode_token(token2)
                     yield unicode_text
                     self.token_buffer = []
                     break

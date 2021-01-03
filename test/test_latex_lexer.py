@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """Tests for the tex lexer."""
+from typing import Type
 
 import pytest
 from unittest import TestCase
@@ -14,17 +15,17 @@ from latexcodec.lexer import (
 
 
 class MockLexer(LatexLexer):
-    tokens = (
+    tokens = [
         ('chars', 'mock'),
         ('unknown', '.'),
-        )
+        ]
 
 
 class MockIncrementalDecoder(LatexIncrementalDecoder):
-    tokens = (
+    tokens = [
         ('chars', 'mock'),
         ('unknown', '.'),
-        )
+        ]
 
 
 def test_token_create_with_args():
@@ -54,7 +55,7 @@ def test_token_assign_other():
 class BaseLatexLexerTest(TestCase):
 
     errors = 'strict'
-    Lexer = None
+    Lexer: Type[LatexLexer]
 
     def setUp(self):
         self.lexer = self.Lexer(errors=self.errors)
@@ -200,7 +201,7 @@ class BaseLatexIncrementalDecoderTest(TestCase):
     """Tex lexer fixture."""
 
     errors = 'strict'
-    IncrementalDecoder = None
+    IncrementalDecoder: Type[LatexIncrementalDecoder]
 
     def setUp(self):
         self.lexer = self.IncrementalDecoder(self.errors)

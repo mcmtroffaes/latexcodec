@@ -81,17 +81,16 @@ class RegexpLexer(codecs.IncrementalDecoder, metaclass=MetaRegexpLexer):
 
     """Abstract base class for regexp based lexers."""
 
-    emptytoken = Token(u"unknown", u"")
-    """The empty token."""
-
-    tokens: Sequence[Tuple[str, str]]
-    """Sequence containing all token regular expressions."""
+    emptytoken = Token(u"unknown", u"")     #: The empty token.
+    tokens: Sequence[Tuple[str, str]] = ()  #: Sequence of token regexps.
+    errors: str                             #: How to respond to errors.
+    raw_buffer: Token                       #: The raw buffer of this lexer.
 
     def __init__(self, errors='strict'):
         """Initialize the codec."""
         super().__init__(errors=errors)
-        self.raw_buffer = self.emptytoken
         self.errors = errors
+        self.reset()
 
     def reset(self):
         """Reset state."""
@@ -141,7 +140,7 @@ class LatexLexer(RegexpLexer):
     """A very simple lexer for tex/latex."""
 
     # implementation note: every token **must** be decodable by inputenc
-    tokens = (
+    tokens = [
         # match newlines and percent first, to ensure comments match correctly
         (u'control_symbol_x2', r'[\\][\\]|[\\]%'),
         # comment: for ease, and for speed, we handle it as a token
@@ -180,7 +179,7 @@ class LatexLexer(RegexpLexer):
         # (such as a lone '\' at the end of a buffer)
         # is never emitted, but used internally by the buffer
         (u'unknown', r'.'),
-    )
+    ]
     """List of token names, and the regular expressions they match."""
 
 
@@ -202,7 +201,7 @@ class LatexIncrementalLexer(LatexLexer):
     curlyrighttoken = Token(u"chars", u"}")
 
     def reset(self):
-        super(LatexIncrementalLexer, self).reset()
+        super().reset()
         # three possible states:
         # newline (N), skipping spaces (S), and middle of line (M)
         self.state = 'N'
