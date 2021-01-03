@@ -87,7 +87,7 @@ class RegexpLexer(codecs.IncrementalDecoder, metaclass=MetaRegexpLexer):
     tokens: Sequence[Tuple[str, str]] = ()  #: Sequence of token regexps.
     errors: str                             #: How to respond to errors.
     raw_buffer: Token                       #: The raw buffer of this lexer.
-    regexp: re.Pattern[str]
+    regexp: re.Pattern
 
     def __init__(self, errors: str = 'strict') -> None:
         """Initialize the codec."""
