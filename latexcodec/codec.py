@@ -58,9 +58,10 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 
 import codecs
-from typing import List
+from typing import Optional, List, Union, Any, Iterator, Tuple, Type
 
 from latexcodec import lexer
+from codecs import CodecInfo
 
 
 def register():
@@ -74,7 +75,7 @@ def register():
 # this is used if latex_codec.py were to be placed in stdlib
 
 
-def getregentry():
+def getregentry() -> Optional[CodecInfo]:
     """Encodings module API."""
     return find_latex('latex')
 
@@ -610,22 +611,34 @@ class LatexUnicodeTable:
             u'\N{REGISTERED SIGN}',
             u'\\textregistered',
             package='textcomp')
-        # \=O and \=o will be translated into Ō and ō before we can
+        # \=O and \=o will be translated before we can
         # match the full latex string... so decoding disabled for now
-        self.register(u'Ǭ', r'\textogonekcentered{\=O}',
+        self.register(u'\N{LATIN CAPITAL LETTER O WITH OGONEK AND MACRON}',
+                      r'\textogonekcentered{\=O}',
                       decode=False)
-        self.register(u'ǭ', r'\textogonekcentered{\=o}',
+        self.register(u'\N{LATIN SMALL LETTER O WITH OGONEK AND MACRON}',
+                      r'\textogonekcentered{\=o}',
                       decode=False)
-        self.register(u'ℕ', r'\mathbb{N}', mode='math')
-        self.register(u'ℕ', r'\mathbb N', mode='math', decode=False)
-        self.register(u'ℤ', r'\mathbb{Z}', mode='math')
-        self.register(u'ℤ', r'\mathbb Z', mode='math', decode=False)
-        self.register(u'ℚ', r'\mathbb{Q}', mode='math')
-        self.register(u'ℚ', r'\mathbb Q', mode='math', decode=False)
-        self.register(u'ℝ', r'\mathbb{R}', mode='math')
-        self.register(u'ℝ', r'\mathbb R', mode='math', decode=False)
-        self.register(u'ℂ', r'\mathbb{C}', mode='math')
-        self.register(u'ℂ', r'\mathbb C', mode='math', decode=False)
+        self.register(u'\N{DOUBLE-STRUCK CAPITAL N}', r'\mathbb{N}',
+                      mode='math')
+        self.register(u'\N{DOUBLE-STRUCK CAPITAL N}', r'\mathbb N',
+                      mode='math', decode=False)
+        self.register(u'\N{DOUBLE-STRUCK CAPITAL Z}', r'\mathbb{Z}',
+                      mode='math')
+        self.register(u'\N{DOUBLE-STRUCK CAPITAL Z}', r'\mathbb Z',
+                      mode='math', decode=False)
+        self.register(u'\N{DOUBLE-STRUCK CAPITAL Q}', r'\mathbb{Q}',
+                      mode='math')
+        self.register(u'\N{DOUBLE-STRUCK CAPITAL Q}', r'\mathbb Q',
+                      mode='math', decode=False)
+        self.register(u'\N{DOUBLE-STRUCK CAPITAL R}', r'\mathbb{R}',
+                      mode='math')
+        self.register(u'\N{DOUBLE-STRUCK CAPITAL R}', r'\mathbb R',
+                      mode='math', decode=False)
+        self.register(u'\N{DOUBLE-STRUCK CAPITAL C}', r'\mathbb{C}',
+                      mode='math')
+        self.register(u'\N{DOUBLE-STRUCK CAPITAL C}', r'\mathbb C',
+                      mode='math', decode=False)
 
     def register(self, unicode_text, latex_text, mode='text', package=None,
                  decode=True, encode=True):
@@ -705,21 +718,21 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
         super(LatexIncrementalEncoder, self).reset()
         self.state = 'M'
 
-    def get_space_bytes(self, bytes_):
+    def get_space_bytes(self, bytes_: str):
         """Inserts space bytes in space eating mode."""
         if self.state == 'S':
             # in space eating mode
             # control space needed?
-            if bytes_.startswith(u' '):
+            if bytes_.startswith(' '):
                 # replace by control space
-                return u'\\ ', bytes_[1:]
+                return '\\ ', bytes_[1:]
             else:
                 # insert space (it is eaten, but needed for separation)
-                return u' ', bytes_
+                return ' ', bytes_
         else:
-            return u'', bytes_
+            return '', bytes_
 
-    def _get_latex_chars_tokens_from_char(self, c):
+    def _get_latex_chars_tokens_from_char(self, c: str):
         # if ascii, try latex equivalents
         # (this covers \, #, &, and other special LaTeX characters)
         if ord(c) < 128:
@@ -753,16 +766,16 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
                 # this assumes
                 # \usepackage[T1]{fontenc}
                 # \usepackage[utf8]{inputenc}
-                bytes_ = u'{\\char' + str(ord(c)) + u'}'
-                return bytes_, (lexer.Token(name=u'chars', text=bytes_),)
+                bytes_ = '{\\char' + str(ord(c)) + '}'
+                return bytes_, (lexer.Token(name='chars', text=bytes_),)
             elif self.errors == 'keep' and not self.binary_mode:
-                return c,  (lexer.Token(name=u'chars', text=c),)
+                return c,  (lexer.Token(name='chars', text=c),)
             else:
                 raise ValueError(
                     "latex codec does not support {0} errors"
                     .format(self.errors))
 
-    def get_latex_chars(self, unicode_: str, final=False):
+    def get_latex_chars(self, unicode_: str, final: bool = False):
         if not isinstance(unicode_, str):
             raise TypeError(
                 "expected unicode for encode input, but got {0} instead"
@@ -798,13 +811,14 @@ class LatexIncrementalDecoder(lexer.LatexIncrementalDecoder):
 
     # python codecs API does not support multibuffer incremental decoders
 
-    def getstate(self):
+    def getstate(self) -> Any:
         raise NotImplementedError
 
-    def setstate(self, state):
+    def setstate(self, state: Any) -> None:
         raise NotImplementedError
 
-    def get_unicode_tokens(self, chars, final=False):
+    def get_unicode_tokens(self, chars: str, final: bool = False
+                           ) -> Iterator[str]:
         for token in self.get_tokens(chars, final=final):
             # at this point, token_buffer does not match anything
             self.token_buffer.append(token)
@@ -838,10 +852,11 @@ class LatexIncrementalDecoder(lexer.LatexIncrementalDecoder):
 
 
 class LatexCodec(codecs.Codec):
-    IncrementalEncoder = None
-    IncrementalDecoder = None
+    IncrementalEncoder: Type[LatexIncrementalEncoder]
+    IncrementalDecoder: Type[LatexIncrementalDecoder]
 
-    def encode(self, unicode_, errors='strict'):
+    def encode(self, unicode_: str, errors='strict'
+               ) -> Tuple[Union[bytes, str], int]:
         """Convert unicode string to LaTeX bytes."""
         encoder = self.IncrementalEncoder(errors=errors)
         return (
@@ -849,7 +864,8 @@ class LatexCodec(codecs.Codec):
             len(unicode_),
         )
 
-    def decode(self, bytes_, errors='strict'):
+    def decode(self, bytes_: Union[bytes, str], errors='strict'
+               ) -> Tuple[str, int]:
         """Convert LaTeX bytes to unicode string."""
         decoder = self.IncrementalDecoder(errors=errors)
         return (
@@ -868,18 +884,20 @@ class UnicodeLatexIncrementalEncoder(LatexIncrementalEncoder):
     binary_mode = False
 
 
-def find_latex(encoding):
+def find_latex(encoding: str) -> Optional[CodecInfo]:
     """Return a :class:`codecs.CodecInfo` instance for the requested
     LaTeX *encoding*, which must be equal to ``latex``,
     or to ``latex+<encoding>``
     where ``<encoding>`` describes another encoding.
     """
-    if u'_' in encoding:
+    IncEnc: Type[LatexIncrementalEncoder]
+    DecEnc: Type[LatexIncrementalDecoder]
+    if '_' in encoding:
         # Python 3.9 now normalizes "latex+latin1" to "latex_latin1"
         # https://bugs.python.org/issue37751
-        encoding, _, inputenc_ = encoding.partition(u"_")
+        encoding, _, inputenc_ = encoding.partition("_")
     else:
-        encoding, _, inputenc_ = encoding.partition(u"+")
+        encoding, _, inputenc_ = encoding.partition("+")
     if not inputenc_:
         inputenc_ = "ascii"
     if encoding == "latex":
