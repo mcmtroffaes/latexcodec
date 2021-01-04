@@ -53,7 +53,7 @@
 import codecs
 import re
 import unicodedata
-from typing import Iterator, Union, Tuple, Sequence, Any, NamedTuple
+from typing import Iterator, Tuple, Sequence, Any, NamedTuple
 
 
 class Token(NamedTuple):
