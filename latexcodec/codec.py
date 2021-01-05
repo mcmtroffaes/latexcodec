@@ -887,7 +887,7 @@ def find_latex(encoding: str) -> Optional[CodecInfo]:
     where ``<encoding>`` describes another encoding.
     """
     IncEnc: Type[LatexIncrementalEncoder]
-    DecEnc: Type[LatexIncrementalDecoder]
+    IncDec: Type[LatexIncrementalDecoder]
     if '_' in encoding:
         # Python 3.9 now normalizes "latex+latin1" to "latex_latin1"
         # https://bugs.python.org/issue37751
@@ -898,17 +898,17 @@ def find_latex(encoding: str) -> Optional[CodecInfo]:
         inputenc_ = "ascii"
     if encoding == "latex":
         IncEnc = LatexIncrementalEncoder
-        DecEnc = LatexIncrementalDecoder
+        IncDec = LatexIncrementalDecoder
     elif encoding == "ulatex":
         IncEnc = UnicodeLatexIncrementalEncoder
-        DecEnc = UnicodeLatexIncrementalDecoder
+        IncDec = UnicodeLatexIncrementalDecoder
     else:
         return None
 
     class IncrementalEncoder_(IncEnc):
         inputenc = inputenc_
 
-    class IncrementalDecoder_(DecEnc):
+    class IncrementalDecoder_(IncDec):
         inputenc = inputenc_
 
     class Codec(LatexCodec):
