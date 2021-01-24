@@ -619,26 +619,16 @@ class LatexUnicodeTable:
         self.register(u'\N{LATIN SMALL LETTER O WITH OGONEK AND MACRON}',
                       r'\textogonekcentered{\=o}',
                       decode=False)
-        self.register(u'\N{DOUBLE-STRUCK CAPITAL N}', r'\mathbb{N}',
-                      mode='math')
         self.register(u'\N{DOUBLE-STRUCK CAPITAL N}', r'\mathbb N',
-                      mode='math', decode=False)
-        self.register(u'\N{DOUBLE-STRUCK CAPITAL Z}', r'\mathbb{Z}',
                       mode='math')
         self.register(u'\N{DOUBLE-STRUCK CAPITAL Z}', r'\mathbb Z',
-                      mode='math', decode=False)
-        self.register(u'\N{DOUBLE-STRUCK CAPITAL Q}', r'\mathbb{Q}',
                       mode='math')
         self.register(u'\N{DOUBLE-STRUCK CAPITAL Q}', r'\mathbb Q',
-                      mode='math', decode=False)
-        self.register(u'\N{DOUBLE-STRUCK CAPITAL R}', r'\mathbb{R}',
                       mode='math')
         self.register(u'\N{DOUBLE-STRUCK CAPITAL R}', r'\mathbb R',
-                      mode='math', decode=False)
-        self.register(u'\N{DOUBLE-STRUCK CAPITAL C}', r'\mathbb{C}',
                       mode='math')
         self.register(u'\N{DOUBLE-STRUCK CAPITAL C}', r'\mathbb C',
-                      mode='math', decode=False)
+                      mode='math')
 
     def register(self, unicode_text: str, latex_text: str, mode='text',
                  package=None, decode=True, encode=True):
@@ -684,6 +674,17 @@ class LatexUnicodeTable:
                     tokens[1].name == u'chars'):
                 alt_tokens = (tokens[0], self.lexer.curlylefttoken, tokens[1],
                               self.lexer.curlyrighttoken)
+                if alt_tokens not in self.unicode_map:
+                    self.max_length = max(self.max_length, len(alt_tokens))
+                    self.unicode_map[alt_tokens] = u"{" + unicode_text + u"}"
+            if (len(tokens) == 4 and
+                    tokens[0].text in {'$', r'\('} and
+                    tokens[1].name.startswith(u'control') and
+                    tokens[2].name == u'chars' and
+                    tokens[3].text in {'$', r'\)'}):
+                alt_tokens = (
+                    tokens[0], tokens[1], self.lexer.curlylefttoken,
+                    tokens[2], self.lexer.curlyrighttoken, tokens[3])
                 if alt_tokens not in self.unicode_map:
                     self.max_length = max(self.max_length, len(alt_tokens))
                     self.unicode_map[alt_tokens] = u"{" + unicode_text + u"}"

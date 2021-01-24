@@ -241,6 +241,10 @@ class TestDecoder(TestCase):
     def test_decode_guillemet(self):
         self.decode(u"«quote»", br"\guillemotleft quote\guillemotright")
 
+    def test_decode_reals(self):
+        self.decode(u"ℝ", br"$\mathbb R$")
+        self.decode(u"{ℝ}", br"$\mathbb{R}$")
+
 
 class TestStreamDecoder(TestDecoder):
 
@@ -438,6 +442,9 @@ class TestEncoder(TestCase):
 
     def test_encode_guillemet(self):
         self.encode(u"«quote»", br"\guillemotleft quote\guillemotright")
+
+    def test_encode_reals(self):
+        self.encode(u"ℝ", br"$\mathbb R$")
 
 
 class TestStreamEncoder(TestEncoder):
