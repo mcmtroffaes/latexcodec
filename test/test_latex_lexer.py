@@ -37,13 +37,13 @@ def test_token_create_with_args():
 def test_token_assign_name():
     with pytest.raises(AttributeError):
         t = Token('hello', 'world')
-        t.name = 'test'
+        t.name = 'test'  # type: ignore
 
 
 def test_token_assign_text():
     with pytest.raises(AttributeError):
         t = Token('hello', 'world')
-        t.text = 'test'
+        t.text = 'test'  # type: ignore
 
 
 def test_token_assign_other():
@@ -423,7 +423,8 @@ class LatexIncrementalDecoderInvalidErrorTest(BaseLatexIncrementalDecoderTest):
 def test_invalid_token():
     lexer = LatexIncrementalDecoder()
     # piggyback an implementation which results in invalid tokens
-    lexer.get_raw_tokens = lambda bytes_, final: [Token('**invalid**', bytes_)]
+    lexer.get_raw_tokens = \
+        lambda bytes_, final: iter([Token('**invalid**', bytes_)])
     with pytest.raises(AssertionError):
         lexer.decode(b'hello')
 

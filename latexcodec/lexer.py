@@ -53,6 +53,7 @@
 import codecs
 import re
 import unicodedata
+from abc import ABC, ABCMeta
 from typing import Iterator, Tuple, Sequence, Any, NamedTuple
 
 
@@ -65,7 +66,7 @@ class Token(NamedTuple):
 # class serves excellently as a base class for incremental decoders,
 # but of course we don't decode yet until later
 
-class MetaRegexpLexer(type):
+class MetaRegexpLexer(ABCMeta):
 
     """Metaclass for :class:`RegexpLexer`. Compiles tokens into a
     regular expression.
@@ -140,7 +141,7 @@ class RegexpLexer(codecs.IncrementalDecoder, metaclass=MetaRegexpLexer):
             self.raw_buffer = self.emptytoken
 
 
-class LatexLexer(RegexpLexer):
+class LatexLexer(RegexpLexer, ABC):
 
     """A very simple lexer for tex/latex."""
 
@@ -188,7 +189,7 @@ class LatexLexer(RegexpLexer):
     """List of token names, and the regular expressions they match."""
 
 
-class LatexIncrementalLexer(LatexLexer):
+class LatexIncrementalLexer(LatexLexer, ABC):
 
     """A very simple incremental lexer for tex/latex code. Roughly
     follows the state machine described in Tex By Topic, Chapter 2.
