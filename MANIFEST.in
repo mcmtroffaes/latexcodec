@@ -5,7 +5,6 @@ include CHANGELOG.rst
 include LICENSE.rst
 include AUTHORS.rst
 include requirements.txt
-include conftest.py
 recursive-include doc *
 recursive-include test *
 global-exclude *.pyc
@@ -15,3 +14,4 @@ exclude .travis.yml
 include latexcodec/table.txt
 include latexcodec/py.typed
 include mypy.ini
+include .coveragerc
