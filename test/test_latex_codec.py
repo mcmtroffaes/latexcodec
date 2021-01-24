@@ -28,7 +28,7 @@ def test_latex_incremental_decoder_getstate():
 
 def test_latex_incremental_decoder_setstate():
     encoder = codecs.getincrementaldecoder('latex')()
-    state = (u'', 0)
+    state = (b'', 0)
     with pytest.raises(NotImplementedError):
         encoder.setstate(state)
 
@@ -282,7 +282,7 @@ class TestEncoder(TestCase):
 
     def test_invalid_type(self):
         with pytest.raises(TypeError):
-            codecs.getencoder("latex")(object())
+            codecs.getencoder("latex")(object())  # type: ignore
 
     # note concerning test_invalid_code_* methods:
     # u'\u2328' (0x2328 = 9000) is unicode for keyboard symbol

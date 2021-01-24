@@ -767,7 +767,7 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
                 # \usepackage[utf8]{inputenc}
                 bytes_ = '{\\char' + str(ord(c)) + '}'
                 return bytes_, (lexer.Token(name='chars', text=bytes_),)
-            elif self.errors == 'keep' and not self.binary_mode:
+            elif self.errors == 'keep':
                 return c,  (lexer.Token(name='chars', text=c),)
             else:
                 raise ValueError(
@@ -869,13 +869,15 @@ class LatexCodec(codecs.Codec):
 
 
 class UnicodeLatexIncrementalDecoder(LatexIncrementalDecoder):
-    table = _LATEX_UNICODE_TABLE
-    binary_mode = False
+
+    def decode(self, bytes_: str, final: bool = False) -> str:
+        return self.udecode(bytes_, final)
 
 
 class UnicodeLatexIncrementalEncoder(LatexIncrementalEncoder):
-    table = _LATEX_UNICODE_TABLE
-    binary_mode = False
+
+    def encode(self, unicode_: str, final: bool = False) -> str:
+        return self.uencode(unicode_, final)
 
 
 def find_latex(encoding: str) -> Optional[CodecInfo]:
@@ -885,7 +887,7 @@ def find_latex(encoding: str) -> Optional[CodecInfo]:
     where ``<encoding>`` describes another encoding.
     """
     IncEnc: Type[LatexIncrementalEncoder]
-    DecEnc: Type[LatexIncrementalDecoder]
+    IncDec: Type[LatexIncrementalDecoder]
     if '_' in encoding:
         # Python 3.9 now normalizes "latex+latin1" to "latex_latin1"
         # https://bugs.python.org/issue37751
@@ -896,17 +898,17 @@ def find_latex(encoding: str) -> Optional[CodecInfo]:
         inputenc_ = "ascii"
     if encoding == "latex":
         IncEnc = LatexIncrementalEncoder
-        DecEnc = LatexIncrementalDecoder
+        IncDec = LatexIncrementalDecoder
     elif encoding == "ulatex":
         IncEnc = UnicodeLatexIncrementalEncoder
-        DecEnc = UnicodeLatexIncrementalDecoder
+        IncDec = UnicodeLatexIncrementalDecoder
     else:
         return None
 
     class IncrementalEncoder_(IncEnc):
         inputenc = inputenc_
 
-    class IncrementalDecoder_(DecEnc):
+    class IncrementalDecoder_(IncDec):
         inputenc = inputenc_
 
     class Codec(LatexCodec):
