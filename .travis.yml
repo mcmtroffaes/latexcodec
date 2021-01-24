@@ -11,7 +11,7 @@ branches:
     - develop
 install:
   - "pip install --upgrade pytest"
-  - "pip install pytest-cov"
+  - "pip install pytest coverage codecov"
   - "pip install ."
   - "if [[ $TRAVIS_PYTHON_VERSION == '3.8' ]]; then pip install check-manifest flake8 Sphinx; fi"
 script:
@@ -20,7 +20,6 @@ script:
   - "pushd doc"
   - "if [[ $TRAVIS_PYTHON_VERSION == '3.8' ]]; then make html; fi"
   - "popd"
-  - cd test
-  - "pytest --cov-report=xml --cov=latexcodec ."
+  - "coverage run -m pytest"
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - "codecov"
