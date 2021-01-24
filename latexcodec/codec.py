@@ -201,8 +201,7 @@ class LatexUnicodeTable:
                 # drop brackets in this case, since it is math mode
                 self.register(UnicodeLatexTranslation(
                     unicode=f"{trans.unicode}",
-                    latex=
-                    f"{tokens[0].text}{tokens[1].text}"
+                    latex=f"{tokens[0].text}{tokens[1].text}"
                     f"{{{tokens[2].text}}}{tokens[3].text}",
                     decode=True, encode=False,
                     math_mode=trans.math_mode,
