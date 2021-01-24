@@ -12,5 +12,6 @@ global-exclude *.pyc
 global-exclude .gitignore
 prune doc/_build
 exclude .travis.yml
+include latexcodec/table.txt
 include latexcodec/py.typed
 include mypy.ini
