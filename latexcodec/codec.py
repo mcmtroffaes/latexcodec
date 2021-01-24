@@ -375,7 +375,7 @@ class LatexCodec(codecs.Codec):
     IncrementalEncoder: Type[LatexIncrementalEncoder]
     IncrementalDecoder: Type[LatexIncrementalDecoder]
 
-    def encode(self, unicode_: str, errors='strict'
+    def encode(self, unicode_: str, errors='strict'  # type: ignore
                ) -> Tuple[Union[bytes, str], int]:
         """Convert unicode string to LaTeX bytes."""
         encoder = self.IncrementalEncoder(errors=errors)
@@ -385,18 +385,19 @@ class LatexCodec(codecs.Codec):
                ) -> Tuple[str, int]:
         """Convert LaTeX bytes to unicode string."""
         decoder = self.IncrementalDecoder(errors=errors)
-        return decoder.decode(bytes_, final=True), len(bytes_)
+        return decoder.decode(bytes_, final=True), len(bytes_)  # type: ignore
 
 
 class UnicodeLatexIncrementalDecoder(LatexIncrementalDecoder):
 
-    def decode(self, bytes_: str, final: bool = False) -> str:
+    def decode(self, bytes_: str, final: bool = False) -> str:  # type: ignore
         return self.udecode(bytes_, final)
 
 
 class UnicodeLatexIncrementalEncoder(LatexIncrementalEncoder):
 
-    def encode(self, unicode_: str, final: bool = False) -> str:
+    def encode(self, unicode_: str, final: bool = False  # type: ignore
+               ) -> str:
         return self.uencode(unicode_, final)
 
 
@@ -417,23 +418,25 @@ def find_latex(encoding: str) -> Optional[CodecInfo]:
     if not inputenc_:
         inputenc_ = "ascii"
     if encoding == "latex":
-        IncEnc = LatexIncrementalEncoder
-        IncDec = LatexIncrementalDecoder
+        incremental_encoder = type(
+            "incremental_encoder", (LatexIncrementalEncoder,),
+            dict(inputenc=inputenc_))
+        incremental_decoder = type(
+            "incremental_encoder", (LatexIncrementalDecoder,),
+            dict(inputenc=inputenc_))
     elif encoding == "ulatex":
-        IncEnc = UnicodeLatexIncrementalEncoder
-        IncDec = UnicodeLatexIncrementalDecoder
+        incremental_encoder = type(
+            "incremental_encoder", (UnicodeLatexIncrementalEncoder,),
+            dict(inputenc=inputenc_))
+        incremental_decoder = type(
+            "incremental_encoder", (UnicodeLatexIncrementalDecoder,),
+            dict(inputenc=inputenc_))
     else:
         return None
 
-    class IncrementalEncoder_(IncEnc):
-        inputenc = inputenc_
-
-    class IncrementalDecoder_(IncDec):
-        inputenc = inputenc_
-
     class Codec(LatexCodec):
-        IncrementalEncoder = IncrementalEncoder_
-        IncrementalDecoder = IncrementalDecoder_
+        IncrementalEncoder = incremental_encoder
+        IncrementalDecoder = incremental_decoder
 
     class StreamWriter(Codec, codecs.StreamWriter):
         pass
@@ -442,8 +445,8 @@ def find_latex(encoding: str) -> Optional[CodecInfo]:
         pass
 
     return codecs.CodecInfo(
-        encode=Codec().encode,
-        decode=Codec().decode,
+        encode=Codec().encode,  # type: ignore
+        decode=Codec().decode,  # type: ignore
         incrementalencoder=Codec.IncrementalEncoder,
         incrementaldecoder=Codec.IncrementalDecoder,
         streamreader=StreamReader,

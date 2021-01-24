@@ -10,7 +10,7 @@ def test_install_example_2():
     import codecs
     import latexcodec  # noqa
     text_latex = u"\\'el\\`eve"
-    assert codecs.decode(text_latex, "ulatex") == u"élève"
+    assert codecs.decode(text_latex, "ulatex") == u"élève"  # type: ignore
     text_unicode = u"ångström"
     assert codecs.encode(text_unicode, "ulatex") == u'\\aa ngstr\\"om'
 
