@@ -64,10 +64,10 @@ class TestDecoder(TestCase):
     def test_invalid_code(self):
         with pytest.raises(ValueError):
             # b'\xe9' is invalid utf-8 code
-            self.decode(u'', b'\xe9  ', 'utf-8')
+            self.decode('', b'\xe9  ', 'utf-8')
 
     def test_null(self):
-        self.decode(u'', b'')
+        self.decode('', b'')
 
     def test_maelstrom(self):
         self.decode(u"mælström", br'm\ae lstr\"om')
@@ -183,31 +183,31 @@ class TestDecoder(TestCase):
                     br'\textogonekcentered{\=O}\textogonekcentered{\=o}')
 
     def test_math_spacing_dollar(self):
-        self.decode(u'This is a ψ test.', br'This is a $\psi$ test.')
+        self.decode('This is a ψ test.', br'This is a $\psi$ test.')
 
     def test_math_spacing_brace(self):
-        self.decode(u'This is a ψ test.', br'This is a \(\psi\) test.')
+        self.decode('This is a ψ test.', br'This is a \(\psi\) test.')
 
     def test_double_math(self):
         # currently no attempt to translate maths inside $$
-        self.decode(u'This is a $$\\psi $$ test.',
+        self.decode('This is a $$\\psi $$ test.',
                     br'This is a $$\psi$$ test.')
 
     def test_tilde(self):
-        self.decode(u'This is a ˜, ˷, ∼ and ~test.',
+        self.decode('This is a ˜, ˷, ∼ and ~test.',
                     (br'This is a \~{}, \texttildelow, '
                      br'$\sim$ and \textasciitilde test.'))
 
     def test_backslash(self):
-        self.decode(u'This is a \\ \\test.',
+        self.decode('This is a \\ \\test.',
                     br'This is a $\backslash$ \textbackslash test.')
 
     def test_percent(self):
-        self.decode(u'This is a % test.',
+        self.decode('This is a % test.',
                     br'This is a \% test.')
 
     def test_math_minus(self):
-        self.decode(u'This is a − test.',
+        self.decode('This is a − test.',
                     br'This is a $-$ test.')
 
     def test_swedish_again(self):
@@ -270,7 +270,7 @@ class TestIncrementalDecoder(TestDecoder):
         decoded_parts = (
             decoder.decode(text_latex_part, final)
             for text_latex_part, final in split_input(text_latex))
-        self.assertEqual(text_utf8, u''.join(decoded_parts))
+        self.assertEqual(text_utf8, ''.join(decoded_parts))
 
 
 class TestEncoder(TestCase):
@@ -288,25 +288,25 @@ class TestEncoder(TestCase):
             codecs.getencoder("latex")(object())  # type: ignore
 
     # note concerning test_invalid_code_* methods:
-    # u'\u2328' (0x2328 = 9000) is unicode for keyboard symbol
+    # '\u2328' (0x2328 = 9000) is unicode for keyboard symbol
     # we currently provide no translation for this into LaTeX code
 
     def test_invalid_code_strict(self):
         with pytest.raises(ValueError):
-            self.encode(u'\u2328', b'', 'ascii', 'strict')
+            self.encode('\u2328', b'', 'ascii', 'strict')
 
     def test_invalid_code_ignore(self):
-        self.encode(u'\u2328', b'', 'ascii', 'ignore')
+        self.encode('\u2328', b'', 'ascii', 'ignore')
 
     def test_invalid_code_replace(self):
-        self.encode(u'\u2328', b'{\\char9000}', 'ascii', 'replace')
+        self.encode('\u2328', b'{\\char9000}', 'ascii', 'replace')
 
     def test_invalid_code_baderror(self):
         with pytest.raises(ValueError):
-            self.encode(u'\u2328', b'', 'ascii', '**baderror**')
+            self.encode('\u2328', b'', 'ascii', '**baderror**')
 
     def test_null(self):
-        self.encode(u'', b'')
+        self.encode('', b'')
 
     def test_maelstrom(self):
         self.encode(u"mælström", br'm\ae lstr\"om')
@@ -401,23 +401,23 @@ class TestEncoder(TestCase):
                     br'\textogonekcentered{\=O}\textogonekcentered{\=o}')
 
     def test_math_spacing(self):
-        self.encode(u'This is a ψ test.', br'This is a $\psi$ test.')
+        self.encode('This is a ψ test.', br'This is a $\psi$ test.')
 
     def test_double_math(self):
         # currently no attempt to translate maths inside $$
-        self.encode(u'This is a $$\\psi$$ test.', br'This is a $$\psi$$ test.')
+        self.encode('This is a $$\\psi$$ test.', br'This is a $$\psi$$ test.')
 
     def test_tilde(self):
-        self.encode(u'This is a ˜, ˷, ∼ and ~test.',
+        self.encode('This is a ˜, ˷, ∼ and ~test.',
                     (br'This is a \~{}, \texttildelow , '
                      br'$\sim$ and \textasciitilde test.'))
 
     def test_percent(self):
-        self.encode(u'This is a % test.',
+        self.encode('This is a % test.',
                     br'This is a \% test.')
 
     def test_hyphen(self):
-        self.encode(u'This is a \N{HYPHEN} test.',
+        self.encode('This is a \N{HYPHEN} test.',
                     br'This is a - test.')
 
     def test_math_minus(self):

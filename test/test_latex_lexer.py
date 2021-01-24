@@ -90,72 +90,72 @@ class LatexLexerTest(BaseLatexLexerTest):
     def test_comment(self):
         self.lex_it(
             'test% some comment\ntest',
-            't|e|s|t|% some comment|\n|t|e|s|t'.split(u'|'),
+            't|e|s|t|% some comment|\n|t|e|s|t'.split('|'),
             final=True
         )
 
     def test_comment_newline(self):
         self.lex_it(
-            u'test% some comment\n\ntest',
-            u't|e|s|t|% some comment|\n|\n|t|e|s|t'.split(u'|'),
+            'test% some comment\n\ntest',
+            't|e|s|t|% some comment|\n|\n|t|e|s|t'.split('|'),
             final=True
         )
 
     def test_control(self):
         self.lex_it(
-            u'\\hello\\world',
-            u'\\hello|\\world'.split(u'|'),
+            '\\hello\\world',
+            '\\hello|\\world'.split('|'),
             final=True
         )
 
     def test_control_whitespace(self):
         self.lex_it(
-            u'\\hello   \\world   ',
-            u'\\hello| | | |\\world| | | '.split(u'|'),
+            '\\hello   \\world   ',
+            '\\hello| | | |\\world| | | '.split('|'),
             final=True
         )
 
     def test_controlx(self):
         self.lex_it(
-            u'\\#\\&',
-            u'\\#|\\&'.split(u'|'),
+            '\\#\\&',
+            '\\#|\\&'.split('|'),
             final=True
         )
 
     def test_controlx_whitespace(self):
         self.lex_it(
-            u'\\#    \\&   ',
-            u'\\#| | | | |\\&| | | '.split(u'|'),
+            '\\#    \\&   ',
+            '\\#| | | | |\\&| | | '.split('|'),
             final=True
         )
 
     def test_buffer(self):
         self.lex_it(
-            u'hi\\t',
-            u'h|i'.split(u'|'),
+            'hi\\t',
+            'h|i'.split('|'),
         )
         self.lex_it(
             'here',
-            [u'\\there'],
+            ['\\there'],
             final=True,
         )
 
     def test_state(self):
         self.lex_it(
-            u'hi\\t',
-            u'h|i'.split(u'|'),
+            'hi\\t',
+            'h|i'.split('|'),
         )
         state = self.lexer.getstate()
         self.lexer.reset()
         self.lex_it(
-            u'here',
-            u'h|e|r|e'.split(u'|'),
+            'here',
+            'h|e|r|e'.split('|'),
             final=True,
         )
         self.lexer.setstate(state)
         self.lex_it(
-            u'here',
-            [u'\\there'],
+            'here',
+            ['\\there'],
             final=True,
         )
 
@@ -165,8 +165,8 @@ class LatexLexerTest(BaseLatexLexerTest):
 
     def test_final_backslash(self):
         self.lex_it(
-            u'notsogood\\',
-            u'n|o|t|s|o|g|o|o|d|\\'.split(u'|'),
+            'notsogood\\',
+            'n|o|t|s|o|g|o|o|d|\\'.split('|'),
             final=True
         )
 

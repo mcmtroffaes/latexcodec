@@ -148,32 +148,32 @@ class LatexLexer(RegexpLexer, ABC):
     # implementation note: every token **must** be decodable by inputenc
     tokens = [
         # match newlines and percent first, to ensure comments match correctly
-        (u'control_symbol_x2', r'[\\][\\]|[\\]%'),
+        ('control_symbol_x2', r'[\\][\\]|[\\]%'),
         # comment: for ease, and for speed, we handle it as a token
-        (u'comment', r'%[^\n]*'),
+        ('comment', r'%[^\n]*'),
         # control tokens
         # in latex, some control tokens skip following whitespace
         # ('control-word' and 'control-symbol')
         # others do not ('control-symbol-x')
         # XXX TBT says no control symbols skip whitespace (except '\ ')
         # XXX but tests reveal otherwise?
-        (u'control_word', r'[\\][a-zA-Z]+'),
-        (u'control_symbol', r'[\\][~' r"'" r'"` =^!.]'),
+        ('control_word', r'[\\][a-zA-Z]+'),
+        ('control_symbol', r'[\\][~' r"'" r'"` =^!.]'),
         # TODO should only match ascii
-        (u'control_symbol_x', r'[\\][^a-zA-Z]'),
+        ('control_symbol_x', r'[\\][^a-zA-Z]'),
         # parameter tokens
         # also support a lone hash so we can lex things like '#a'
-        (u'parameter', r'\#[0-9]|\#'),
+        ('parameter', r'\#[0-9]|\#'),
         # any remaining characters; for ease we also handle space and
         # newline as tokens
         # XXX TBT does not mention \t to be a space character as well
         # XXX but tests reveal otherwise?
-        (u'space', r' |\t'),
-        (u'newline', r'\n'),
-        (u'mathshift', r'[$][$]|[$]'),
+        ('space', r' |\t'),
+        ('newline', r'\n'),
+        ('mathshift', r'[$][$]|[$]'),
         # note: some chars joined together to make it easier to detect
         # symbols that have a special function (i.e. --, ---, etc.)
-        (u'chars',
+        ('chars',
          r'---|--|-|[`][`]'
          r"|['][']"
          r'|[?][`]|[!][`]'
@@ -184,7 +184,7 @@ class LatexLexer(RegexpLexer, ABC):
         # trailing garbage which we cannot decode otherwise
         # (such as a lone '\' at the end of a buffer)
         # is never emitted, but used internally by the buffer
-        (u'unknown', r'.'),
+        ('unknown', r'.'),
     ]
     """List of token names, and the regular expressions they match."""
 
@@ -241,7 +241,7 @@ class LatexIncrementalLexer(LatexLexer, ABC):
         for token in self.get_raw_tokens(chars, final=final):
             pos = pos + len(token.text)
             assert pos >= 0  # first token includes at least self.raw_buffer
-            if token.name == u'newline':
+            if token.name == 'newline':
                 if self.state == 'N':
                     # if state was 'N', generate new paragraph
                     yield self.partoken
@@ -255,7 +255,7 @@ class LatexIncrementalLexer(LatexLexer, ABC):
                 else:
                     raise AssertionError(
                         "unknown tex state {0!r}".format(self.state))
-            elif token.name == u'space':
+            elif token.name == 'space':
                 if self.state == 'N':
                     # remain in 'N' state, no space token generated
                     pass
@@ -270,34 +270,34 @@ class LatexIncrementalLexer(LatexLexer, ABC):
                 else:
                     raise AssertionError(
                         "unknown state {0!r}".format(self.state))
-            elif token.name == u'mathshift':
+            elif token.name == 'mathshift':
                 self.inline_math = not self.inline_math
                 self.state = 'M'
                 yield token
-            elif token.name == u'parameter':
+            elif token.name == 'parameter':
                 self.state = 'M'
                 yield token
-            elif token.name == u'control_word':
+            elif token.name == 'control_word':
                 # go to space skip mode
                 self.state = 'S'
                 yield token
-            elif token.name == u'control_symbol':
+            elif token.name == 'control_symbol':
                 # go to space skip mode
                 self.state = 'S'
                 yield token
-            elif (token.name == u'control_symbol_x'
-                  or token.name == u'control_symbol_x2'):
+            elif (token.name == 'control_symbol_x'
+                  or token.name == 'control_symbol_x2'):
                 # don't skip following space, so go to M mode
                 self.state = 'M'
                 yield token
-            elif token.name == u'comment':
+            elif token.name == 'comment':
                 # no token is generated
                 # note: comment does not include the newline
                 self.state = 'S'
             elif token.name == 'chars':
                 self.state = 'M'
                 yield token
-            elif token.name == u'unknown':
+            elif token.name == 'unknown':
                 if self.errors == 'strict':
                     # current position within chars
                     # this is the position right after the unknown token
@@ -345,11 +345,11 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
            sure separation from the next token, so that decoded token
            sequences can be joined together.
 
-           For example, the tokens ``u'\\hello'`` and ``u'world'``
-           will correctly result in ``u'\\hello world'`` (remember
+           For example, the tokens ``'\\hello'`` and ``'world'``
+           will correctly result in ``'\\hello world'`` (remember
            that LaTeX eats space following control words). If no space
            were added, this would wrongfully result in
-           ``u'\\helloworld'``.
+           ``'\\helloworld'``.
 
         """
         text = token.text

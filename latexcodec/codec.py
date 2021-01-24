@@ -129,7 +129,7 @@ class LatexUnicodeTable:
         # register special symbols
         self.register(UnicodeLatexTranslation(
             unicode='\n\n',
-            latex=u' \\par',
+            latex=' \\par',
             encode=False,
             decode=True,
             text_mode=True,
@@ -137,7 +137,7 @@ class LatexUnicodeTable:
         ))
         self.register(UnicodeLatexTranslation(
             unicode='\n\n',
-            latex=u'\\par',
+            latex='\\par',
             encode=False,
             decode=True,
             text_mode=True,
@@ -184,8 +184,8 @@ class LatexUnicodeTable:
             # note: we do not remove brackets (they sometimes matter,
             # e.g. bibtex uses them to prevent lower case transformation)
             if (len(tokens) == 2 and
-                tokens[0].name.startswith(u'control') and
-                    tokens[1].name == u'chars'):
+                tokens[0].name.startswith('control') and
+                    tokens[1].name == 'chars'):
                 self.register(UnicodeLatexTranslation(
                     unicode=f"{{{trans.unicode}}}",
                     latex=f"{tokens[0].text}{{{tokens[1].text}}}",
@@ -195,8 +195,8 @@ class LatexUnicodeTable:
                 ))
             if (len(tokens) == 4 and
                     tokens[0].text in {'$', r'\('} and
-                    tokens[1].name.startswith(u'control') and
-                    tokens[2].name == u'chars' and
+                    tokens[1].name.startswith('control') and
+                    tokens[2].name == 'chars' and
                     tokens[3].text in {'$', r'\)'}):
                 # drop brackets in this case, since it is math mode
                 self.register(UnicodeLatexTranslation(
@@ -265,7 +265,7 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
         except UnicodeEncodeError:
             pass
         else:
-            return c, (lexer.Token(name=u'chars', text=c),)
+            return c, (lexer.Token(name='chars', text=c),)
         # next, try latex equivalents of common unicode characters
         try:
             return self.table.latex_map[c]
@@ -279,7 +279,7 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
                     "don't know how to translate {0} into latex"
                     .format(repr(c)))
             elif self.errors == 'ignore':
-                return u'', (self.emptytoken,)
+                return '', (self.emptytoken,)
             elif self.errors == 'replace':
                 # use the \\char command
                 # this assumes
@@ -305,7 +305,7 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
             bytes_, tokens = self._get_latex_chars_tokens_from_char(c)
             space, bytes_ = self.get_space_bytes(bytes_)
             # update state
-            if tokens[-1].name == u'control_word':
+            if tokens[-1].name == 'control_word':
                 # we're eating spaces
                 self.state = 'S'
             else:

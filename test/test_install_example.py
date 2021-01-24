@@ -12,7 +12,7 @@ def test_install_example_2():
     text_latex = u"\\'el\\`eve"
     assert codecs.decode(text_latex, "ulatex") == u"élève"  # type: ignore
     text_unicode = u"ångström"
-    assert codecs.encode(text_unicode, "ulatex") == u'\\aa ngstr\\"om'
+    assert codecs.encode(text_unicode, "ulatex") == '\\aa ngstr\\"om'
 
 
 def test_install_example_3():
@@ -28,11 +28,11 @@ def test_install_example_3():
 def test_install_example_4():
     import codecs
     import latexcodec  # noqa
-    text_unicode = u'⌨'  # \u2328 = keyboard symbol, currently not translated
+    text_unicode = '⌨'  # \u2328 = keyboard symbol, currently not translated
     try:
         # raises a value error as \u2328 cannot be encoded into latex
         codecs.encode(text_unicode, "ulatex+ascii")
     except ValueError:
         pass
-    assert codecs.encode(text_unicode, "ulatex+ascii", "keep") == u'⌨'
-    assert codecs.encode(text_unicode, "ulatex+utf8") == u'⌨'
+    assert codecs.encode(text_unicode, "ulatex+ascii", "keep") == '⌨'
+    assert codecs.encode(text_unicode, "ulatex+utf8") == '⌨'

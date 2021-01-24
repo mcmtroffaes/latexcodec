@@ -13,8 +13,8 @@ extensions = [
     'sphinx.ext.viewcode']
 source_suffix = '.rst'
 master_doc = 'index'
-project = u'latexcodec'
-copyright = u'2011-2014, Matthias C. M. Troffaes'
+project = 'latexcodec'
+copyright = '2011-2014, Matthias C. M. Troffaes'
 with open("../VERSION") as version_file:
     release = version_file.read().strip()
 version = '.'.join(release.split('.')[:2])
@@ -24,16 +24,16 @@ html_theme = 'default'
 htmlhelp_basename = 'latexcodecdoc'
 latex_documents = [
     ('index', 'latexcodec.tex',
-     u'latexcodec Documentation',
-     u'Matthias C. M. Troffaes', 'manual'),
+     'latexcodec Documentation',
+     'Matthias C. M. Troffaes', 'manual'),
 ]
 man_pages = [
-    ('index', 'latexcodec', u'latexcodec Documentation',
-     [u'Matthias C. M. Troffaes'], 1)
+    ('index', 'latexcodec', 'latexcodec Documentation',
+     ['Matthias C. M. Troffaes'], 1)
 ]
 texinfo_documents = [
-    ('index', 'latexcodec', u'latexcodec Documentation',
-     u'Matthias C. M. Troffaes',
+    ('index', 'latexcodec', 'latexcodec Documentation',
+     'Matthias C. M. Troffaes',
      'latexcodec', 'One line description of project.', 'Miscellaneous'),
 ]
 intersphinx_mapping = {
