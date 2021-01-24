@@ -243,7 +243,7 @@ class TestDecoder(TestCase):
 
     def test_decode_reals(self):
         self.decode(u"ℝ", br"$\mathbb R$")
-        self.decode(u"{ℝ}", br"$\mathbb{R}$")
+        self.decode(u"ℝ", br"$\mathbb{R}$")
 
 
 class TestStreamDecoder(TestDecoder):

@@ -672,22 +672,20 @@ class LatexUnicodeTable:
             if (len(tokens) == 2 and
                 tokens[0].name.startswith(u'control') and
                     tokens[1].name == u'chars'):
-                alt_tokens = (tokens[0], self.lexer.curlylefttoken, tokens[1],
-                              self.lexer.curlyrighttoken)
-                if alt_tokens not in self.unicode_map:
-                    self.max_length = max(self.max_length, len(alt_tokens))
-                    self.unicode_map[alt_tokens] = u"{" + unicode_text + u"}"
+                self.register(f"{{{unicode_text}}}",
+                              f"{tokens[0].text}{{{tokens[1].text}}}",
+                              decode=True, encode=False, mode=mode)
             if (len(tokens) == 4 and
                     tokens[0].text in {'$', r'\('} and
                     tokens[1].name.startswith(u'control') and
                     tokens[2].name == u'chars' and
                     tokens[3].text in {'$', r'\)'}):
-                alt_tokens = (
-                    tokens[0], tokens[1], self.lexer.curlylefttoken,
-                    tokens[2], self.lexer.curlyrighttoken, tokens[3])
-                if alt_tokens not in self.unicode_map:
-                    self.max_length = max(self.max_length, len(alt_tokens))
-                    self.unicode_map[alt_tokens] = u"{" + unicode_text + u"}"
+                # drop brackets in this case, since it is math mode
+                self.register(
+                    f"{unicode_text}",
+                    f"{tokens[0].text}{tokens[1].text}"
+                    f"{{{tokens[2].text}}}{tokens[3].text}",
+                    decode=True, encode=False, mode=mode)
         if encode and unicode_text not in self.latex_map:
             assert len(unicode_text) == 1
             self.latex_map[unicode_text] = (latex_text, tokens)
