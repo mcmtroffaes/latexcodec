@@ -35,8 +35,7 @@ def test_latex_incremental_decoder_setstate():
 
 def split_input(input_):
     """Helper function for testing the incremental encoder and decoder."""
-    if not isinstance(input_, (str, bytes)):
-        raise TypeError("expected unicode or bytes input")
+    assert isinstance(input_, (str, bytes))
     if input_:
         for i in range(len(input_)):
             if i + 1 < len(input_):

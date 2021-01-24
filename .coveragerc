@@ -1,0 +1,9 @@
+[run]
+branch = True
+source = test,latexcodec
+
+[report]
+exclude_lines =
+    pragma: no cover
+    if TYPE_CHECKING:
+    raise NotImplementedError
