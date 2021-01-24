@@ -12,3 +12,4 @@ global-exclude *.pyc
 global-exclude .gitignore
 prune doc/_build
 exclude .travis.yml
+include latexcodec/py.typed
