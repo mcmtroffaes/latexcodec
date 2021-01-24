@@ -10,6 +10,7 @@ def readfile(filename):
 
 
 readme = readfile("README.rst")[5:]  # skip title and badges
+requires = readfile("requirements.txt")
 version = readfile("VERSION")[0].strip()
 
 setup(
@@ -42,4 +43,5 @@ setup(
     platforms='any',
     packages=find_packages(),
     python_requires='>=3.6',
+    install_requires=requires,
 )

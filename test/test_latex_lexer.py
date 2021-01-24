@@ -452,7 +452,7 @@ def test_invalid_state_2():
 class MyLatexIncrementalLexer(LatexIncrementalLexer):
     """A mock decoder to test the lexer."""
     def decode(self, input_: bytes, final: bool = False) -> str:
-        return ''
+        return ''  # pragma: no cover
 
 
 class LatexIncrementalLexerTest(TestCase):

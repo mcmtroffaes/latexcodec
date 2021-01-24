@@ -12,7 +12,7 @@ A lexer and codec to work with LaTeX code in Python.
 * Development: http://github.com/mcmtroffaes/latexcodec/
 
 .. |travis| image:: https://travis-ci.org/mcmtroffaes/latexcodec.png?branch=develop
-    :target: https://travis-ci.org/mcmtroffaes/latexcodec
+    :target: https://travis-ci.com/mcmtroffaes/latexcodec
     :alt: travis-ci
 
 .. |codecov| image:: https://codecov.io/gh/mcmtroffaes/latexcodec/branch/develop/graph/badge.svg

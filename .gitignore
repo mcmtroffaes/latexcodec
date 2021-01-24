@@ -5,3 +5,6 @@
 /.pytest_cache
 /.mypy_cache
 *.sqlite3
+/htmlcov
+.coverage
+*.egg-info
