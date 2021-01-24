@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """Tests for the tex lexer."""
-from typing import Type, TypeVar, Generic, List
+from typing import Type, TypeVar, Generic, List, Iterator
 
 import pytest
 from unittest import TestCase
@@ -49,7 +49,7 @@ def test_token_assign_text():
 def test_token_assign_other():
     with pytest.raises(AttributeError):
         t = Token('hello', 'world')
-        t.blabla = 'test'
+        t.blabla = 'test'  # type: ignore
 
 
 class BaseLatexLexerTest(TestCase):
@@ -420,11 +420,15 @@ class LatexIncrementalDecoderInvalidErrorTest(BaseLatexIncrementalDecoderTest):
             )
 
 
+class InvalidTokenLatexIncrementalDecoder(LatexIncrementalDecoder):
+    """Decoder which results in invalid tokens."""
+    def get_raw_tokens(self, chars: str, final: bool = False
+                       ) -> Iterator[Token]:
+        return iter([Token('**invalid**', chars)])
+
+
 def test_invalid_token():
-    lexer = LatexIncrementalDecoder()
-    # piggyback an implementation which results in invalid tokens
-    lexer.get_raw_tokens = \
-        lambda bytes_, final: iter([Token('**invalid**', bytes_)])
+    lexer = InvalidTokenLatexIncrementalDecoder()
     with pytest.raises(AssertionError):
         lexer.decode(b'hello')
 
@@ -445,12 +449,18 @@ def test_invalid_state_2():
         lexer.decode(b'   ')
 
 
+class MyLatexIncrementalLexer(LatexIncrementalLexer):
+    """A mock decoder to test the lexer."""
+    def decode(self, input_: bytes, final: bool = False) -> str:
+        return ''
+
+
 class LatexIncrementalLexerTest(TestCase):
 
     errors = 'strict'
 
     def setUp(self):
-        self.lexer = LatexIncrementalLexer(errors=self.errors)
+        self.lexer = MyLatexIncrementalLexer(errors=self.errors)
 
     def lex_it(self, latex_code, latex_tokens, final=False):
         tokens = self.lexer.get_tokens(latex_code, final=final)
@@ -491,7 +501,7 @@ class LatexIncrementalEncoderTest(TestCase):
 
     def test_invalid_type(self):
         with pytest.raises(TypeError):
-            self.encoder.encode(object(), final=True)
+            self.encoder.encode(object(), final=True)  # type: ignore
 
     def test_invalid_code(self):
         with pytest.raises(ValueError):
