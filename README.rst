@@ -5,6 +5,8 @@ latexcodec
 
 A lexer and codec to work with LaTeX code in Python.
 
+**Instead of using latexcodec, I encourage you to consider [pylatexenc](https://github.com/phfaist/pylatexenc) instead, which is far superior to latexcodec.**
+
 * Download: http://pypi.python.org/pypi/latexcodec/#downloads
 
 * Documentation: http://latexcodec.readthedocs.org/
