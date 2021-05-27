@@ -3,6 +3,8 @@
 
 * Drop Python 2.7, 3.4, and 3.5 support.
 
+* Added a few more translations.
+
 2.0.1 (23 July 2020)
 --------------------
 
