@@ -42,6 +42,7 @@ setup(
     ],
     platforms='any',
     packages=find_packages(),
+    package_data={'latexcodec': ['table.txt']},
     python_requires='>=3.6',
     install_requires=requires,
 )
