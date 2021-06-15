@@ -62,7 +62,11 @@ import dataclasses
 import unicodedata
 from typing import Optional, List, Union, Any, Iterator, Tuple, Type, Dict
 
-import pkg_resources
+try:
+    import importlib.resources as pkg_resources
+except ImportError:
+    import importlib_resources as pkg_resources
+
 
 from latexcodec import lexer
 from codecs import CodecInfo
@@ -95,8 +99,7 @@ class UnicodeLatexTranslation:
 
 
 def load_unicode_latex_table() -> Iterator[UnicodeLatexTranslation]:
-    filename = pkg_resources.resource_filename('latexcodec', 'table.txt')
-    with open(filename, 'r') as datafile:
+    with pkg_resources.open_text('latexcodec', 'table.txt') as datafile:
         for line in datafile:
             marker, unicode_names, latex = line.rstrip('\r\n').split('\u0009')
             unicode = ''.join(
