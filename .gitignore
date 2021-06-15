@@ -8,3 +8,4 @@
 /htmlcov
 .coverage
 *.egg-info
+/doc/_build

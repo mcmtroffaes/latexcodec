@@ -451,6 +451,9 @@ class TestEncoder(TestCase):
     def test_encode_reals(self):
         self.encode(u"ℝ", br"$\mathbb R$")
 
+    def test_encode_ligatures(self):
+        self.encode(u"ﬀ ﬁ ﬂ ﬃ ﬄ ﬆ", br"ff fi fl ffi ffl st")
+
 
 class TestStreamEncoder(TestEncoder):
 
