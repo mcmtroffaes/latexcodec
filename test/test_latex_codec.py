@@ -454,6 +454,9 @@ class TestEncoder(TestCase):
     def test_encode_ligatures(self):
         self.encode(u"ﬀ ﬁ ﬂ ﬃ ﬄ ﬆ", br"ff fi fl ffi ffl st")
 
+    def test_encode_zero_width(self):
+        self.encode(u"1\u200b2\u200c3\u200d4", br"1\hspace{0pt}2{}34")
+
 
 class TestStreamEncoder(TestEncoder):
 

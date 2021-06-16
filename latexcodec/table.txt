@@ -1,6 +1,9 @@
 A<	SPACE	\ 
 A-	EM SPACE	\quad
 A>	THIN SPACE	 
+A>	ZERO WIDTH JOINER	
+A>	ZERO WIDTH NON-JOINER	{}
+A>	ZERO WIDTH SPACE	\hspace{0pt}
 A-	PERCENT SIGN	\%
 T-	EN DASH	--
 T-	EN DASH	\textendash

@@ -308,10 +308,10 @@ class LatexIncrementalEncoder(lexer.LatexIncrementalEncoder):
             bytes_, tokens = self._get_latex_chars_tokens_from_char(c)
             space, bytes_ = self.get_space_bytes(bytes_)
             # update state
-            if tokens[-1].name == 'control_word':
+            if tokens and tokens[-1].name == 'control_word':
                 # we're eating spaces
                 self.state = 'S'
-            else:
+            elif tokens:
                 self.state = 'M'
             if space:
                 yield space
