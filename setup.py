@@ -10,7 +10,6 @@ def readfile(filename):
 
 
 readme = readfile("README.rst")[5:]  # skip title and badges
-requires = readfile("requirements.txt")
 version = readfile("VERSION")[0].strip()
 
 setup(
@@ -32,17 +31,17 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'Topic :: Text Processing :: Markup :: LaTeX',
         'Topic :: Text Processing :: Filters',
     ],
     platforms='any',
     packages=find_packages(),
     package_data={'latexcodec': ['table.txt']},
-    python_requires='>=3.6',
-    install_requires=requires,
+    python_requires='>=3.7',
 )

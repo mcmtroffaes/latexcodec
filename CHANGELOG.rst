@@ -1,7 +1,9 @@
 3.0.0 (in development)
 ----------------------
 
-* Drop Python 2.7, 3.4, and 3.5 support.
+* Drop Python 2.7, 3.4, 3.5, and 3.6 support.
+
+* Add Python 3.11 and 3.12 support.
 
 * Added a few more translations.
 
