@@ -1,7 +1,7 @@
-3.0.0 (in development)
-----------------------
+3.0.0 (6 March 2024)
+--------------------
 
-* Drop Python 2.7, 3.4, 3.5, and 3.6 support.
+* Drop Python 2.7, 3.4, 3.5, and 3.6 support. Remove unneeded dependencies.
 
 * Add Python 3.11 and 3.12 support.
 
