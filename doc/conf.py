@@ -15,7 +15,7 @@ extensions = [
 source_suffix = ".rst"
 master_doc = "index"
 project = "latexcodec"
-copyright = "2011-2014, Matthias C. M. Troffaes"
+copyright = "2011-2024, Matthias C. M. Troffaes"
 with open("../VERSION") as version_file:
     release = version_file.read().strip()
 version = ".".join(release.split(".")[:2])
