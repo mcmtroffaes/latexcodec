@@ -425,8 +425,6 @@ def find_latex(encoding: str) -> Optional[CodecInfo]:
     or to ``latex+<encoding>``
     where ``<encoding>`` describes another encoding.
     """
-    IncEnc: Type[LatexIncrementalEncoder]
-    IncDec: Type[LatexIncrementalDecoder]
     if "_" in encoding:
         # Python 3.9 now normalizes "latex+latin1" to "latex_latin1"
         # https://bugs.python.org/issue37751
