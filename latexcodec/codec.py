@@ -99,7 +99,8 @@ class UnicodeLatexTranslation:
 
 
 def load_unicode_latex_table() -> Iterator[UnicodeLatexTranslation]:
-    with pkg_resources.open_text('latexcodec', 'table.txt') as datafile:
+    with (pkg_resources.files('latexcodec') / 'table.txt').open(
+            'r', encoding='utf-8', errors='strict') as datafile:
         for line in datafile:
             marker, unicode_names, latex = line.rstrip('\r\n').split('\u0009')
             unicode = ''.join(
