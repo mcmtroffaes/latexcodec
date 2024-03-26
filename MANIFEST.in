@@ -10,6 +10,8 @@ global-exclude *.pyc
 global-exclude .gitignore
 prune doc/_build
 exclude .travis.yml
+exclude .isort.cfg
+exclude .flake8
 include latexcodec/table.txt
 include latexcodec/py.typed
 include mypy.ini
