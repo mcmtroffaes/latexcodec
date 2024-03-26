@@ -1,6 +1,12 @@
 3.0.1 (in development)
 ----------------------
 
+* Drop Python 3.7 and 3.8 support.
+
+* Add Python 3.13 support.
+
+* Use new pkg_resources files interface (see issue #98).
+
 3.0.0 (6 March 2024)
 --------------------
 
