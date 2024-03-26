@@ -54,7 +54,7 @@ import codecs
 import re
 import unicodedata
 from abc import ABC, ABCMeta
-from typing import Iterator, Tuple, Sequence, Any, NamedTuple
+from typing import Any, Iterator, NamedTuple, Sequence, Tuple
 
 
 class Token(NamedTuple):
@@ -66,8 +66,8 @@ class Token(NamedTuple):
 # class serves excellently as a base class for incremental decoders,
 # but of course we don't decode yet until later
 
-class MetaRegexpLexer(ABCMeta):
 
+class MetaRegexpLexer(ABCMeta):
     """Metaclass for :class:`RegexpLexer`. Compiles tokens into a
     regular expression.
     """
@@ -76,21 +76,21 @@ class MetaRegexpLexer(ABCMeta):
         super().__init__(name, bases, dct)
         regexp_string = "|".join(
             "(?P<" + name + ">" + regexp + ")"
-            for name, regexp in getattr(cls, "tokens", []))
+            for name, regexp in getattr(cls, "tokens", [])
+        )
         cls.regexp = re.compile(regexp_string, re.DOTALL)
 
 
 class RegexpLexer(codecs.IncrementalDecoder, metaclass=MetaRegexpLexer):
-
     """Abstract base class for regexp based lexers."""
 
-    emptytoken = Token("unknown", "")       #: The empty token.
+    emptytoken = Token("unknown", "")  #: The empty token.
     tokens: Sequence[Tuple[str, str]] = ()  #: Sequence of token regexps.
-    errors: str                             #: How to respond to errors.
-    raw_buffer: Token                       #: The raw buffer of this lexer.
-    regexp: Any                             #: Compiled regular expression.
+    errors: str  #: How to respond to errors.
+    raw_buffer: Token  #: The raw buffer of this lexer.
+    regexp: Any  #: Compiled regular expression.
 
-    def __init__(self, errors: str = 'strict') -> None:
+    def __init__(self, errors: str = "strict") -> None:
         """Initialize the codec."""
         super().__init__(errors=errors)
         self.errors = errors
@@ -109,10 +109,9 @@ class RegexpLexer(codecs.IncrementalDecoder, metaclass=MetaRegexpLexer):
         """Set state. The *state* must correspond to the return value
         of a previous :meth:`getstate` call.
         """
-        self.raw_buffer = Token('unknown', state[0])
+        self.raw_buffer = Token("unknown", state[0])
 
-    def get_raw_tokens(self, chars: str, final: bool = False
-                       ) -> Iterator[Token]:
+    def get_raw_tokens(self, chars: str, final: bool = False) -> Iterator[Token]:
         """Yield tokens without any further processing. Tokens are one of:
 
         - ``\\<word>``: a control word (i.e. a command)
@@ -142,55 +141,53 @@ class RegexpLexer(codecs.IncrementalDecoder, metaclass=MetaRegexpLexer):
 
 
 class LatexLexer(RegexpLexer, ABC):
-
     """A very simple lexer for tex/latex."""
 
     # implementation note: every token **must** be decodable by inputenc
     tokens = [
         # match newlines and percent first, to ensure comments match correctly
-        ('control_symbol_x2', r'[\\][\\]|[\\]%'),
+        ("control_symbol_x2", r"[\\][\\]|[\\]%"),
         # comment: for ease, and for speed, we handle it as a token
-        ('comment', r'%[^\n]*'),
+        ("comment", r"%[^\n]*"),
         # control tokens
         # in latex, some control tokens skip following whitespace
         # ('control-word' and 'control-symbol')
         # others do not ('control-symbol-x')
         # XXX TBT says no control symbols skip whitespace (except '\ ')
         # XXX but tests reveal otherwise?
-        ('control_word', r'[\\][a-zA-Z]+'),
-        ('control_symbol', r'[\\][~' r"'" r'"` =^!.]'),
+        ("control_word", r"[\\][a-zA-Z]+"),
+        ("control_symbol", r"[\\][~" r"'" r'"` =^!.]'),
         # TODO should only match ascii
-        ('control_symbol_x', r'[\\][^a-zA-Z]'),
+        ("control_symbol_x", r"[\\][^a-zA-Z]"),
         # parameter tokens
         # also support a lone hash so we can lex things like '#a'
-        ('parameter', r'\#[0-9]|\#'),
+        ("parameter", r"\#[0-9]|\#"),
         # any remaining characters; for ease we also handle space and
         # newline as tokens
         # XXX TBT does not mention \t to be a space character as well
         # XXX but tests reveal otherwise?
-        ('space', r' |\t'),
-        ('newline', r'\n'),
-        ('mathshift', r'[$][$]|[$]'),
+        ("space", r" |\t"),
+        ("newline", r"\n"),
+        ("mathshift", r"[$][$]|[$]"),
         # note: some chars joined together to make it easier to detect
         # symbols that have a special function (i.e. --, ---, etc.)
-        ('chars',
-         r'---|--|-|[`][`]'
-         r"|['][']"
-         r'|[?][`]|[!][`]'
-         # separate chars because brackets are optional
-         # e.g. fran\\c cais = fran\\c{c}ais in latex
-         # so only way to detect \\c acting on c only is this way
-         r'|(?![ %#$\n\t\\]).'),
+        (
+            "chars",
+            r"---|--|-|[`][`]" r"|['][']" r"|[?][`]|[!][`]"
+            # separate chars because brackets are optional
+            # e.g. fran\\c cais = fran\\c{c}ais in latex
+            # so only way to detect \\c acting on c only is this way
+            r"|(?![ %#$\n\t\\]).",
+        ),
         # trailing garbage which we cannot decode otherwise
         # (such as a lone '\' at the end of a buffer)
         # is never emitted, but used internally by the buffer
-        ('unknown', r'.'),
+        ("unknown", r"."),
     ]
     """List of token names, and the regular expressions they match."""
 
 
 class LatexIncrementalLexer(LatexLexer, ABC):
-
     """A very simple incremental lexer for tex/latex code. Roughly
     follows the state machine described in Tex By Topic, Chapter 2.
 
@@ -200,11 +197,11 @@ class LatexIncrementalLexer(LatexLexer, ABC):
     * spaces following control tokens are compressed
     """
 
-    partoken = Token(u"control_word", u"\\par")
-    spacetoken = Token(u"space", u" ")
-    replacetoken = Token(u"chars", u"\ufffd")
-    curlylefttoken = Token(u"chars", u"{")
-    curlyrighttoken = Token(u"chars", u"}")
+    partoken = Token("control_word", "\\par")
+    spacetoken = Token("space", " ")
+    replacetoken = Token("chars", "\ufffd")
+    curlylefttoken = Token("chars", "{")
+    curlyrighttoken = Token("chars", "}")
     state: str
     inline_math: bool
 
@@ -212,7 +209,7 @@ class LatexIncrementalLexer(LatexLexer, ABC):
         super().reset()
         # three possible states:
         # newline (N), skipping spaces (S), and middle of line (M)
-        self.state = 'N'
+        self.state = "N"
         # inline math mode?
         self.inline_math = False
 
@@ -220,13 +217,12 @@ class LatexIncrementalLexer(LatexLexer, ABC):
         # state 'M' is most common, so let that be zero
         return (
             self.raw_buffer,
-            {'M': 0, 'N': 1, 'S': 2}[self.state] |
-            (4 if self.inline_math else 0)
+            {"M": 0, "N": 1, "S": 2}[self.state] | (4 if self.inline_math else 0),
         )
 
     def setstate(self, state: Any):
         self.raw_buffer = state[0]
-        self.state = {0: 'M', 1: 'N', 2: 'S'}[state[1] & 3]
+        self.state = {0: "M", 1: "N", 2: "S"}[state[1] & 3]
         self.inline_math = bool(state[1] & 4)
 
     def get_tokens(self, chars: str, final: bool = False) -> Iterator[Token]:
@@ -241,87 +237,84 @@ class LatexIncrementalLexer(LatexLexer, ABC):
         for token in self.get_raw_tokens(chars, final=final):
             pos = pos + len(token.text)
             assert pos >= 0  # first token includes at least self.raw_buffer
-            if token.name == 'newline':
-                if self.state == 'N':
+            if token.name == "newline":
+                if self.state == "N":
                     # if state was 'N', generate new paragraph
                     yield self.partoken
-                elif self.state == 'S':
+                elif self.state == "S":
                     # switch to 'N' state, do not generate a space
-                    self.state = 'N'
-                elif self.state == 'M':
+                    self.state = "N"
+                elif self.state == "M":
                     # switch to 'N' state, generate a space
-                    self.state = 'N'
+                    self.state = "N"
                     yield self.spacetoken
                 else:
-                    raise AssertionError(
-                        "unknown tex state {0!r}".format(self.state))
-            elif token.name == 'space':
-                if self.state == 'N':
+                    raise AssertionError("unknown tex state {0!r}".format(self.state))
+            elif token.name == "space":
+                if self.state == "N":
                     # remain in 'N' state, no space token generated
                     pass
-                elif self.state == 'S':
+                elif self.state == "S":
                     # remain in 'S' state, no space token generated
                     pass
-                elif self.state == 'M':
+                elif self.state == "M":
                     # in M mode, generate the space,
                     # but switch to space skip mode
-                    self.state = 'S'
+                    self.state = "S"
                     yield token
                 else:
-                    raise AssertionError(
-                        "unknown state {0!r}".format(self.state))
-            elif token.name == 'mathshift':
+                    raise AssertionError("unknown state {0!r}".format(self.state))
+            elif token.name == "mathshift":
                 self.inline_math = not self.inline_math
-                self.state = 'M'
+                self.state = "M"
                 yield token
-            elif token.name == 'parameter':
-                self.state = 'M'
+            elif token.name == "parameter":
+                self.state = "M"
                 yield token
-            elif token.name == 'control_word':
+            elif token.name == "control_word":
                 # go to space skip mode
-                self.state = 'S'
+                self.state = "S"
                 yield token
-            elif token.name == 'control_symbol':
+            elif token.name == "control_symbol":
                 # go to space skip mode
-                self.state = 'S'
+                self.state = "S"
                 yield token
-            elif (token.name == 'control_symbol_x'
-                  or token.name == 'control_symbol_x2'):
+            elif token.name == "control_symbol_x" or token.name == "control_symbol_x2":
                 # don't skip following space, so go to M mode
-                self.state = 'M'
+                self.state = "M"
                 yield token
-            elif token.name == 'comment':
+            elif token.name == "comment":
                 # no token is generated
                 # note: comment does not include the newline
-                self.state = 'S'
-            elif token.name == 'chars':
-                self.state = 'M'
+                self.state = "S"
+            elif token.name == "chars":
+                self.state = "M"
                 yield token
-            elif token.name == 'unknown':
-                if self.errors == 'strict':
+            elif token.name == "unknown":
+                if self.errors == "strict":
                     # current position within chars
                     # this is the position right after the unknown token
                     raise UnicodeDecodeError(
                         "latex",  # codec
-                        chars.encode('utf8'),  # problematic input
+                        chars.encode("utf8"),  # problematic input
                         pos - len(token.text),  # start of problematic token
                         pos,  # end of it
-                        "unknown token {0!r}".format(token.text))
-                elif self.errors == 'ignore':
+                        "unknown token {0!r}".format(token.text),
+                    )
+                elif self.errors == "ignore":
                     # do nothing
                     pass
-                elif self.errors == 'replace':
+                elif self.errors == "replace":
                     yield self.replacetoken
                 else:
                     raise NotImplementedError(
-                        "error mode {0!r} not supported".format(self.errors))
+                        "error mode {0!r} not supported".format(self.errors)
+                    )
             else:
-                raise AssertionError(
-                    "unknown token name {0!r}".format(token.name))
+                raise AssertionError("unknown token name {0!r}".format(token.name))
 
 
 class LatexIncrementalDecoder(LatexIncrementalLexer):
-
     """Simple incremental decoder. Transforms lexed LaTeX tokens into
     unicode.
 
@@ -332,7 +325,7 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
     inputenc = "ascii"
     """Input encoding. **Must** extend ascii."""
 
-    def __init__(self, errors: str = 'strict') -> None:
+    def __init__(self, errors: str = "strict") -> None:
         super(LatexIncrementalDecoder, self).__init__(errors)
         self.decoder = codecs.getincrementaldecoder(self.inputenc)(errors)
 
@@ -353,10 +346,9 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
 
         """
         text = token.text
-        return text if token.name != u'control_word' else text + u' '
+        return text if token.name != "control_word" else text + " "
 
-    def get_unicode_tokens(self, chars: str, final: bool = False
-                           ) -> Iterator[str]:
+    def get_unicode_tokens(self, chars: str, final: bool = False) -> Iterator[str]:
         """Decode every token. Override to
         process the tokens in some other way (for example, for token
         translation).
@@ -370,7 +362,7 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
         This implementation calls :meth:`get_unicode_tokens` and joins
         the resulting unicode strings together.
         """
-        return ''.join(self.get_unicode_tokens(bytes_, final=final))
+        return "".join(self.get_unicode_tokens(bytes_, final=final))
 
     def decode(self, bytes_: bytes, final: bool = False) -> str:
         """Decode LaTeX *bytes_* into a unicode string. Implementation uses
@@ -386,7 +378,6 @@ class LatexIncrementalDecoder(LatexIncrementalLexer):
 
 
 class LatexIncrementalEncoder(codecs.IncrementalEncoder):
-
     """Simple incremental encoder for LaTeX. Transforms unicode into
     :class:`bytes`.
 
@@ -399,7 +390,7 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
 
     buffer: str
 
-    def __init__(self, errors: str = 'strict') -> None:
+    def __init__(self, errors: str = "strict") -> None:
         """Initialize the codec."""
         super().__init__(errors=errors)
         self.errors = errors
@@ -408,7 +399,7 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
     def reset(self) -> None:
         """Reset state."""
         # buffer for storing last (possibly incomplete) token
-        self.buffer = u""
+        self.buffer = ""
 
     def getstate(self) -> Any:
         """Get state."""
@@ -420,15 +411,16 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
         """
         self.buffer = state
 
-    def get_unicode_tokens(self, unicode_: str, final: bool = False
-                           ) -> Iterator[str]:
+    def get_unicode_tokens(self, unicode_: str, final: bool = False) -> Iterator[str]:
         """Split unicode into tokens so that every token starts with a
         non-combining character.
         """
         if not isinstance(unicode_, str):
             raise TypeError(
-                "expected unicode for encode input, but got {0} instead"
-                .format(unicode_.__class__.__name__))
+                "expected unicode for encode input, but got {0} instead".format(
+                    unicode_.__class__.__name__
+                )
+            )
         for c in unicode_:
             if not unicodedata.combining(c):
                 for token in self.flush_unicode_tokens():
@@ -442,10 +434,9 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
         """Flush the buffer."""
         if self.buffer:
             yield self.buffer
-            self.buffer = u""
+            self.buffer = ""
 
-    def get_latex_chars(self, unicode_: str, final: bool = False
-                        ) -> Iterator[str]:
+    def get_latex_chars(self, unicode_: str, final: bool = False) -> Iterator[str]:
         """Encode every character. Override to
         process the unicode in some other way (for example, for character
         translation).
@@ -459,7 +450,7 @@ class LatexIncrementalEncoder(codecs.IncrementalEncoder):
         This implementation calls :meth:`get_latex_chars` and joins
         the resulting :class:`bytes` together.
         """
-        return ''.join(self.get_latex_chars(unicode_, final=final))
+        return "".join(self.get_latex_chars(unicode_, final=final))
 
     def encode(self, unicode_: str, final: bool = False) -> bytes:
         """Encode the *unicode_* string into LaTeX :class:`bytes`.
